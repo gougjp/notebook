@@ -11,8 +11,21 @@ Welcome to CookBook's documentation!
    :caption: Python:
 
    Python/Python向Excel中插入文件
-   
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Superxon:
+   
+   Superxon/数据回传工具打包exe方法
+   
+.. toctree::
+   :maxdepth: 2
+   :caption: Jenkins:
+   
+   Jenkins/Jenkins打开RF报告出错OpeningRobotFrameworklogfailed
+   Jenkins/Python调用Jenkins的API
+   
+   
 
 Indices and tables
 ==================
