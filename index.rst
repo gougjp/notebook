@@ -11,6 +11,8 @@ Welcome to CookBook's documentation!
    :caption: Python:
 
    Python/Python向Excel中插入文件
+   Python/Python2ToPython3
+   Python/PythonCRC计算
 
 .. toctree::
    :maxdepth: 2
@@ -25,7 +27,11 @@ Welcome to CookBook's documentation!
    Jenkins/Jenkins打开RF报告出错OpeningRobotFrameworklogfailed
    Jenkins/Python调用Jenkins的API
    
+.. toctree::
+   :maxdepth: 2
+   :caption: Git:
    
+   Git/Git查看某个提交的文件列表
 
 Indices and tables
 ==================
