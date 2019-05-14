@@ -3,34 +3,48 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to CookBook's documentation!
-====================================
+
+Python
+========
 
 .. toctree::
    :glob:
    :maxdepth: 2
-   :caption: Python:
+   :caption: Python
 
    Python/*
 
+Superxon
+==========
+
 .. toctree::
+   :glob:
    :maxdepth: 2
-   :caption: Superxon:
+   :caption: Superxon
    
-   Superxon/数据回传工具打包exe方法
-   
+   Superxon/*
+
+Jenkins
+==========
+
 .. toctree::
+   :glob:
    :maxdepth: 2
-   :caption: Jenkins:
-   
-   Jenkins/Jenkins打开RF报告出错OpeningRobotFrameworklogfailed
-   Jenkins/Python调用Jenkins的API
-   
+   :caption: Jenkins
+
+   Jenkins/*
+
+Git
+==========
+
 .. toctree::
+   :glob:
    :maxdepth: 2
-   :caption: Git:
-   
-   Git/Git查看某个提交的文件列表
+   :caption: Git
+    
+   Git/*
+
+
 
 Indices and tables
 ==================
