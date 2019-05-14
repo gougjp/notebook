@@ -7,12 +7,11 @@ Welcome to CookBook's documentation!
 ====================================
 
 .. toctree::
+   :glob:
    :maxdepth: 2
    :caption: Python:
 
-   Python/Python向Excel中插入文件
-   Python/Python2ToPython3
-   Python/PythonCRC计算
+   Python/*
 
 .. toctree::
    :maxdepth: 2
