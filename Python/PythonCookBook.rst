@@ -106,6 +106,7 @@ python 2.7.15版本
 .. code::
 
     import struct
+
     def float_to_hex(float_data):
         result = []
         hex_data = struct.pack('!f', float_data).encode('hex')
@@ -113,6 +114,7 @@ python 2.7.15版本
         for i in range(0, len(hex_data), 2):
             result.append(int(hex_data[i:i+2],16))
         return result
+
     def hex_to_float(hex_data):
         '''
         hex_data: [0x3F,0xA0,0x00,0x00]
@@ -133,6 +135,7 @@ Python 3.6.8版本
         for i in range(0, len(hex_data), 2):
             result.append(int(hex_data[i:i+2],16))
         return result
+
     def hex_to_float(hex_data):
         '''
         hex_data: [0x3F,0xA0,0x00,0x00]
@@ -149,6 +152,7 @@ Python 3.6.8版本
     float_to_hex(3.78)
     3.78 4071eb85
     [64, 113, 235, 133]
+
     hex_to_float([64, 113, 235, 133])
     4071eb85 3.77999997139
     3.7799999713897705
