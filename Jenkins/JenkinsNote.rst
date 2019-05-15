@@ -88,3 +88,56 @@ Python调用Jenkins的API
     #输出anVucGluZy5nb3U6QGdqcDEyMzQ==
     #解码
     base64.b64decode('anVucGluZy5nb3U6QGdqcDEyMzQ==')
+
+Jenkins 插件
+----------------
+
+* Job Configuration History #查看Job配置历史
+
+.. code::
+
+    https://plugins.jenkins.io/jobConfigHistory
+
+* Sectioned View Plugin #对view中的Job进行分类
+
+.. code::
+
+    https://wiki.jenkins.io/display/JENKINS/Sectioned+View+Plugin
+
+* Timestamper #JOB控制台输出中加入时间戳
+
+.. code::
+
+    https://wiki.jenkins.io/display/JENKINS/Timestamper
+
+* build-name-setter #设置build显示的名字
+
+.. code::
+
+    https://wiki.jenkins.io/display/JENKINS/Build+Name+Setter+Plugin
+    
+* Parameterized Trigger # 带参数触发下游Job
+
+.. code::
+
+    https://plugins.jenkins.io/parameterized-trigger
+    
+* Build Pipeline Plugin # Pipeline的形式显示JOB的调用流程
+
+.. code::
+
+    https://wiki.jenkins.io/display/JENKINS/Build+Pipeline+Plugin
+    https://www.cnblogs.com/luodengxiong/p/5535218.html
+    https://blog.csdn.net/GW569453350game/article/details/51882246
+    
+* Environment Injector #Job中设置环境变量
+
+.. code::
+
+    https://wiki.jenkins.io/display/JENKINS/EnvInject+Plugin
+
+
+
+
+
+
