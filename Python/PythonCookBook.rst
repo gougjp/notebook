@@ -551,4 +551,23 @@ https://github.com/ethanhs/pyhooked/blob/master/pyhooked/__init__.py
                 self.keyboard_is_hook = False
                 UnhookWindowsHookEx(self.keyboard_id)
 
+Pyinstaller 将Python脚本打包成 exe
+------------------------------------
+
+1. 官方手册：
+
+https://pyinstaller.readthedocs.io/en/v3.3.1/
+
+2. 安装
+
+.. code::
+
+    pip install PyInstaller
     
+3. 
+
+
+
+
+
+
