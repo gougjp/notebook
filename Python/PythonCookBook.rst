@@ -580,9 +580,9 @@ https://pyinstaller.readthedocs.io/en/v3.3.1/
     --add-data            打包额外资源, 用法：pyinstaller main.py --add-data=src;dest。windows以;分割，linux以:分割
     --add-binary          打包额外的代码, 用法：同--add-data。与–add-data不同的是，用binary添加的文件，pyi会分析它引用的文件并把它们一同添加进来
     --runtime-hook        指定用户runtime-hook, 如果设置了此参数, 则runtime-hook会在运行main.py之前被运行
-    –-runtime-tmpdir      指定运行时的临时目录, 默认：使用系统临时目录
+    –-runtime-tmpdir      指定运行时的临时目录, 默认使用系统临时目录
     --hidden-import       打包额外py库, pyi在分析过程中, 有些import没有正确分析出来, 运行时会报import error, 这时可以使用该参数
-    --clean               在本次编译开始时, 清空上一次编译生成的各种文件, 默认：不清除
+    --clean               在本次编译开始时, 清空上一次编译生成的各种文件, 默认不清除
     
 5. 参考
 
