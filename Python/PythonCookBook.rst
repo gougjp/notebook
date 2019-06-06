@@ -572,8 +572,8 @@ https://pyinstaller.readthedocs.io/en/v3.3.1/
     
 4. pyinstaller命令的参数介绍
 
-    -F/--onefile   生成结果是一个exe文件，所有的第三方依赖、资源和代码均被打包进该exe内
-    -D/--onedir    生成结果是一个目录，各种第三方依赖、资源和exe同时存储在该目录
+    -F, --onefile   生成结果是一个exe文件，所有的第三方依赖、资源和代码均被打包进该exe内
+    -D, --onedir    生成结果是一个目录，各种第三方依赖、资源和exe同时存储在该目录
 
 
 
