@@ -10,7 +10,7 @@ Superxon Note
 
     # 这两个包为打包工具
     pip install pyinstaller
-    pip intall pywin32
+    pip install pywin32
     # 这个包为Python文件中引用的
     pip install cx-Oracle
     
