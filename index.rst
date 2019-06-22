@@ -6,6 +6,13 @@
 .. toctree::
    :glob:
    :maxdepth: 2
+   :caption: Basic
+    
+   Basic/*
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
    :caption: Python
 
    Python/*
@@ -33,8 +40,6 @@
    :caption: Git
     
    Git/*
-
-
 
 Indices and tables
 ==================
