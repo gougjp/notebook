@@ -68,7 +68,7 @@ pipeline的 HTML Publisher Plugin使用
                                     script {
                                         currentBuild.displayName = "${BUILD_NUMBER} -> ${gitlabSourceRepoName}"
                                         try {
-                                            sh "mkdir -m 777 -p ${JENKINS_HOME}/userContent/${GITLAB_NAME}/${TRIGGER_NUM}"
+                                            sh "mkdir -m 777 -p ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}"
                                         } catch (err) {
                                             echo "Caught error in mkdir on master: ${err}"
                                         }
@@ -80,7 +80,7 @@ pipeline的 HTML Publisher Plugin使用
                                     }
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
-                                              branches: [[name: "*/${GITLAB_BRANCH}"]], 
+                                              branches: [[name: "${GITLAB_COMMIT}"]], 
                                               doGenerateSubmoduleConfigurations: false, 
                                               extensions: [[$class:"RelativeTargetDirectory",
                                                             relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
@@ -113,7 +113,7 @@ pipeline的 HTML Publisher Plugin使用
                                 steps {
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
-                                              branches: [[name: "*/${GITLAB_BRANCH}"]], 
+                                              branches: [[name: "${GITLAB_COMMIT}"]], 
                                               doGenerateSubmoduleConfigurations: false, 
                                               extensions: [[$class:"RelativeTargetDirectory",
                                                             relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
@@ -150,12 +150,12 @@ pipeline的 HTML Publisher Plugin使用
                                 }
                             }
                             stage("Test") {
-                                agent { label "firmware_test" }
                                 when { equals expected: Test_Firmware, actual: "Yes" }
+                                agent { label "firmware_test" }
                                 steps {
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
-                                              branches: [[name: "*/${GITLAB_BRANCH}"]], 
+                                              branches: [[name: "${GITLAB_COMMIT}"]], 
                                               doGenerateSubmoduleConfigurations: false, 
                                               extensions: [[$class:"RelativeTargetDirectory",
                                                             relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
@@ -200,7 +200,7 @@ pipeline的 HTML Publisher Plugin使用
                                 steps {
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
-                                              branches: [[name: "*/${GITLAB_BRANCH}"]], 
+                                              branches: [[name: "${GITLAB_COMMIT}"]], 
                                               doGenerateSubmoduleConfigurations: false, 
                                               extensions: [[$class:"RelativeTargetDirectory",
                                                             relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
@@ -238,12 +238,12 @@ pipeline的 HTML Publisher Plugin使用
                             }
 
                             stage("Test") {
-                                agent { label "software_test" }
                                 when { equals expected: Test_Software, actual: "Yes" }
+                                agent { label "software_test" }
                                 steps {
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
-                                              branches: [[name: "*/${GITLAB_BRANCH}"]], 
+                                              branches: [[name: "${GITLAB_COMMIT}"]], 
                                               doGenerateSubmoduleConfigurations: false, 
                                               extensions: [[$class:"RelativeTargetDirectory",
                                                             relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
@@ -251,7 +251,7 @@ pipeline的 HTML Publisher Plugin使用
                                               submoduleCfg: [], 
                                               userRemoteConfigs: [[credentialsId: "123", 
                                                                    url: "${GITLAB_HTTPURL}"]]]
-
+                            
                                     dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
                                         script {
                                             try {

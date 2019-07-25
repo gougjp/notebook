@@ -601,3 +601,119 @@ https://pyinstaller.readthedocs.io/en/v3.3.1/
 https://blog.csdn.net/weixin_39000819/article/details/80942423
 https://pyinstaller.readthedocs.io/en/v3.3.1/usage.html
 https://blog.csdn.net/bearstarx/article/details/81054134
+
+python 根据某个或者某几个字段来排序列表, 字典, 以及自定义对象的排序
+---------------------------------------------------------------------
+
+* 通过使用operator 模块的itemgetter 函数，可以非常容易的排序这样的数据结构
+
+    .. code::
+
+        >>> rows = [{'fname': 'Brian', 'lname': 'Jones', 'uid': 1003},
+        ...         {'fname': 'David', 'lname': 'Beazley', 'uid': 1002},
+        ...         {'fname': 'John', 'lname': 'Cleese', 'uid': 1001},
+        ...         {'fname': 'Big', 'lname': 'Jones', 'uid': 1004}]
+
+        >>> from operator import itemgetter
+        
+        >>> rows_by_fname = sorted(rows, key=itemgetter('fname'))
+        >>> print(rows_by_fname)
+        [{'fname': 'Big', 'uid': 1004, 'lname': 'Jones'},
+        {'fname': 'Brian', 'uid': 1003, 'lname': 'Jones'},
+        {'fname': 'David', 'uid': 1002, 'lname': 'Beazley'},
+        {'fname': 'John', 'uid': 1001, 'lname': 'Cleese'}]
+        
+        >>> rows_by_uid = sorted(rows, key=itemgetter('uid'))
+        >>> print(rows_by_uid)
+        [{'fname': 'John', 'uid': 1001, 'lname': 'Cleese'},
+        {'fname': 'David', 'uid': 1002, 'lname': 'Beazley'},
+        {'fname': 'Brian', 'uid': 1003, 'lname': 'Jones'},
+        {'fname': 'Big', 'uid': 1004, 'lname': 'Jones'}]
+        
+        >>> rows_by_lfname = sorted(rows, key=itemgetter('lname','fname'))
+        >>> print(rows_by_lfname)
+        [{'fname': 'David', 'uid': 1002, 'lname': 'Beazley'},
+        {'fname': 'John', 'uid': 1001, 'lname': 'Cleese'},
+        {'fname': 'Big', 'uid': 1004, 'lname': 'Jones'},
+        {'fname': 'Brian', 'uid': 1003, 'lname': 'Jones'}]
+        
+    * 也可以用lambda函数来实现同样的功能, 但是性能没有没有itemgetter()快
+
+    .. code::
+
+        rows_by_fname = sorted(rows, key=lambda r: r['fname'])
+        rows_by_lfname = sorted(rows, key=lambda r: (r['lname'],r['fname']))
+        
+    * 最后，不要忘了这节中展示的技术也同样适用于min() 和max() 等函数
+
+    .. code::
+
+        >>> min(rows, key=itemgetter('uid'))
+        {'fname': 'John', 'lname': 'Cleese', 'uid': 1001}
+        >>> max(rows, key=itemgetter('uid'))
+        {'fname': 'Big', 'lname': 'Jones', 'uid': 1004}
+
+* 下面是对元组不同项进行排序的例子
+
+    .. code::
+
+        >>> from operator import itemgetter
+        >>> student_tuples = [
+        ...     ('john', 'A', 15),
+        ...     ('jane', 'B', 12),
+        ...     ('dave', 'B', 10),
+        ... ]
+        >>> sorted(student_tuples, key=itemgetter(0))
+        [('dave', 'B', 10), ('jane', 'B', 12), ('john', 'A', 15)]
+        >>> sorted(student_tuples, key=itemgetter(1))
+        [('john', 'A', 15), ('jane', 'B', 12), ('dave', 'B', 10)]
+        >>> sorted(student_tuples, key=itemgetter(2))
+        [('dave', 'B', 10), ('jane', 'B', 12), ('john', 'A', 15)]
+        >>> sorted(student_tuples, key=itemgetter(1,2))
+        [('john', 'A', 15), ('dave', 'B', 10), ('jane', 'B', 12)]
+        >>> sorted(student_tuples, key=itemgetter(1,0))
+        [('john', 'A', 15), ('dave', 'B', 10), ('jane', 'B', 12)]
+
+    * 也可以用lambda来替换itemgetter
+
+    .. code::
+
+        >>> sorted(student_tuples, key=lambda r:(r[1],r[0]))
+        [('john', 'A', 15), ('dave', 'B', 10), ('jane', 'B', 12)]
+
+* 下面是对自定义对象的不同属性进行排序的例子
+
+.. code::
+
+    # -*- coding: utf-8 -*-
+    # 在排序时, 可以用lambda表达式将对象map成keys
+    # 亦可以使用operator包中的attrgetter和itemgetter函数以提高效率
+    # 参考 http://wiki.python.org/moin/HowTo/Sorting
+
+    # 考虑 Student 对象
+    class Student:
+        def __init__(self, name, grade, age):
+                self.name = name
+                self.grade = grade
+                self.age = age
+        def __repr__(self):
+                return repr((self.name, self.grade, self.age))
+
+    # 建立一组Student对象
+    students = [
+        Student('jane', 'B', 12),
+        Student('john', 'A', 12),
+        Student('dave', 'B', 10),
+    ]
+
+    from operator import itemgetter, attrgetter
+
+    # 对students按照年龄排序
+    print sorted(students, key=attrgetter('age'))
+    # 其等价于
+    print sorted(students, key=lambda o: o.age)
+    # 输出: >>> [('dave', 'B', 10), ('jane', 'B', 12), ('john', 'A', 15)]
+
+    # 亦可以按多个key排序, 先按age再按grade排序
+    print sorted(students, key=attrgetter('age', 'grade'))
+    # 输出: >>> [('dave', 'B', 10), ('john', 'A', 12), ('jane', 'B', 12)]
