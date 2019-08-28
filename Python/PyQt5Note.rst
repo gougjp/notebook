@@ -25,9 +25,9 @@ PyQt5 Note
 
 * 在QTextEdit中, 修改Enter和Return键是默认处理方式
 
-    因为Enter和Return键是默认处理的, 并且在QTextEdit中按下回车键, 主窗口event是不会捕获到这个事件的, 
-    所以无法在主窗口中用keyPressEvent来修改；我们可以在主窗口中重新定义eventFilter函数, 并对textEdit
-    调用installEventFilter来注册事件处理函数
+因为Enter和Return键是默认处理的, 并且在QTextEdit中按下回车键, 主窗口event是不会捕获到这个事件的, 
+所以无法在主窗口中用keyPressEvent来修改；我们可以在主窗口中重新定义eventFilter函数, 并对textEdit
+调用installEventFilter来注册事件处理函数
     
 .. code::
 
@@ -61,6 +61,8 @@ PyQt5 Note
 
 重新实现QTextEdit类中的keyPressEvent函数来忽略对应键的操作, 并用这个类来创建QTextEdit对象
 
+.. code::
+
     from PyQt5 import QtCore, QtGui, QtWidgets
 
     class MyTextEdit(QtWidgets.QTextEdit):
@@ -77,9 +79,17 @@ PyQt5 Note
                     QtWidgets.QTextEdit.keyPressEvent(self,event)
 
 
+* 获取QTextEdit中光标所在行的内容; 前提是不能修改前面回车键的默认操作, 否则会获取所有行的内容
+
+.. code::
+
+    self.ui.textEdit_2.textCursor().block().text()
 
 
+* 获取QTextEdit中光标所在行的行号; 前提是不能修改前面回车键的默认操作, 否则一直为0
 
+.. code::
 
+    self.ui.textEdit_2.textCursor().blockNumber()
 
 
