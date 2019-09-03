@@ -717,3 +717,14 @@ python 根据某个或者某几个字段来排序列表, 字典, 以及自定义
         # 亦可以按多个key排序, 先按age再按grade排序
         print sorted(students, key=attrgetter('age', 'grade'))
         # 输出: >>> [('dave', 'B', 10), ('john', 'A', 12), ('jane', 'B', 12)]
+
+在Windows下用Python加载和释放动态库
+-------------------------------------------
+
+.. code::
+
+    # 加载
+    dll = ctypes.cdll.LoadLibrary('F320.dll')
+    
+    # 释放
+    win32api.FreeLibrary(dll._handle)
