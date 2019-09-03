@@ -92,4 +92,73 @@ PyQt5 Note
 
     self.ui.textEdit_2.textCursor().blockNumber()
 
+ImportError: unable to find Qt5Core.dll on PATH
+--------------------------------------------------
+
+* 现象：
+
+最近在一台电脑上安装了最新的PyQt5和PyQt5-tools包, 用Pyinstaller打包PyQt5写的应用程序后, 应用程序打开失败
+然后我用不带-w的参数重新打包, 并在CMD中用call来调用打包好的exe, 则会出现以下错误
+
+ImportError: unable to find Qt5Core.dll on PATH
+
+* 解决方法:
+
+在源代码目录新建Python文件: fix_qt_import_error.py, 文件内容如下: 
+
+.. code::
+
+    # Fix qt import error
+    # Include this file before import PyQt5 
+
+    import os
+    import sys
+    import logging
+
+
+    def _append_run_path():
+        if getattr(sys, 'frozen', False):
+            pathlist = []
+
+            # If the application is run as a bundle, the pyInstaller bootloader
+            # extends the sys module by a flag frozen=True and sets the app
+            # path into variable _MEIPASS'.
+            pathlist.append(sys._MEIPASS)
+
+            # the application exe path
+            _main_app_path = os.path.dirname(sys.executable)
+            pathlist.append(_main_app_path)
+
+            # append to system path enviroment
+            os.environ["PATH"] += os.pathsep + os.pathsep.join(pathlist)
+
+        logging.error("current PATH: %s", os.environ['PATH'])
+
+
+    _append_run_path()
+
+然后在应用程序中用import PyQt5之前import fix_qt_import_error; 重新打包后即能正常运行
+
+参考:
+https://stackoverflow.com/questions/56949297/how-to-fix-importerror-unable-to-find-qt5core-dll-on-path-after-pyinstaller-b
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
