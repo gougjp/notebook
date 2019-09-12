@@ -36,3 +36,22 @@ Superxon Note
         cwd = win32api.GetShortPathName(cwd)
     AttributeError: 'module' object has no attribute 'GetShortPathName'
 
+Jenkins 服务器维护
+----------------------------
+
+1. 重启服务：
+
+配置文件：
+/etc/init.d/jenkins
+/etc/default/jenkins
+
+.. code::
+
+    service jenkins status    #查看Jenkins服务的状态
+    service jenkins restart   #重启Jenkins服务
+    service jenkins stop      #停止Jenkins服务
+    service jenkins start     #启动Jenkins服务
+    
+2. 版本更新：
+
+将下载的新版jenkins.war放到/usr/share/jenkins/目录下，然后重启Jenkins服务
