@@ -16,6 +16,13 @@
    :caption: Python
 
    Python/*
+   
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :caption: Java
+
+   Java/*
 
 
 .. toctree::
