@@ -26,7 +26,9 @@ HelloDate.java, 主类名必须跟文件名相同, 这里都为HelloDate; 主函
 * 执行
 
 在命令行执行java HelloDate.class会出现如下错误
-"错误: 找不到或无法加载主类 HelloDate.class"
+
+"**错误: 找不到或无法加载主类 HelloDate.class**"
+
 删除class后缀则能成功执行: java HelloDate
 
 
