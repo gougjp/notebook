@@ -98,10 +98,11 @@ Sphinx是一个基于Python的文档生成项目, 最早只是用来生成 Pytho
 
 .. code::
 
-    Contents:
     .. toctree::
        :maxdepth: 2
-
+       :caption: Contents:
+       
+       # 这里的hello是新增的,为hello.rst的文件名
        hello
 
 * 更改主题 sphinx_rtd_theme:
@@ -110,6 +111,7 @@ Sphinx是一个基于Python的文档生成项目, 最早只是用来生成 Pytho
 
 .. code::
 
+    # 用以下代码替换html_theme = 'alabaster'一行
     import sphinx_rtd_theme
     html_theme = "sphinx_rtd_theme"
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
@@ -144,8 +146,9 @@ Sphinx是一个基于Python的文档生成项目, 最早只是用来生成 Pytho
 
     The HTML pages are in build\html.
 
+* 进入build/html目录后用浏览器打开index.html
 
-
+.. image:: images/HelloWorld.jpg
 
 
 
