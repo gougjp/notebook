@@ -57,60 +57,82 @@ pipeline的 HTML Publisher Plugin使用
             timestamps()
             timeout(time: 2, unit: 'HOURS')
         }
-        
+
         stages {
-            stage("Compile And Test") {
-                parallel {
-                    stage("Master") {
-                        stages {
-                            stage("Prepare") {
-                                steps {
-                                    script {
-                                        currentBuild.displayName = "${BUILD_NUMBER} -> ${gitlabSourceRepoName}"
-                                        try {
-                                            sh "mkdir -m 777 -p ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}"
-                                        } catch (err) {
-                                            echo "Caught error in mkdir on master: ${err}"
-                                        }
-                                        try {
-                                            sh "rm -rf ${WORKSPACE}/*"
-                                        } catch (err) {
-                                            echo "Caught error in clean ${WORKSPACE} on master: ${err}"
-                                        }
-                                    }
-                                    checkout changelog: false, poll: false, 
-                                        scm: [$class: "GitSCM", 
-                                              branches: [[name: "${GITLAB_COMMIT}"]], 
-                                              doGenerateSubmoduleConfigurations: false, 
-                                              extensions: [[$class:"RelativeTargetDirectory",
-                                                            relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
-                                                           [$class: "CleanCheckout"]], 
-                                              submoduleCfg: [], 
-                                              userRemoteConfigs: [[credentialsId: "123", 
-                                                                   url: "${GITLAB_HTTPURL}"]]]
-                                    script {
-                                        Test_Firmware = "No"
-                                        Test_Software = "No"
-                                        echo '---------------------------------0'
-                                        if (fileExists("${GITLAB_GROUP}/${GITLAB_NAME}/02 ci/02 firmware/hlt/robotRun.py")) {
-                                            Test_Firmware = "Yes"
-                                            echo '---------------------------------1'
-                                        }
-                                        if (fileExists("${GITLAB_GROUP}/${GITLAB_NAME}/02 ci/03 software/hlt/robotRun.py")) {
-                                            Test_Software = "Yes"
-                                            echo '---------------------------------2'
-                                        }
-                                        echo '---------------------------------4'
-                                    }
-                                }
-                            }
+            stage("Prepare") {
+                steps {
+                    // 创建日志目录, 设置build名字, 清理workspace
+                    script {
+                        currentBuild.displayName = "${BUILD_NUMBER} -> ${gitlabSourceRepoName}"
+                        try {
+                            sh "mkdir -m 777 -p ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}"
+                        } catch (err) {
+                            echo "Caught error in mkdir on master: ${err}"
+                        }
+                        try {
+                            sh "rm -rf ${WORKSPACE}/*"
+                        } catch (err) {
+                            echo "Caught error in clean ${WORKSPACE} on master: ${err}"
                         }
                     }
+                    // 下载代码
+                    checkout changelog: false, poll: false, 
+                        scm: [$class: "GitSCM", 
+                              branches: [[name: "${GITLAB_COMMIT}"]], 
+                              doGenerateSubmoduleConfigurations: false, 
+                              extensions: [[$class:"RelativeTargetDirectory",
+                                            relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
+                                           [$class: "CleanCheckout"]], 
+                              submoduleCfg: [], 
+                              userRemoteConfigs: [[credentialsId: "123", 
+                                                   url: "${GITLAB_HTTPURL}"]]]
+                    // 解析提交日志, 得出编译和测试条件, 并生成邮件列表
+                    script {
+                        sh "python \"${GITLAB_GROUP}/${GITLAB_NAME}/02 ci/04 common/analysis_gitlog.py\""
+                        Compile_Firmware = "No"
+                        Compile_Software = "No"
+                        Test_Firmware = "No"
+                        Test_Software = "No"
+
+                        if (fileExists("${GITLAB_GROUP}\\${GITLAB_NAME}\\02 ci\\02 firmware\\hlt\\robotRun.py")) {
+                            Test_Firmware = "Yes"
+                        }
+                        if (fileExists("${GITLAB_GROUP}\\${GITLAB_NAME}\\02 ci\\03 software\\hlt\\robotRun.py")) {
+                            Test_Software = "Yes"
+                        }
+
+                        compile_list = readFile('compile_list')
+                        if (compile_list.contains('Compile_Firmware=Yes')) {
+                            Compile_Firmware = "Yes"
+                        }
+                        if (compile_list.contains('Compile_Software=Yes')) {
+                            Compile_Software = "Yes"
+                        }
+
+                        if (Compile_Firmware == "No") {
+                            Test_Firmware = "No"
+                        }
+                        if (Compile_Software == "No") {
+                            Test_Software = "No"
+                        }
+
+                        println("Compile_Firmware: ${Compile_Firmware}")
+                        println("Compile_Software: ${Compile_Software}")
+                        println("Test_Firmware: ${Test_Firmware}")
+                        println("Test_Software: ${Test_Software}")
+                    }
+                }
+            }
+            
+            stage("Compile") {
+                parallel {
                     stage("Firmware") {
+                        when { equals expected: Compile_Firmware, actual: "Yes" }
                         stages {
-                            stage('Compile'){
+                            stage('Firmware Compile') {
                                 agent { label "firmware_compile" }
                                 steps {
+                                    // 下载代码
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
                                               branches: [[name: "${GITLAB_COMMIT}"]], 
@@ -122,6 +144,7 @@ pipeline的 HTML Publisher Plugin使用
                                               userRemoteConfigs: [[credentialsId: "123", 
                                                                    url: "${GITLAB_HTTPURL}"]]]
 
+                                    // 编译固件
                                     dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
                                         script {
                                             try {
@@ -134,7 +157,8 @@ pipeline的 HTML Publisher Plugin使用
                                             }
                                         }
                                     }
-
+                                    
+                                    // 静态解析固件代码
                                     dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
                                         script {
                                             try {
@@ -149,10 +173,69 @@ pipeline的 HTML Publisher Plugin使用
                                     }
                                 }
                             }
-                            stage("Test") {
-                                when { equals expected: Test_Firmware, actual: "Yes" }
+                        }
+                    }
+                    stage("Software") {
+                        when { equals expected: Compile_Software, actual: "Yes" }
+                        stages {
+                            stage('Software Compile') {
+                                agent { label "software_compile" }
+                                steps {
+                                    // 下载代码
+                                    checkout changelog: false, poll: false, 
+                                        scm: [$class: "GitSCM", 
+                                              branches: [[name: "${GITLAB_COMMIT}"]], 
+                                              doGenerateSubmoduleConfigurations: false, 
+                                              extensions: [[$class:"RelativeTargetDirectory",
+                                                            relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
+                                                           [$class: "CleanCheckout"]], 
+                                              submoduleCfg: [], 
+                                              userRemoteConfigs: [[credentialsId: "123", 
+                                                                   url: "${GITLAB_HTTPURL}"]]]
+       
+                                    // 编译软件
+                                    dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
+                                        script {
+                                            try {
+                                                bat("call \"02 ci\\04 common\\common_script.bat\" compile software")
+                                            } catch (err) {
+                                                echo "Caught error in software compile: ${err}"
+                                                currentBuild.result = 'FAILURE'
+                                            } finally {
+                                                bat("call \"02 ci\\04 common\\common_script.bat\" post compile software")
+                                            }
+                                        }
+                                    }
+                                    
+                                    // 静态解析软件代码
+                                    dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
+                                        script {
+                                            try {
+                                                bat("call \"02 ci\\04 common\\common_script.bat\" static software")
+                                            } catch (err) {
+                                                echo "Caught error in software static: ${err}"
+                                                currentBuild.result = 'FAILURE'
+                                            } finally {
+                                                bat("call \"02 ci\\04 common\\common_script.bat\" post static software")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            stage("Test") {
+                parallel {
+                    stage("Firmware") {
+                        when { equals expected: Test_Firmware, actual: "Yes" }
+                        stages {
+                            stage('Firmware Test') {
                                 agent { label "firmware_test" }
                                 steps {
+                                    // 下载代码
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
                                               branches: [[name: "${GITLAB_COMMIT}"]], 
@@ -164,6 +247,7 @@ pipeline的 HTML Publisher Plugin使用
                                               userRemoteConfigs: [[credentialsId: "123", 
                                                                    url: "${GITLAB_HTTPURL}"]]]
 
+                                    // 固件测试
                                     dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
                                         script {
                                             try {
@@ -194,53 +278,12 @@ pipeline的 HTML Publisher Plugin使用
                         }
                     }
                     stage("Software") {
+                        when { equals expected: Test_Software, actual: "Yes" }
                         stages {
-                            stage('Compile'){
-                                agent { label "software_compile" }
-                                steps {
-                                    checkout changelog: false, poll: false, 
-                                        scm: [$class: "GitSCM", 
-                                              branches: [[name: "${GITLAB_COMMIT}"]], 
-                                              doGenerateSubmoduleConfigurations: false, 
-                                              extensions: [[$class:"RelativeTargetDirectory",
-                                                            relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
-                                                           [$class: "CleanCheckout"]], 
-                                              submoduleCfg: [], 
-                                              userRemoteConfigs: [[credentialsId: "123", 
-                                                                   url: "${GITLAB_HTTPURL}"]]]
-
-                                    dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
-                                        script {
-                                            try {
-                                                bat("call \"02 ci\\04 common\\common_script.bat\" compile software")
-                                            } catch (err) {
-                                                echo "Caught error in software compile: ${err}"
-                                                currentBuild.result = 'FAILURE'
-                                            } finally {
-                                                bat("call \"02 ci\\04 common\\common_script.bat\" post compile software")
-                                            }
-                                        }
-                                    }
-
-                                    dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
-                                        script {
-                                            try {
-                                                bat("call \"02 ci\\04 common\\common_script.bat\" static software")
-                                            } catch (err) {
-                                                echo "Caught error in software static: ${err}"
-                                                currentBuild.result = 'FAILURE'
-                                            } finally {
-                                                bat("call \"02 ci\\04 common\\common_script.bat\" post static software")
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            stage("Test") {
-                                when { equals expected: Test_Software, actual: "Yes" }
+                            stage('Software Test') {
                                 agent { label "software_test" }
                                 steps {
+                                    // 下载代码
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
                                               branches: [[name: "${GITLAB_COMMIT}"]], 
@@ -252,6 +295,7 @@ pipeline的 HTML Publisher Plugin使用
                                               userRemoteConfigs: [[credentialsId: "123", 
                                                                    url: "${GITLAB_HTTPURL}"]]]
                             
+                                    // 软件测试
                                     dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
                                         script {
                                             try {
@@ -283,6 +327,7 @@ pipeline的 HTML Publisher Plugin使用
                     }
                 }
             }
+
             stage("Collection Reports") {
                 steps {
                     dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
