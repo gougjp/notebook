@@ -71,32 +71,78 @@ Sphinx是一个基于Python的文档生成项目, 最早只是用来生成 Pytho
        make builder
     where "builder" is one of the supported builders, e.g. html, latex or linkcheck.
 
+* 然后运行 tree -C . 查看生成的sphinx结构:
 
+.. code::
 
+    .                      
+    |-- Makefile           
+    |-- build              
+    |-- make.bat           
+    `-- source             
+        |-- _static        
+        |-- _templates     
+        |-- conf.py        
+        `-- index.rst      
+                           
+    4 directories, 4 files 
 
+* 添加一篇文章, 在source目录下新建hello.rst, 内容如下:
 
+.. code::
 
+    hello,world
+    =============
 
+* index.rst 修改如下:
 
+.. code::
 
+    Contents:
+    .. toctree::
+       :maxdepth: 2
 
+       hello
 
+* 更改主题 sphinx_rtd_theme:
 
+更改source/conf.py:
 
+.. code::
 
+    import sphinx_rtd_theme
+    html_theme = "sphinx_rtd_theme"
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
+* 在根目录F:\cookbook执行make html命令, 输出信息如下:
 
+.. code::
 
+    F:\cookbook>make html
+    Running Sphinx v2.0.1
+    loading translations [zh_CN]... done
+    making output directory... done
+    building [mo]: targets for 0 po files that are out of date
+    building [html]: targets for 2 source files that are out of date
+    updating environment: 2 added, 0 changed, 0 removed
+    reading sources... [100%] index
+    looking for now-outdated files... none found
+    pickling environment... done
+    checking consistency... done
+    preparing documents... done
+    writing output... [100%] index
+    generating indices... genindex
+    writing additional pages... searchc:\python36\lib\site-packages\sphinx_rtd_theme\search.html:20: RemovedInSphinx30Warnin
+    g: To modify script_files in the theme is deprecated. Please insert a <script> tag directly in your theme instead.
+      {{ super() }}
 
+    copying static files... done
+    copying extra files... done
+    dumping search index in Chinese (code: zh) ... done
+    dumping object inventory... done
+    build succeeded.
 
-
-
-
-
-
-
-
-
+    The HTML pages are in build\html.
 
 
 
