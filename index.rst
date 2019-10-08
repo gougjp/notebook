@@ -48,6 +48,13 @@
     
    Git/*
 
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :caption: Help
+    
+   Help/*
+
 Indices and tables
 ==================
 
