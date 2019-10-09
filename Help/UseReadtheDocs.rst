@@ -150,9 +150,25 @@ Sphinx是一个基于Python的文档生成项目, 最早只是用来生成 Pytho
 
 .. image:: images/HelloWorld.jpg
 
+* toctree 支持多级目录,比如要想将python.rst,java.rst笔记在不同的目录,toctree这样设置:
 
+.. code::
 
+    Contents:
 
+    .. toctree::
+
+       python/python
+       swift/swift
+       
+    # 也可以使用通配符*来匹配所有的.rst文件
+    Contents:
+
+    .. toctree::
+
+       python/*
+       swift/*
+    
 
 
 
