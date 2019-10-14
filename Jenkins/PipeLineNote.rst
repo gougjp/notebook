@@ -33,6 +33,45 @@ pipeline的 HTML Publisher Plugin使用
             }
         }
     }
+    
+jenkins build 的结果反馈给gitlab
+--------------------------------------
+
+.. code::
+
+    pipeline {
+      agent any
+     
+      options {
+        gitLabConnection('Your GitLab Connection')
+      }
+     
+      stages {
+        stage('build') {
+          steps {
+            updateGitlabCommitStatus name: 'build', state: 'running'
+            hogehoge
+          }
+        }
+      }
+     
+      post {
+        success {
+          updateGitlabCommitStatus name: 'build', state: 'success'
+        }
+        failure {
+          updateGitlabCommitStatus name: 'build', state: 'failed'
+        }
+      }
+    }
+
+* gitLabConnection: 是和GitLab连接的名称. 根据用户的权限可以在Job->configure->General->GitLab Connection看到具体的名称; 
+而这个连接的名称是在Manage Jenkins->Configure System->Gitlab中配置的
+
+* updateGitlabCommitStatus: name - build 名称, 可以根据不同的步骤指定不同的名称, 就是一个普通字符串, 结果回传过后可以在
+Gitlab中看到; state - 回传的状态, 包括: pending, running, canceled, success, failed
+
+
 
 配置实例
 ---------------------------------
@@ -56,11 +95,13 @@ pipeline的 HTML Publisher Plugin使用
         options { 
             timestamps()
             timeout(time: 2, unit: 'HOURS')
+            gitLabConnection('tangke')
         }
 
         stages {
             stage("Prepare") {
                 steps {
+                    updateGitlabCommitStatus name: 'Prepare', state: 'running'
                     // 创建日志目录, 设置build名字, 清理workspace
                     script {
                         currentBuild.displayName = "${BUILD_NUMBER} -> ${gitlabSourceRepoName}"
@@ -121,6 +162,7 @@ pipeline的 HTML Publisher Plugin使用
                         println("Test_Firmware: ${Test_Firmware}")
                         println("Test_Software: ${Test_Software}")
                     }
+                    updateGitlabCommitStatus name: 'Prepare', state: 'success'
                 }
             }
             
@@ -132,6 +174,7 @@ pipeline的 HTML Publisher Plugin使用
                             stage('Firmware Compile') {
                                 agent { label "firmware_compile" }
                                 steps {
+                                    updateGitlabCommitStatus name: 'FirmwareCompile', state: 'running'
                                     // 下载代码
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
@@ -152,6 +195,7 @@ pipeline的 HTML Publisher Plugin使用
                                             } catch (err) {
                                                 echo "Caught error in firmware compile: ${err}"
                                                 currentBuild.result = 'FAILURE'
+                                                updateGitlabCommitStatus name: 'FirmwareCompile', state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post compile firmware")
                                             }
@@ -166,11 +210,13 @@ pipeline的 HTML Publisher Plugin使用
                                             } catch (err) {
                                                 echo "Caught error in firmware static: ${err}"
                                                 currentBuild.result = 'FAILURE'
+                                                updateGitlabCommitStatus name: 'FirmwareCompile', state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post static firmware")
                                             }
                                         }
                                     }
+                                    updateGitlabCommitStatus name: 'FirmwareCompile', state: 'success'
                                 }
                             }
                         }
@@ -181,6 +227,7 @@ pipeline的 HTML Publisher Plugin使用
                             stage('Software Compile') {
                                 agent { label "software_compile" }
                                 steps {
+                                    updateGitlabCommitStatus name: 'SoftwareCompile', state: 'running'
                                     // 下载代码
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
@@ -201,6 +248,7 @@ pipeline的 HTML Publisher Plugin使用
                                             } catch (err) {
                                                 echo "Caught error in software compile: ${err}"
                                                 currentBuild.result = 'FAILURE'
+                                                updateGitlabCommitStatus name: 'SoftwareCompile', state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post compile software")
                                             }
@@ -215,11 +263,13 @@ pipeline的 HTML Publisher Plugin使用
                                             } catch (err) {
                                                 echo "Caught error in software static: ${err}"
                                                 currentBuild.result = 'FAILURE'
+                                                updateGitlabCommitStatus name: 'SoftwareCompile', state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post static software")
                                             }
                                         }
                                     }
+                                    updateGitlabCommitStatus name: 'SoftwareCompile', state: 'success'
                                 }
                             }
                         }
@@ -235,6 +285,7 @@ pipeline的 HTML Publisher Plugin使用
                             stage('Firmware Test') {
                                 agent { label "firmware_test" }
                                 steps {
+                                    updateGitlabCommitStatus name: 'FirmwareTest', state: 'running'
                                     // 下载代码
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
@@ -255,6 +306,7 @@ pipeline的 HTML Publisher Plugin使用
                                             } catch (err) {
                                                 echo "Caught error in firmware test: ${err}"
                                                 currentBuild.result = 'FAILURE'
+                                                updateGitlabCommitStatus name: 'FirmwareTest', state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post test firmware")
                                             }
@@ -273,6 +325,7 @@ pipeline的 HTML Publisher Plugin使用
                                             }
                                         }
                                     }
+                                    updateGitlabCommitStatus name: 'FirmwareTest', state: 'success'
                                 }
                             }
                         }
@@ -283,6 +336,7 @@ pipeline的 HTML Publisher Plugin使用
                             stage('Software Test') {
                                 agent { label "software_test" }
                                 steps {
+                                    updateGitlabCommitStatus name: 'SoftwareTest', state: 'running'
                                     // 下载代码
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
@@ -303,6 +357,7 @@ pipeline的 HTML Publisher Plugin使用
                                             } catch (err) {
                                                 echo "Caught error in software test: ${err}"
                                                 currentBuild.result = 'FAILURE'
+                                                updateGitlabCommitStatus name: 'SoftwareTest', state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post test software")
                                             }
@@ -321,6 +376,7 @@ pipeline的 HTML Publisher Plugin使用
                                             }
                                         }
                                     }
+                                    updateGitlabCommitStatus name: 'SoftwareTest', state: 'success'
                                 }
                             }
                         }
@@ -330,6 +386,7 @@ pipeline的 HTML Publisher Plugin使用
 
             stage("Collection Reports") {
                 steps {
+                    updateGitlabCommitStatus name: 'CollectionReports', state: 'success'
                     dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
                         sh "\"02 ci/04 common/control.sh\""
                     }
@@ -338,18 +395,21 @@ pipeline的 HTML Publisher Plugin使用
         }
         post {
             success {
+                updateGitlabCommitStatus name: 'BuldComplete', state: 'success'
                 emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, commiter:${GITLAB_COMMITER}",
                          mimeType:'text/html',
                          body: '${FILE, path="summary.html"}', 
                          to: '${FILE,path="mail_list"} ${DEFAULT_RECIPIENTS}'
             }
             unstable {
+                updateGitlabCommitStatus name: 'BuldComplete', state: 'failed'
                 emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, commiter:${GITLAB_COMMITER}",
                          mimeType:'text/html',
                          body: '${FILE, path="summary.html"}', 
                          to: '${FILE,path="mail_list"} ${DEFAULT_RECIPIENTS}'
             }
             failure {
+                updateGitlabCommitStatus name: 'BuldComplete', state: 'failed'
                 emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, commiter:${GITLAB_COMMITER}",
                          mimeType:'text/html',
                          body: '${FILE, path="summary.html"}', 
