@@ -47,6 +47,13 @@
    :caption: Git
     
    Git/*
+   
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :caption: EFK
+    
+   Efk/*
 
 .. toctree::
    :glob:

@@ -33,7 +33,7 @@ pipeline的 HTML Publisher Plugin使用
             }
         }
     }
-    
+
 jenkins build 的结果反馈给gitlab
 --------------------------------------
 
@@ -45,7 +45,7 @@ jenkins build 的结果反馈给gitlab
       options {
         gitLabConnection('Your GitLab Connection')
       }
-     
+
       stages {
         stage('build') {
           steps {
@@ -65,10 +65,10 @@ jenkins build 的结果反馈给gitlab
       }
     }
 
-* gitLabConnection: 是和GitLab连接的名称. 根据用户的权限可以在Job->configure->General->GitLab Connection看到具体的名称; 
+gitLabConnection: 是和GitLab连接的名称. 根据用户的权限可以在Job->configure->General->GitLab Connection看到具体的名称; 
 而这个连接的名称是在Manage Jenkins->Configure System->Gitlab中配置的
 
-* updateGitlabCommitStatus: name - build 名称, 可以根据不同的步骤指定不同的名称, 就是一个普通字符串, 结果回传过后可以在
+updateGitlabCommitStatus: name - build 名称, 可以根据不同的步骤指定不同的名称, 就是一个普通字符串, 结果回传过后可以在
 Gitlab中看到; state - 回传的状态, 包括: pending, running, canceled, success, failed
 
 jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#updategitlabcommitstatus-update-the-commit-status-in-gitlab
