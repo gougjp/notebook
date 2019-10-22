@@ -58,6 +58,13 @@
 .. toctree::
    :glob:
    :maxdepth: 2
+   :caption: MySql
+    
+   MySql/*
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
    :caption: Help
     
    Help/*
