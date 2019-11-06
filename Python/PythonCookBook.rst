@@ -728,3 +728,27 @@ python 根据某个或者某几个字段来排序列表, 字典, 以及自定义
     
     # 释放
     win32api.FreeLibrary(dll._handle)
+
+python sqlite3数据库操作
+------------------------------------
+
+.. code::
+
+    import sqlite3
+
+    conn = sqlite3.connect('atepipeline.db')
+    cursor = conn.cursor()
+    cursor.execute("create table BuildInfo (NUMBER integer PRIMARY KEY,GROUPNAME text,PROJECTNAME text,BRANCH text,COMMITID text,COMMITER text,BUILDDATE text,BUILDRESULT text);")
+    cursor.execute("create table CppCheckInfo (NUMBER integer,CODETYPE text,ERROR integer,WARNING integer,STYLE integer,PERFORMANCE integer,PORTABILITY integer);")
+    cursor.execute("create table ClocInfo (NUMBER integer,CODETYPE text,CODE integer,COMMENT integer,BLANK integer,FILE integer);")
+
+    cursor.execute('insert into BuildInfo values (3011,"new_project","xfp_10g_epon_olt","develop-eric-ss","6af54fac794ec6007220d08415893c2994ed1513","eric.yao@superxon.cn","2019-11-02 10:30:25","PASS");')
+    conn.commit()
+
+    cursor.execute('insert into CppCheckInfo values (3011,"software",0,0,0,0,0);')
+    conn.commit()
+
+    conn.close()
+
+
+
