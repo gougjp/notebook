@@ -41,13 +41,14 @@ when检查文件是否存在
 
     when { expression  { fileExists('cppcheck.xml') }}
     steps {
-        publishCppcheck pattern:'cppcheck.xml',
+        publishCppcheck allowNoReport: true, 
                         displayErrorSeverity: true, 
                         displayNoCategorySeverity: true, 
                         displayPerformanceSeverity: true, 
                         displayPortabilitySeverity: true, 
                         displayStyleSeverity: true, 
-                        displayWarningSeverity: true
+                        displayWarningSeverity: true, 
+                        pattern: 'cppcheck.xml'
     }
 
 jenkins build 的结果反馈给gitlab
