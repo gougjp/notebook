@@ -65,6 +65,13 @@
 .. toctree::
    :glob:
    :maxdepth: 2
+   :caption: CppCheck
+    
+   CppCheck/*
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
    :caption: Help
     
    Help/*
