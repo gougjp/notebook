@@ -20,11 +20,12 @@ Python 源代码学习(3.7.5)
 | 件输入的Python源代码或从命令行输入的一行行Python代码切分为一个个的token;
 | Parser对应语法分析, 在Scanner的分析结果上进行语法分析, 建立抽象语法树(AST); 
 | Compiler是根据建立的AST生成指令集合 -- Python字节码(byte code), 就像Java编译
-| 器和C#编译器所做的那样; 最后由Code Evaluator来执行这些字节码. 因此Code Evaluator
-| 又可以被称为虚拟机
+| 器和C#编译器所做的那样; 最后由Code Evaluator来执行这些字节码. 因此Code 
+| Evaluator又可以被称为虚拟机
 
-| 图中, 在解释器
-
+| 图中, 在解释器与右边的对象/类型系统, 内存分配器之间的箭头表示"使用"关系; 而与
+| 运行时状态之间的箭头表示"修改"关系, 即Python在执行的过程中会不断地修改当前解
+| 释器所处的状态, 在不同的状态之间切换
 
 .. image:: images/0-1.jpeg
 
