@@ -23,6 +23,8 @@ Python 源代码学习(3.7.5)
 | 器和C#编译器所做的那样; 最后由Code Evaluator来执行这些字节码. 因此Code Evaluator
 | 又可以被称为虚拟机
 
+| 图中, 在解释器
+
 
 .. image:: images/0-1.jpeg
 
