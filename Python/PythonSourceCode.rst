@@ -35,7 +35,7 @@ Python 源代码学习(3.7.5)
 
 .. image:: images/0-2.jpeg
 
-    图0-2 Python目录结构
+
 
 
 
