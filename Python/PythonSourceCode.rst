@@ -4,6 +4,8 @@ Python 源代码学习(3.7.5)
 第一章: Python 总体架构
 -----------------------------
 
+<font size=16>**1. Python 总体架构**</font>
+
       下图是Python的总体架构：
 
       右边是Python的运行环境, 包括对象/类型系统(Object/Type structures), 内存\
