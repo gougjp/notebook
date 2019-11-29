@@ -56,7 +56,7 @@ Python 源代码学习(3.7.5)
 
 | PCBuild: 包含了Visual Studio的工程文件
 
-第一章: Python 对象初探
+第二章: Python 对象初探
 -----------------------------
 
 

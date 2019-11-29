@@ -90,7 +90,7 @@ Gitlab中看到; state - 回传的状态, 包括: pending, running, canceled, su
 
 jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#updategitlabcommitstatus-update-the-commit-status-in-gitlab
 
-配置实例
+AtePipeline配置实例
 ---------------------------------
 
 .. code::
@@ -107,6 +107,7 @@ jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#upda
             GITLAB_BEFORE = "${gitlabBefore}"
             GITLAB_HTTPURL = "${gitlabSourceRepoHttpUrl}"
             GITLAB_GROUP = "${gitlabSourceNamespace}"
+            REPORT_LINK = "${JENKINS_URL}userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/summary.html"
         }
 
         options { 
@@ -121,7 +122,8 @@ jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#upda
                     updateGitlabCommitStatus name: 'Prepare', state: 'running'
                     // 创建日志目录, 设置build名字, 清理workspace
                     script {
-                        currentBuild.displayName = "${BUILD_NUMBER} -> ${gitlabSourceRepoName}"
+                        currentBuild.displayName = "${BUILD_NUMBER} -> ${gitlabSourceRepoName} -> ${gitlabUserName}"
+                        currentBuild.description = "<a href=\"${REPORT_LINK}\">${REPORT_LINK}</a>"
                         try {
                             sh "mkdir -m 777 -p ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}"
                         } catch (err) {
@@ -191,7 +193,7 @@ jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#upda
                             stage('Firmware Compile') {
                                 agent { label "firmware_compile" }
                                 steps {
-                                    updateGitlabCommitStatus name: 'FirmwareCompile', state: 'running'
+                                    updateGitlabCommitStatus name: "FirmwareCompile", state: 'running'
                                     // 下载代码
                                     checkout changelog: false, poll: false, 
                                         scm: [$class: "GitSCM", 
@@ -212,7 +214,7 @@ jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#upda
                                             } catch (err) {
                                                 echo "Caught error in firmware compile: ${err}"
                                                 currentBuild.result = 'FAILURE'
-                                                updateGitlabCommitStatus name: 'FirmwareCompile', state: 'failed'
+                                                updateGitlabCommitStatus name: "FirmwareCompile", state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post compile firmware")
                                             }
@@ -227,13 +229,21 @@ jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#upda
                                             } catch (err) {
                                                 echo "Caught error in firmware static: ${err}"
                                                 currentBuild.result = 'FAILURE'
-                                                updateGitlabCommitStatus name: 'FirmwareCompile', state: 'failed'
+                                                updateGitlabCommitStatus name: "FirmwareCompile", state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post static firmware")
                                             }
                                         }
                                     }
-                                    updateGitlabCommitStatus name: 'FirmwareCompile', state: 'success'
+                                    //publishCppcheck allowNoReport: true, 
+                                    //                displayErrorSeverity: true, 
+                                    //                displayNoCategorySeverity: true, 
+                                    //                displayPerformanceSeverity: true, 
+                                    //                displayPortabilitySeverity: true, 
+                                    //                displayStyleSeverity: true, 
+                                    //                displayWarningSeverity: true, 
+                                    //                pattern: 'cppcheck.xml'            
+                                    updateGitlabCommitStatus name: "FirmwareCompile", state: 'success'
                                 }
                             }
                         }
@@ -286,6 +296,14 @@ jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#upda
                                             }
                                         }
                                     }
+                                    //publishCppcheck allowNoReport: true, 
+                                    //                displayErrorSeverity: true, 
+                                    //                displayNoCategorySeverity: true, 
+                                    //                displayPerformanceSeverity: true, 
+                                    //                displayPortabilitySeverity: true, 
+                                    //                displayStyleSeverity: true, 
+                                    //                displayWarningSeverity: true, 
+                                    //                pattern: 'cppcheck.xml'     
                                     updateGitlabCommitStatus name: 'SoftwareCompile', state: 'success'
                                 }
                             }
@@ -380,7 +398,7 @@ jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#upda
                                             }
                                             if (fileExists("02 ci/02 firmware/hlt/Reports")) {
                                                 step(
-                                                    [$class               : "RobotPublisher",
+                                                    [$class              : "RobotPublisher",
                                                     outputPath           : "02 ci/03 software/hlt/Reports",
                                                     outputFileName       : "*/output.xml",
                                                     reportFileName       : "report.html",
@@ -427,6 +445,256 @@ jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#upda
             }
             failure {
                 updateGitlabCommitStatus name: 'BuldComplete', state: 'failed'
+                emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, commiter:${GITLAB_COMMITER}",
+                         mimeType:'text/html',
+                         body: '${FILE, path="summary.html"}', 
+                         to: '${FILE,path="mail_list"} ${DEFAULT_RECIPIENTS}'
+            }
+        }
+    }
+
+SoftwareMiddleware配置实例
+---------------------------------
+
+.. code::
+
+    pipeline {
+        agent { label "master" }
+
+        environment {
+            TRIGGER_NUM = "${BUILD_NUMBER}"
+            GITLAB_BRANCH = "${gitlabSourceBranch}"
+            GITLAB_NAME = "${gitlabSourceRepoName}"
+            GITLAB_COMMITER = "${gitlabUserEmail}"
+            GITLAB_COMMIT = "${gitlabAfter}"
+            GITLAB_BEFORE = "${gitlabBefore}"
+            GITLAB_HTTPURL = "${gitlabSourceRepoHttpUrl}"
+            GITLAB_GROUP = "${gitlabSourceNamespace}"
+            REPORT_LINK = "${JENKINS_URL}userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/summary.html"
+        }
+
+        options { 
+            timestamps()
+            timeout(time: 2, unit: 'HOURS')
+            gitLabConnection('tangke')
+        }
+
+        stages {
+            stage("Prepare") {
+                steps {
+                    updateGitlabCommitStatus name: 'build', state: 'running'
+                    // 创建日志目录, 设置build名字, 清理workspace
+                    script {
+                        currentBuild.description = "<a href=\"${REPORT_LINK}\">${REPORT_LINK}</a>"
+                        currentBuild.displayName = "${BUILD_NUMBER} -> ${gitlabSourceRepoName} -> ${gitlabUserName}"
+                        try {
+                            sh "mkdir -m 777 -p ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}"
+                            sh "mkdir -m 777 -p ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/Download"
+                        } catch (err) {
+                            echo "Caught error in mkdir on master: ${err}"
+                        }
+                        try {
+                            sh "rm -rf ${WORKSPACE}/mail_list"
+                            sh "rm -rf ${WORKSPACE}/build_list"
+                            sh "rm -rf ${WORKSPACE}/summary.html"
+                        } catch (err) {
+                            echo "Caught error in clean ${WORKSPACE} on master: ${err}"
+                        }
+                    }
+
+                    // 下载代码
+                    checkout changelog: false, poll: false, 
+                        scm: [$class: "GitSCM", 
+                              branches: [[name: "${GITLAB_COMMIT}"]], 
+                              doGenerateSubmoduleConfigurations: false, 
+                              extensions: [[$class:"RelativeTargetDirectory",
+                                            relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
+                                           [$class: "CleanCheckout"],
+                                           [$class: 'CleanBeforeCheckout'],], 
+                              submoduleCfg: [], 
+                              userRemoteConfigs: [[credentialsId: "123", 
+                                                   url: "${GITLAB_HTTPURL}"]]]
+
+                    script {
+                        sh "python \"${GITLAB_GROUP}/${GITLAB_NAME}/02 ci/04 common/analysis_gitlog.py\""
+                        Compile = "No"
+                        Test = "No"
+
+                        build_list = readFile('build_list')
+                        if (build_list.contains('Compile=Yes')) {
+                            Compile = "Yes"
+                        }
+                        if (build_list.contains('Test=Yes')) {
+                            Test = "Yes"
+                        }
+
+                        println("Compile: ${Compile}")
+                        println("Test: ${Test}")
+                    }
+                }
+            }
+
+            stage("Compile") {
+                when { equals expected: Compile, actual: "Yes" }
+                stages {
+                    stage('Compile') {
+                        agent { label "software_compile" }
+                        steps {
+                            // 下载代码
+                            checkout changelog: false, poll: false, 
+                                scm: [$class: "GitSCM", 
+                                      branches: [[name: "${GITLAB_COMMIT}"]], 
+                                      doGenerateSubmoduleConfigurations: false, 
+                                      extensions: [[$class:"RelativeTargetDirectory",
+                                                    relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
+                                                   [$class: "CleanCheckout"],
+                                                   [$class: 'CleanBeforeCheckout'],], 
+                                      submoduleCfg: [], 
+                                      userRemoteConfigs: [[credentialsId: "123", 
+                                                           url: "${GITLAB_HTTPURL}"]]]
+
+                            // 编译软件
+                            dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
+                                script {
+                                    try {
+                                        bat("python \"02 ci\\03 software\\complie\\software_compile.py\"")
+                                    } catch (err) {
+                                        echo "Caught error in software compile: ${err}"
+                                        currentBuild.result = 'FAILURE'
+                                    }
+                                    try {
+                                        bat('start /wait cmd /c "python \"02 ci\\04 common\\file_transfer.py\" upload build"')
+                                    } catch (err) {
+                                        echo "Caught error in upload compile: ${err}"
+                                    }
+                                }
+                            }
+                            
+                            // CppCheck
+                            dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
+                                script {
+                                    try {
+                                        bat("call \"02 ci\\03 software\\lint\\sw-cppcheck.bat\"")
+                                    } catch (err) {
+                                        echo "Caught error in software cppcheck: ${err}"
+                                        currentBuild.result = 'FAILURE'
+                                    }
+                                    try {
+                                        bat('start /wait cmd /c "python \"02 ci\\04 common\\file_transfer.py\" upload cppcheck"')
+                                    } catch (err) {
+                                        echo "Caught error in upload cppcheck: ${err}"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            stage("Test") {
+                when { equals expected: Test, actual: "Yes" }
+                stages {
+                    stage('Test') {
+                        agent { label "firmware_test" }
+                        steps {
+                            // 下载代码
+                            checkout changelog: false, poll: false, 
+                                scm: [$class: "GitSCM", 
+                                      branches: [[name: "${GITLAB_COMMIT}"]], 
+                                      doGenerateSubmoduleConfigurations: false, 
+                                      extensions: [[$class:"RelativeTargetDirectory",
+                                                    relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
+                                                   [$class: "CleanCheckout"],
+                                                   [$class: 'CleanBeforeCheckout'],], 
+                                      submoduleCfg: [], 
+                                      userRemoteConfigs: [[credentialsId: "123", 
+                                                           url: "${GITLAB_HTTPURL}"]]]
+
+                            checkout changelog: false, poll: false, 
+                                scm: [$class: "GitSCM",
+                                      branches: [[name: '*/master']], 
+                                      doGenerateSubmoduleConfigurations: false, 
+                                      extensions: [[$class: 'CleanCheckout'], 
+                                                   [$class: 'CleanBeforeCheckout'], 
+                                                   [$class: 'RelativeTargetDirectory', 
+                                                   relativeTargetDir: 'new_project/xfp_10g_epon_olt']], 
+                                      submoduleCfg: [], 
+                                      userRemoteConfigs: [[credentialsId: '123', url: 'http://172.16.0.31/new_project/xfp_10g_epon_olt.git']]]
+
+                            // 固件测试
+                            dir("${WORKSPACE}/new_project/xfp_10g_epon_olt/02 ci/02 firmware/hlt") {
+                                script {
+                                    try {
+                                        //bat("echo RxPower_XGPON_Adjust_Test >> parameter.cfg")
+                                        bat("start /wait cmd /c \"python \"${WORKSPACE}\\${GITLAB_GROUP}\\${GITLAB_NAME}\\02 ci\\04 common\\file_transfer.py\" download build\"")
+                                    } catch (err) {
+                                        echo "Caught error in download build: ${err}"
+                                    }
+                                    
+                                    try {
+                                        bat("python robotRun.py ZTE")
+                                    } catch (err) {
+                                        echo "Caught error in firmware test: ${err}"
+                                        currentBuild.result = 'FAILURE'
+                                    }
+                                    
+                                    try {
+                                        bat("start /wait cmd /c \"python \"${WORKSPACE}\\${GITLAB_GROUP}\\${GITLAB_NAME}\\02 ci\\04 common\\file_transfer.py\" upload test\"")
+                                    } catch (err) {
+                                        echo "Caught error in upload test: ${err}"
+                                    }
+                                    
+                                    if (fileExists("Reports")) {
+                                        step([
+                                            $class               : "RobotPublisher",
+                                            outputPath           : "Reports",
+                                            outputFileName       : "*/output.xml",
+                                            reportFileName       : "report.html",
+                                            logFileName          : "log.html",
+                                            disableArchiveOutput : false,
+                                            passThreshold        : 100,
+                                            unstableThreshold    : 95.0,
+                                            otherFiles           : "*.txt",
+                                        ])
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 生成报告
+            stage("Reports") {
+                steps {
+                    dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
+                        sh "cp -f ${WORKSPACE}/git_log.html ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/Download/"
+                        sh "python \"02 ci/04 common/gen_reports.py\""
+                        sh "cp -f ${WORKSPACE}/summary.html ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/"
+                        sh "cp -f ${WORKSPACE}/build_list ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/"
+                        sh "cp -f ${WORKSPACE}/build_list ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/"
+                    }
+                }
+            }
+        }
+        
+        post {
+            success {
+                updateGitlabCommitStatus name: 'build', state: 'success'
+                emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, commiter:${GITLAB_COMMITER}",
+                         mimeType:'text/html',
+                         body: '${FILE, path="summary.html"}', 
+                         to: '${FILE,path="mail_list"} ${DEFAULT_RECIPIENTS}'
+            }
+            unstable {
+                updateGitlabCommitStatus name: 'build', state: 'failed'
+                emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, commiter:${GITLAB_COMMITER}",
+                         mimeType:'text/html',
+                         body: '${FILE, path="summary.html"}', 
+                         to: '${FILE,path="mail_list"} ${DEFAULT_RECIPIENTS}'
+            }
+            failure {
+                updateGitlabCommitStatus name: 'build', state: 'failed'
                 emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, commiter:${GITLAB_COMMITER}",
                          mimeType:'text/html',
                          body: '${FILE, path="summary.html"}', 
