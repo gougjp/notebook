@@ -31,6 +31,8 @@ Python 源代码学习(3.7.5)
 
 **2. Python源代码的组织**
 
+| 下图是Python的目录结构:
+
 .. image:: images/0-2.jpeg
 
     图0-2 Python目录结构
