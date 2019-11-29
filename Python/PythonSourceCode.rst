@@ -35,10 +35,29 @@ Python 源代码学习(3.7.5)
 
 .. image:: images/0-2.jpeg
 
+| Include: 该目录下包含了Python提供的所有头文件, 如果用户需要自己用C或C++来编写
+| 自定义模块扩展Python, 那么就需要到这里提供头文件
 
+| Lib: 该目录包含了Python自带的所有标准库, Lib中的库都是用Python语言编写的
 
+| Modules: 该目录中包含了所有用C语言编写的模块, 比如random, cStringIO等. Modules
+| 中的模块是那些对速度要求非常严格的模块, 而有一些对速度没有太严格要求的模块, 就
+| 是用Python编写的, 放在Lib目录下, 比如os
 
+| Parser: 该目录中包含了Python解释器中的Scanner和Parser部分, 即对Python源代码进行
+| 词法分析和语法分析的部分. 除了这些, Parser目录下还包含了一些有用的工具, 这些工
+| 具能够根据Python语言的语法自动生成Python语言的词法和语法分析器, 与YACC非常类型.
 
+| Objects: 该目录包含了所有Python的内建对象, 包括整数, list, dict等. 同时, 该目录
+| 还包括了Python在运行时需要的所有的内部使用对象的实现
+
+| Python: 该目录下包含了Python解释器中的Compiler和执行引擎部分, 时Python运行的核心
+| 所在
+
+| PCBuild: 包含了Visual Studio的工程文件
+
+第一章: Python 对象初探
+-----------------------------
 
 
 
