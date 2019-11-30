@@ -59,6 +59,8 @@ Python 源代码学习(3.7.5)
 第二章: Python 对象初探
 -----------------------------
 
+**1. 对象机制的基石 -- PyObject**
+
 | 在Python中, 对象就是为C中的结构体在堆上申请的一块内存, 一般来说, 对象是不能被静态
 | 初始化的, 并且也不能在栈空间上生存. 唯一的例外就是类型对象, Python中所有的内建对
 | 象(如整数类型对象, 字符串类型对象)都是被静态初始化的.
@@ -78,14 +80,47 @@ Python 源代码学习(3.7.5)
         struct _typeobject *ob_type;
     } PyObject;
 
+| 从代码中可以看到, Python对象的密码都隐藏在_PyObject_HEAD_EXTRA这个宏中
 
+.. code::
 
+    [Include/object.h]
+    #ifdef Py_TRACE_REFS
+    /* Define pointers to support a doubly-linked list of all live heap objects. */
+    #define _PyObject_HEAD_EXTRA            \
+        struct _object *_ob_next;           \
+        struct _object *_ob_prev;
 
+    #define _PyObject_EXTRA_INIT 0, 0,
 
+    #else
+    #define _PyObject_HEAD_EXTRA
+    #define _PyObject_EXTRA_INIT
+    #endif
 
+| 当我们在Visual Studio的release模式下编译Python时, 是不会定义Py_TRACE_REFS符号的.
+| 所以在实际发布的Python版本中, PyObject的定义非常简单
 
+.. code::
+    [Include/object.h]
+    typedef struct _object {
+        Py_ssize_t ob_refcnt;
+        struct _typeobject *ob_type;
+    } PyObject;
 
+| 其中变量ob_refcnt实际上是一个整形, 与Python的内存管理机制有关, 它实现了基于引用计
+| 数的垃圾收集机制. 对于某一个对象A, 当有一个新的PyObject *引用该对象时, A的引用计数
+| 应该增加; 而当这个PyObject *被删除时, A的引用计数应该减少. 当A的引用计数减少到0时,
+| A就可以从堆上被删除, 以释放出内存供别的对象使用.
 
+| ob_type是一个指向_typeobject结构体的指针, 这个结构体是用来指定一个对象类型的类型对象
+
+| 可以看出, 在Python中, 对象机制的核心其实就是一个引用计数和一个类型信息
+
+| 在PyObject中定义了每一个Python对象都必须有的内容, 这些内容将出现在每一个Python对象所
+| 占有的内存的最开始的字节中; 其后才是每个对象区别于其他对象的特殊信息
+
+**2. 定长对象和变长对象**
 
 
 
