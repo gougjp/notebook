@@ -59,6 +59,31 @@ Python 源代码学习(3.7.5)
 第二章: Python 对象初探
 -----------------------------
 
+| 在Python中, 对象就是为C中的结构体在堆上申请的一块内存, 一般来说, 对象是不能被静态
+| 初始化的, 并且也不能在栈空间上生存. 唯一的例外就是类型对象, Python中所有的内建对
+| 象(如整数类型对象, 字符串类型对象)都是被静态初始化的.
+
+| 在Python中, 一个对象一旦被创建, 它在内存中的大小就是不变的了. 这就意味着需要容纳
+| 可变长度数据的对象只能在对象内维护一个指向一块可变大小的内存区域的指针.
+
+| 在Python中, 所有的东西都是对象, 而所有的对象都拥有一些相同的内容, 这些内容在PyObject
+| 中定义, PyObject是整个Python对象机制的核心
+
+.. code::
+
+    [Include/object.h]
+    typedef struct _object {
+        _PyObject_HEAD_EXTRA
+        Py_ssize_t ob_refcnt;
+        struct _typeobject *ob_type;
+    } PyObject;
+
+
+
+
+
+
+
 
 
 
