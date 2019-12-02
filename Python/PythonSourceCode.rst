@@ -263,11 +263,17 @@ Python 源代码学习(3.7.5)
 
 * tp_name - 类型名, 主要是Python内部以及调试的时候使用
 * tp_basicsize, tp_itemsize - 创建该类型对象时分配内存空间大小的信息
+* tp_hash - 用于该对象类型生成hash值
+* tp_as_number - 数值对象相关的操作
+* tp_as_sequence - 序列对象相关的操作
+* tp_as_mapping - 映射对象相关的操作
 * 与该类型相关的操作信息, 比如tp_print
 
 | 事实上, 一个PyTypeObject对象就是Python中对面向对象理论中"类"这个概念的实现.
 
-
+| 在PyTypeObject中定义了大量的函数指针, 这些函数指针最终都会指向某个函数, 或者指向NULL.
+| 这些函数指针可以视为类型对象中所定义的操作, 而这些操作直接决定着一个对象在运行时所表
+| 现出的的行为.
 
 
 
