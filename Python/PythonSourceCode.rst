@@ -122,14 +122,31 @@ Python 源代码学习(3.7.5)
 
 **2. 定长对象和变长对象**
 
+| 整数对象这样不包含可变长度数据的对象称为定长对象, 而字符串对象这样包含可变长度数据
+| 的对象称为变长对象. 它们的区别在于定长对象的不同对象占用的内存大小一样, 而变长对象
+| 的不同对象占用的内存可能是不一样的.
 
+| 以下PyVarObject是变长对象的定义: 实际上是在PyObject后面增加了一个ob_size的成员, 它
+| 用来指明变长对象中一共容纳了多少个元素. **它是元素的个数, 而不是字节的数量**. 比如list
+| 对象就是一个PyVarObject对象, 如果某一时刻, 这个list中有5个元素, 那么ob_size的值就是5.
 
+.. code::
 
+    typedef struct {
+        PyObject ob_base;
+        Py_ssize_t ob_size; /* Number of items in variable part */
+    } PyVarObject;
 
+| 因此, 对于任何一个PyVarObject, 其所占用的内存, 开始部分的字节的意义和PyObject是一样的.
+| 即在Python内部, 每一个对象都拥有相同的对象头部. 这就使得在Python中, 对对象的引用变得非
+| 常的统一, 我们只需要用一个PyObject *指针就可以引用任意的一个对象, 而不论该对象实际是一
+| 个什么对象.
 
+| 下图显示了Python中不同对象与PyObject, PyVarObject在内存布局上的关系:
 
+.. image:: images/1-1.jpeg
 
-
+**3. 类型对象**
 
 
 
