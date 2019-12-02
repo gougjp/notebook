@@ -132,6 +132,7 @@ Python 源代码学习(3.7.5)
 
 .. code::
 
+    [Include/object.h]
     typedef struct {
         PyObject ob_base;
         Py_ssize_t ob_size; /* Number of items in variable part */
@@ -148,12 +149,121 @@ Python 源代码学习(3.7.5)
 
 **3. 类型对象**
 
+.. code::
 
+    [Include/object.h]
+    /* PyObject_VAR_HEAD defines the initial segment of all variable-size
+     * container objects.  These end with a declaration of an array with 1
+     * element, but enough space is malloc'ed so that the array actually
+     * has room for ob_size elements.  Note that ob_size is an element count,
+     * not necessarily a byte count.
+     */
+    #define PyObject_VAR_HEAD      PyVarObject ob_base;
 
+.. code::
 
+    [Include/object.h]
+    #ifdef Py_LIMITED_API
+    typedef struct _typeobject PyTypeObject; /* opaque */
+    #else
+    typedef struct _typeobject {
+        PyObject_VAR_HEAD
+        const char *tp_name; /* For printing, in format "<module>.<name>" */
+        Py_ssize_t tp_basicsize, tp_itemsize; /* For allocation */
 
+        /* Methods to implement standard operations */
 
+        destructor tp_dealloc;
+        printfunc tp_print;
+        getattrfunc tp_getattr;
+        setattrfunc tp_setattr;
+        PyAsyncMethods *tp_as_async; /* formerly known as tp_compare (Python 2)
+                                        or tp_reserved (Python 3) */
+        reprfunc tp_repr;
 
+        /* Method suites for standard classes */
+
+        PyNumberMethods *tp_as_number;
+        PySequenceMethods *tp_as_sequence;
+        PyMappingMethods *tp_as_mapping;
+
+        /* More standard operations (here for binary compatibility) */
+
+        hashfunc tp_hash;
+        ternaryfunc tp_call;
+        reprfunc tp_str;
+        getattrofunc tp_getattro;
+        setattrofunc tp_setattro;
+
+        /* Functions to access object as input/output buffer */
+        PyBufferProcs *tp_as_buffer;
+
+        /* Flags to define presence of optional/expanded features */
+        unsigned long tp_flags;
+
+        const char *tp_doc; /* Documentation string */
+
+        /* Assigned meaning in release 2.0 */
+        /* call function for all accessible objects */
+        traverseproc tp_traverse;
+
+        /* delete references to contained objects */
+        inquiry tp_clear;
+
+        /* Assigned meaning in release 2.1 */
+        /* rich comparisons */
+        richcmpfunc tp_richcompare;
+
+        /* weak reference enabler */
+        Py_ssize_t tp_weaklistoffset;
+
+        /* Iterators */
+        getiterfunc tp_iter;
+        iternextfunc tp_iternext;
+
+        /* Attribute descriptor and subclassing stuff */
+        struct PyMethodDef *tp_methods;
+        struct PyMemberDef *tp_members;
+        struct PyGetSetDef *tp_getset;
+        struct _typeobject *tp_base;
+        PyObject *tp_dict;
+        descrgetfunc tp_descr_get;
+        descrsetfunc tp_descr_set;
+        Py_ssize_t tp_dictoffset;
+        initproc tp_init;
+        allocfunc tp_alloc;
+        newfunc tp_new;
+        freefunc tp_free; /* Low-level free-memory routine */
+        inquiry tp_is_gc; /* For PyObject_IS_GC */
+        PyObject *tp_bases;
+        PyObject *tp_mro; /* method resolution order */
+        PyObject *tp_cache;
+        PyObject *tp_subclasses;
+        PyObject *tp_weaklist;
+        destructor tp_del;
+
+        /* Type attribute cache version tag. Added in version 2.6 */
+        unsigned int tp_version_tag;
+
+        destructor tp_finalize;
+
+    #ifdef COUNT_ALLOCS
+        /* these must be last and never explicitly initialized */
+        Py_ssize_t tp_allocs;
+        Py_ssize_t tp_frees;
+        Py_ssize_t tp_maxalloc;
+        struct _typeobject *tp_prev;
+        struct _typeobject *tp_next;
+    #endif
+    } PyTypeObject;
+    #endif
+
+| 可以看出来, 类型对象最前面是一个PyObject_VAR_HEAD, 实际上就是一个可变长度对象的头部, 分别
+| 包含引用计数, 类型指针, 元素个数; 其后的信息是与对象所属类型密切相关的一些信息.
+
+| tp_name - 类型名, 主要是Python内部以及调试的时候使用
+| tp_basicsize, tp_itemsize - 创建该类型对象时分配内存空间大小的信息
+| 与该类型相关的操作信息, 比如tp_print
 
 
 
