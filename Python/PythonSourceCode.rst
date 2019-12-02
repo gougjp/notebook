@@ -261,9 +261,9 @@ Python 源代码学习(3.7.5)
 | 可以看出来, 类型对象最前面是一个PyObject_VAR_HEAD, 实际上就是一个可变长度对象的头部, 
 | 分别包含引用计数, 类型指针, 元素个数; 其后的信息是与对象所属类型密切相关的一些信息.
 
-| tp_name - 类型名, 主要是Python内部以及调试的时候使用
-| tp_basicsize, tp_itemsize - 创建该类型对象时分配内存空间大小的信息
-| 与该类型相关的操作信息, 比如tp_print
+* tp_name - 类型名, 主要是Python内部以及调试的时候使用
+* tp_basicsize, tp_itemsize - 创建该类型对象时分配内存空间大小的信息
+* 与该类型相关的操作信息, 比如tp_print
 
 | 事实上, 一个PyTypeObject对象就是Python中对面向对象理论中"类"这个概念的实现.
 
