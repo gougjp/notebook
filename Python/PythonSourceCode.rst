@@ -265,7 +265,7 @@ Python 源代码学习(3.7.5)
 | tp_basicsize, tp_itemsize - 创建该类型对象时分配内存空间大小的信息
 | 与该类型相关的操作信息, 比如tp_print
 
-
+| 事实上, 一个PyTypeObject对象就是Python中对面向对象理论中"类"这个概念的实现.
 
 
 
