@@ -27,13 +27,13 @@ Python 源代码学习(3.7.5)
 | 运行时状态之间的箭头表示"修改"关系, 即Python在执行的过程中会不断地修改当前解
 | 释器所处的状态, 在不同的状态之间切换
 
-.. image:: images/0-1.jpeg
+.. image:: images/PythonSourceCode/0-1.jpeg
 
 **2. Python源代码的组织**
 
 | 下图是Python的目录结构:
 
-.. image:: images/0-2.jpeg
+.. image:: images/PythonSourceCode/0-2.jpeg
 
 | Include: 该目录下包含了Python提供的所有头文件, 如果用户需要自己用C或C++来编写
 | 自定义模块扩展Python, 那么就需要到这里提供头文件
@@ -145,7 +145,7 @@ Python 源代码学习(3.7.5)
 
 | 下图显示了Python中不同对象与PyObject, PyVarObject在内存布局上的关系:
 
-.. image:: images/1-1.jpeg
+.. image:: images/PythonSourceCode/1-1.jpeg
 
 **3. 类型对象**
 
