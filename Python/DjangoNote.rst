@@ -30,7 +30,7 @@ Django Note
         |   `-- asgi.py
         |   `-- settings.py
         |   `-- urls.py
-                    `-- wsgi.py
+            `-- wsgi.py
 
     1 directory, 6 files
 
