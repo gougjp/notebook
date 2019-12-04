@@ -68,6 +68,45 @@ Django Note
 
 然后在浏览器中用http://127.0.0.1:8000/即可访问服务器
 
+默认情况下，runserver 命令会将服务器设置为监听本机内部IP的8000端口
+如果你想更换服务器的监听端口,请使用命令行参数.举个例子,下面的命令会使服务器监听8080端口：
+
+.. code::
+
+    $ python manage.py runserver 8080
+    
+如果你想要修改服务器监听的IP,在端口之前输入新的. 比如,为了监听所有服务器的公开IP(这你运行Vagrant或想要向网络上的其它电脑展示你的成果时很有用),使用:
+
+.. code::
+
+    $ python manage.py runserver 0:8000
+    
+0 是0.0.0.0的简写
+
+创建一个新的项目
+----------------------
+
+在manage.py同一级目录, 运行如下命令来创建一个应用:
+
+.. code::
+
+    $ python manage.py startapp polls
+
+这将会创建一个 polls 目录, 它的目录结构大致如下：
+
+.. code::
+
+    polls/                                             
+    |-- __init__.py                                    
+    |-- admin.py                                       
+    |-- apps.py                                        
+    |-- migrations                                     
+    |   `-- __init__.py
+    |-- models.py                                      
+    |-- tests.py                                       
+    `-- views.py                                       
+                                                       
+    1 directory, 7 files      
 
 
 
@@ -75,4 +114,16 @@ Django Note
 
 
 
-参考:https://docs.djangoproject.com/zh-hans/2.2/
+
+
+
+
+
+
+
+
+
+
+
+
+参考:https://docs.djangoproject.com/zh-hans/2.2/                         
