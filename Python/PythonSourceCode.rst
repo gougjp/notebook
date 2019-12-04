@@ -71,7 +71,7 @@ Python 源代码学习(3.7.5)
 | 在Python中, 所有的东西都是对象, 而所有的对象都拥有一些相同的内容, 这些内容在PyObject
 | 中定义, PyObject是整个Python对象机制的核心
 
-.. code::C
+.. code::
 
     [Include/object.h]
     typedef struct _object {
@@ -82,7 +82,7 @@ Python 源代码学习(3.7.5)
 
 | 从代码中可以看到, Python对象的密码都隐藏在_PyObject_HEAD_EXTRA这个宏中
 
-.. code::C
+.. code::
 
     [Include/object.h]
     #ifdef Py_TRACE_REFS
@@ -101,7 +101,7 @@ Python 源代码学习(3.7.5)
 | 当我们在Visual Studio的release模式下编译Python时, 是不会定义Py_TRACE_REFS符号的.
 | 所以在实际发布的Python版本中, PyObject的定义非常简单
 
-.. code::C
+.. code::
     [Include/object.h]
     typedef struct _object {
         Py_ssize_t ob_refcnt;
@@ -130,7 +130,7 @@ Python 源代码学习(3.7.5)
 | 用来指明变长对象中一共容纳了多少个元素. **它是元素的个数, 而不是字节的数量**. 比如list
 | 对象就是一个PyVarObject对象, 如果某一时刻, 这个list中有5个元素, 那么ob_size的值就是5.
 
-.. code::C
+.. code::
 
     [Include/object.h]
     typedef struct {
@@ -149,7 +149,7 @@ Python 源代码学习(3.7.5)
 
 **3. 类型对象**
 
-.. code::C
+.. code::
 
     [Include/object.h]
     /* PyObject_VAR_HEAD defines the initial segment of all variable-size
@@ -160,7 +160,7 @@ Python 源代码学习(3.7.5)
      */
     #define PyObject_VAR_HEAD      PyVarObject ob_base;
 
-.. code:: C
+.. code::
 
     [Include/object.h]
     #ifdef Py_LIMITED_API
