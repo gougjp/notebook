@@ -160,7 +160,7 @@ Python 源代码学习(3.7.5)
      */
     #define PyObject_VAR_HEAD      PyVarObject ob_base;
 
-.. code::C
+.. code:: C
 
     [Include/object.h]
     #ifdef Py_LIMITED_API
