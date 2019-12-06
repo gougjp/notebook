@@ -90,6 +90,50 @@ Gitlab中看到; state - 回传的状态, 包括: pending, running, canceled, su
 
 jenkins 官方接口：https://jenkins.io/doc/pipeline/steps/gitlab-plugin/#updategitlabcommitstatus-update-the-commit-status-in-gitlab
 
+pipeline动态配置label
+-----------------------------
+
+.. code::
+
+    agentLabel = "master"
+
+    pipeline {
+        agent { label agentLabel }
+        stages {   
+            stage('Prep') {
+                steps {
+                    script {
+                        agentLabel = "Windows && Test"
+                    }
+                }
+            }
+            stage('Checking') {
+                steps {
+                    script {
+                        println agentLabel
+                        bat('ipconfig')
+                    }
+                }
+            }
+            stage('Final') {
+                agent { label agentLabel }
+
+                steps {
+                    script {
+                        println agentLabel
+                        bat('ipconfig')
+                    }
+                }
+            }
+        }
+    }
+
+变量agentLabel可以在中间stage赋值, 并且可以多个label进行逻辑组合
+
+
+
+
+
 AtePipeline配置实例
 ---------------------------------
 
