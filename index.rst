@@ -68,6 +68,13 @@
    :caption: CppCheck
     
    CppCheck/*
+   
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :caption: Exsi
+    
+   Exsi/*
 
 .. toctree::
    :glob:

@@ -139,6 +139,8 @@ AtePipeline配置实例
 
 .. code::
 
+    agentTest = "firmwaretester1"
+
     pipeline {
         agent { label "master" }
 
@@ -192,6 +194,10 @@ AtePipeline配置实例
                                                    url: "${GITLAB_HTTPURL}"]]]
                     // 解析提交日志, 得出编译和测试条件, 并生成邮件列表
                     script {
+                        if (env.GITLAB_NAME == "sfp_plus_10g_epon_olt") {
+                            agentTest = "firmwaretester2"
+                        }
+                    
                         sh "python \"${GITLAB_GROUP}/${GITLAB_NAME}/02 ci/04 common/analysis_gitlog.py\""
                         Compile_Firmware = "No"
                         Compile_Software = "No"
@@ -362,7 +368,7 @@ AtePipeline配置实例
                         when { equals expected: Test_Firmware, actual: "Yes" }
                         stages {
                             stage('Firmware Test') {
-                                agent { label "firmware_test" }
+                                agent { label agentTest }
                                 steps {
                                     updateGitlabCommitStatus name: 'FirmwareTest', state: 'running'
                                     // 下载代码
