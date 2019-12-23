@@ -1,4 +1,4 @@
-Exsi 6.7 安装
+ESXI 6.7 安装
 ===============================
 
 一. 服务器安装:
@@ -64,15 +64,15 @@ No Network Adapters
 
 打开VMware PowerCLI, 进入ESXi-Customizer-PS-v2.6.0.ps1文件所在目录, 执行如下命令:
 
-.\ESXi-Customizer-PS-v2.6.0.ps1  -v67  -vft  -load  net55-r8168,sata-xahci
+.\\ESXi-Customizer-PS-v2.6.0.ps1  -v67  -vft  -load  net55-r8168,sata-xahci
 
     参数解释：
 
-    　　-v67    指定是VMware EXSI为 6.7版本
+    　　-v67    指定是VMware ESXI为 6.7版本
 
-    　　-vft      在线连接到V-Front在线仓库下载驱动到VMware EXSI.ISO镜像包
+    　　-vft      在线连接到V-Front在线仓库下载驱动到VMware ESXI.ISO镜像包
 
-    　　-load   指定要添加到VMware EXSI.ISO镜像的驱动
+    　　-load   指定要添加到VMware ESXI.ISO镜像的驱动
 
     　　Sata-xahci   常用的SATA控制器
     
@@ -96,7 +96,7 @@ net55-r8168驱动支持网卡型号（Realtek RTL8111B / RTL8168B / RTL8111/RTL8
 
 .. code::
 
-.\ESXi-Customizer-PS-v2.6.0.ps1 -izip .\ESXi670-201905001.zip -pkgDir whsir\
+.\\ESXi-Customizer-PS-v2.6.0.ps1 -izip .\\ESXi670-201905001.zip -pkgDir whsir\\
 
 注意：打包时会自动在whsir文件夹内查找vib的驱动，生成的ESXI6.7.iso镜像会在当前目录下
 
@@ -122,12 +122,52 @@ ps -c |grep weasel #不结束进程，直接适用ALT+F2貌似无效
 kill -9 [进程ID] #
 此时正常情况下会跳回欢迎界面，如不跳回按ALT+F2返回继续安装
 
+USB 直通配置(passthrough)
+-------------------------------------
 
+以下是ESXI 6.0的基础上操作的
 
+* 硬件要支持vt-d模式, 可以在BIOS中打开vt-d
 
+华硕BIOS中的intel vt-d为Intel 虚拟化技术选项, 可以通过在BIOS中的System Agent Configuration选项开启VT。具体设置步骤如下：
 
+    * 开机后按“DEL”或“F2”进入BIOS
 
+    .. image:: images/0-16.jpeg
+    
+    * 在Advanced选项页中找到System Agent Configuration并选择进入
 
+    .. image:: images/0-17.jpeg
+    
+    * 进入System Agent Configuration后将VT-D选项设置为Enabled即可
+    
+    .. image:: images/0-18.jpeg
+    
+    .. image:: images/0-19.jpeg
+
+    * 设置完成后点击F10键即可保存BIOS中的设置，机器会自动重启。
+    
+* 使用vSphere Client登录服务器
+
+点击主机 -> 配置 -> 硬件 -> 高级设置, 如果现实当前主机不支持直通, 则可能是硬件不支持, 或者BIOS中没有打开vt-d
+
+然后点击右侧的编辑 -> 在弹出的界面中选择要直通的设备 -> 确定即可
+
+.. image:: images/0-20.jpeg
+
+然后选择虚拟机 -> 编辑虚拟机设置 -> 硬件 -> 添加 -> usb设备; 点击下一步就会出现刚才插入的设备, 选中对应的设备添加即可, 然后就可以在虚拟机中看到对应的USB
+
+.. image:: images/0-21.jpeg
+
+* 在直通配置的时候, 如果选中了Intel Corporation HD Graphics 630这个显卡设备, 则在重启服务器的时候, 就卡在了vmkapi-v2_2_0_0_vmkernel_shim loaded successfully步骤
+
+.. image:: images/0-23.jpeg
+
+.. image:: images/0-22.jpg
+
+* 在直通配置的时候, 如果选中了网卡, 则启动后出现以下错误: No compatible network adapter found. Please consult the product's Hardware Compatibility Guide(HCG) for a list of supported adapters.
+
+.. image:: images/0-24.jpeg
 
 
 

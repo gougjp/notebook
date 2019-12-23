@@ -74,7 +74,7 @@
    :maxdepth: 2
    :caption: Exsi
     
-   Exsi/*
+   Esxi/*
 
 .. toctree::
    :glob:
