@@ -170,6 +170,11 @@ AtePipeline配置实例
                     script {
                         currentBuild.displayName = "${BUILD_NUMBER} -> ${gitlabSourceRepoName} -> ${gitlabUserName}"
                         currentBuild.description = "<a href=\"${REPORT_LINK}\">${REPORT_LINK}</a>"
+                        
+                        sh "grep \"${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}\" ${JENKINS_HOME}/userContent/Joblist.txt | awk -F':' '{print \$NF}' > prebuildnumber"
+                        sh "[ \"`cat prebuildnumber`\" != \"\" ] && curl -X POST http://172.16.0.33:8080/job/${JOB_NAME}/`cat prebuildnumber`/stop --user junping.gou:@gjp1234 || exit 0"
+                        sh "echo ${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}:${TRIGGER_NUM} >> ${JENKINS_HOME}/userContent/Joblist.txt"
+
                         try {
                             sh "mkdir -m 777 -p ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}"
                         } catch (err) {
@@ -481,24 +486,28 @@ AtePipeline配置实例
         post {
             success {
                 updateGitlabCommitStatus name: 'BuldComplete', state: 'success'
-                emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, commiter:${GITLAB_COMMITER}",
+                emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, ${gitlabUserName} | ${GITLAB_BRANCH}",
                          mimeType:'text/html',
                          body: '${FILE, path="summary.html"}', 
                          to: '${FILE,path="mail_list"} ${DEFAULT_RECIPIENTS}'
             }
             unstable {
                 updateGitlabCommitStatus name: 'BuldComplete', state: 'failed'
-                emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, commiter:${GITLAB_COMMITER}",
+                emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, ${gitlabUserName} | ${GITLAB_BRANCH}",
                          mimeType:'text/html',
                          body: '${FILE, path="summary.html"}', 
                          to: '${FILE,path="mail_list"} ${DEFAULT_RECIPIENTS}'
             }
             failure {
                 updateGitlabCommitStatus name: 'BuldComplete', state: 'failed'
-                emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, commiter:${GITLAB_COMMITER}",
+                emailext subject:"${GITLAB_NAME}, -Build #${TRIGGER_NUM} ${currentBuild.result}, ${gitlabUserName} | ${GITLAB_BRANCH}",
                          mimeType:'text/html',
                          body: '${FILE, path="summary.html"}', 
                          to: '${FILE,path="mail_list"} ${DEFAULT_RECIPIENTS}'
+            }
+            always {
+                sh "sed -i \"/${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}/d\" ${JENKINS_HOME}/userContent/Joblist.txt"
+                sh "sed -i \"/^ *\$/d\" ${JENKINS_HOME}/userContent/Joblist.txt"
             }
         }
     }
