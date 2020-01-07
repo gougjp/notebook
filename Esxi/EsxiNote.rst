@@ -169,6 +169,22 @@ USB 直通配置(passthrough)
 
 .. image:: images/0-24.jpeg
 
+虚拟机克隆
+--------------------------------
+
+* ssh登录到ESXI服务器
+
+.. code::
+
+    #创建要克隆的虚拟机的目录
+    mkdir /vmfs/volumes/datastore1/ate-tester2
+    #将已有的虚拟机ate-tester1.vmdk克隆到ate-tester2
+    vmkfstools -i /vmfs/volumes/datastore1/ate-tester1/ate-tester1.vmdk /vmfs/volumes/datastore1/ate-tester2/ate-tester2.vmdk -d thin
+
+
+
+
+
 
 
 参考:

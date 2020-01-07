@@ -139,7 +139,7 @@ AtePipeline配置实例
 
 .. code::
 
-    agentTest = "firmwaretester1"
+    agentTest = "firmwaretester"
 
     pipeline {
         agent { label "master" }
@@ -171,9 +171,11 @@ AtePipeline配置实例
                         currentBuild.displayName = "${BUILD_NUMBER} -> ${gitlabSourceRepoName} -> ${gitlabUserName}"
                         currentBuild.description = "<a href=\"${REPORT_LINK}\">${REPORT_LINK}</a>"
                         
-                        sh "grep \"${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}\" ${JENKINS_HOME}/userContent/Joblist.txt | awk -F':' '{print \$NF}' > prebuildnumber"
-                        sh "[ \"`cat prebuildnumber`\" != \"\" ] && curl -X POST http://172.16.0.33:8080/job/${JOB_NAME}/`cat prebuildnumber`/stop --user junping.gou:@gjp1234 || exit 0"
-                        sh "echo ${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}:${TRIGGER_NUM} >> ${JENKINS_HOME}/userContent/Joblist.txt"
+                        if (env.GITLAB_BRANCH != "master") {
+                            sh "grep \"${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}\" ${JENKINS_HOME}/userContent/Joblist.txt | awk -F':' '{print \$NF}' > prebuildnumber"
+                            sh "[ \"`cat prebuildnumber`\" != \"\" ] && curl -X POST http://172.16.0.33:8080/job/${JOB_NAME}/`cat prebuildnumber`/stop --user junping.gou:@gjp1234 || exit 0"
+                            sh "echo ${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}:${TRIGGER_NUM} >> ${JENKINS_HOME}/userContent/Joblist.txt"
+                        }
 
                         try {
                             sh "mkdir -m 777 -p ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}"
@@ -200,7 +202,7 @@ AtePipeline配置实例
                     // 解析提交日志, 得出编译和测试条件, 并生成邮件列表
                     script {
                         if (env.GITLAB_NAME == "sfp_plus_10g_epon_olt") {
-                            agentTest = "firmwaretester2"
+                            agentTest = "firmwaretester"
                         }
                     
                         sh "python \"${GITLAB_GROUP}/${GITLAB_NAME}/02 ci/04 common/analysis_gitlog.py\""
@@ -229,6 +231,10 @@ AtePipeline配置实例
                         }
                         if (Compile_Software == "No") {
                             Test_Software = "No"
+                        }
+                        
+                        if (env.GITLAB_BRANCH == "develop_scripts") {
+                            Compile_Software = "No"
                         }
 
                         println("Compile_Firmware: ${Compile_Firmware}")
@@ -372,6 +378,15 @@ AtePipeline配置实例
                     stage("Firmware") {
                         when { equals expected: Test_Firmware, actual: "Yes" }
                         stages {
+                            stage('PreCheck') {
+                                agent { label "master" }
+                                steps {
+                                    script {
+                                        sh "for i in {1..180}; do if [ `grep \"${GITLAB_GROUP}:${GITLAB_NAME}\" ${JENKINS_HOME}/userContent/Joblist.txt | wc -l` -ge 2 ]; then echo \"Wait for the last job to finish ...\";sleep 10; else break; fi;done"
+                                    }
+                                }
+                            }
+
                             stage('Firmware Test') {
                                 agent { label agentTest }
                                 steps {
