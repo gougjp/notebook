@@ -232,10 +232,6 @@ AtePipeline配置实例
                         if (Compile_Software == "No") {
                             Test_Software = "No"
                         }
-                        
-                        if (env.GITLAB_BRANCH == "develop_scripts") {
-                            Compile_Software = "No"
-                        }
 
                         println("Compile_Firmware: ${Compile_Firmware}")
                         println("Compile_Software: ${Compile_Software}")

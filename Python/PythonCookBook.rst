@@ -750,5 +750,35 @@ python sqlite3数据库操作
 
     conn.close()
 
+python打印存文本图片
+--------------------------------
+
+* 安装库pillow
+
+* 执行如下脚本, 将输出重定向到一个文件, 然后用文本编辑器打开即可
+
+.. code::
+
+    from PIL import Image
+
+    char_arr = list("#$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'.")
+    # im = Image.open("StartTest.png")
+    im = Image.open("20150609005642.jpeg")
+    im = im.convert("RGBA")
+
+    txt = ""
+
+    def get_char(r, g, b, alpha):
+        if alpha == 0:
+            return " "
+        gray = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        unit = (256.0 + 1) / len(char_arr)
+        return char_arr[int(gray / unit)]
+
+    for i in range(im.height):
+        for j in range(im.width):
+            txt += get_char(*im.getpixel((j, i)))
+        txt += "\n"
+    print(txt)
 
 
