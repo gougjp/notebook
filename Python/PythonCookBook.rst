@@ -795,7 +795,495 @@ python打印存文本图片
     * hasattr 判断对象是否有对应的对象
     * delattr 删除指定的属性
 
+attr是属性英文的前几个字母，属性指的是类中类变量、实例变量和方法。但是要注意不能是私有的，如果你的变量是以“_”开头，那将无法获取
+
+反射常常用在动态加载模块的场景中
+
+.. code::
+
+    #!/usr/bin/env python
+    # -*- coding: utf-8 -*-
+    # Author: rex.cheny
+    # E-mail: rex.cheny@outlook.com
+
+    class TestObj(object):
+
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+
+        def displayName(self):
+            print("displayName方法执行，打印姓名：", self.name)
 
 
+
+    def AAA(self):
+        print("I am AAA.")
+
+
+    def main():
+        to = TestObj("Tom", 23)
+        # 查看 to 实例里面是否有 name 这个属性
+        if hasattr(to, "name"):
+            print("实例 to 中有 name 属性。")
+            print(getattr(to, "name"))
+        else:
+            print("实例 to 中没有 name 属性。")
+
+        if hasattr(to, "displayName"):
+            print("实例 to 中有 displayName 属性。")
+            getattr(to, "displayName")()
+        else:
+            print("实例 to 中没有 displayName 属性。")
+
+        if hasattr(to, "AAA"):
+            print("实例 to 中有 AAA 属性。")
+            getattr(to, "AAA")()
+        else:
+            print("实例 to 中没有 AAA 属性，将会设置。")
+            setattr(to, "AAA", AAA)  # 参数：实例、方法名称、具体方法  相当于 to.AAA = AAA 第一个AAA是函数在实例中的名称， 第二个AAA是把哪个函数放进去，两者只是恰好这里名称一样
+
+            # to.AAA(to)  # 这里一定要主动传递一个实例进去，因为它不会自动装配self
+            getattr(to, "AAA")(to)
+
+
+    if __name__ == '__main__':
+        main()
+
+AAA是动态装载到实例里面去的
+
+可能有些人还没明白反射，反射就是把字符串反射成内存对象，看下面的例子
+
+.. code::
+
+    #!/usr/bin/env python
+    # -*- coding: utf-8 -*-
+    # Author: rex.cheny
+    # E-mail: rex.cheny@outlook.com
+
+
+    class TestObj(object):
+        def __init__(self, name):
+            self.name = name
+
+
+    def displayname(self):
+        print(self.name)
+
+
+    def main():
+        to = TestObj(name="Tom")
+
+        cmd = input("输入：")
+        if hasattr(to, cmd):
+            pass
+        else:
+            setattr(to, cmd, displayname)
+            func = getattr(to, cmd)
+            func(to)
+
+
+    if __name__ == '__main__':
+        main()
+
+根据用户输入来调用函数（这个函数肯定要提前的真实存在）。我这里无论我输入什么都可以执行上面的displayname方法。现在应该明白字符串映射到方法了吧。
+
+* **反射使用**
+
+通过字符串导入模块
+
+.. code::
+
+    #!/usr/bin/env python
+    # -*- coding: utf-8 -*-
+    # Author: rex.cheny
+    # E-mail: rex.cheny@outlook.com
+
+    temp = "re"
+    model = __import__(temp)
+
+
+    def main():
+        txt = "hj123uo"
+        pattern = model.compile(r"[0-9]+")
+        print(model.search(pattern, txt).group())
+
+
+    if __name__ == '__main__':
+        main()
+
+以字符串的形式使用模块的方法
+
+.. code::
+
+    #!/usr/bin/env python
+    # -*- coding: utf-8 -*-
+    # Author: rex.cheny
+    # E-mail: rex.cheny@outlook.com
+     
+    temp = "re"  # 要引入的模块
+    func = "compile"  # 要使用的方法
+    model = __import__(temp)  # 导入模块
+    function = getattr(model, func)  # 找到模块中的属性
+
+
+    def main():
+        txt = "hj123uo"
+        pattern = function(r"[0-9]+")  # 这里执行funcation()就等于执行re.compile()函数
+        print(model.search(pattern, txt).group())
+
+
+    if __name__ == '__main__':
+        main()
+
+反射到底有什么用:
+
+上面使用re.compile()函数的整个过程看起来很麻烦，但是你要知道这就等于实现了动态加载和执行所需要的模块或方法而不需要全部写入到PY文件中，当然具体需要执行的方法你也要提前实现。典型的使用场景就是web的URL路由。目前所有的web框架的URL路由基本都是这个原理。
+用户输入不同的URL如何加载不同的PY文件以及调用里面的方法呢？你想一想Django里面，它并不是这样的，它依然需要你设置URL以及该URL对应的PY文件，为什么？因为这样调试方便，当然你能力足够也可以给它改写成反射的机制。
+
+**以下是另一篇比较好的文章：**
+
+在做程序开发中，我们常常会遇到这样的需求：需要执行对象里的某个方法，或需要调用对象中的某个变量，但是由于种种原因我们无法确定这个方法或变量是否存在，这是我们需要用一个特殊的方法或机制要访问和操作这个未知的方法或变量，这种机制就称之为反射。接下记录下反射几个重要方法：
+
+* hasattr
+
+判断对象中是否有这个方法或变量
+
+.. code::
+
+    class Person(object):
+        def __init__(self,name):
+            self.name = name
+        def talk(self):
+            print("%s正在交谈"%self.name)
+
+    p = Person("laowang")        
+    print(hasattr(p,"talk"))    # True。因为存在talk方法
+    print(hasattr(p,"name"))    # True。因为存在name变量
+    print(hasattr(p,"abc"))     # False。因为不存在abc方法或变量
+
+* getattr
+
+获取对象中的方法或变量的内存地址
+
+.. code::
+
+    class Person(object):
+        def __init__(self,name):
+            self.name = name
+        def talk(self):
+            print("%s正在交谈"%self.name)
+    p = Person("laowang")
+
+    n = getattr(p,"name")   # 获取name变量的内存地址
+    print(n)                # 此时打印的是:laowang
+
+    f = getattr(p,"talk")   # 获取talk方法的内存地址
+    f()                     # 调用talk方法
+
+    我们发现getattr有三个参数，那么第三个参数是做什么用的呢?
+    s = getattr(p,"abc","not find")
+    print(s)                # 打印结果：not find。因为abc在对象p中找不到，本应该报错，属性找不到，但因为修改了找不到就输出not find
+
+* setattr
+
+为对象添加变量或方法
+
+.. code::
+
+    def abc(self):
+        print("%s正在交谈"%self.name)
+
+    class Person(object):
+        def __init__(self,name):
+            self.name = name
+
+    p = Person("laowang")
+    setattr(p,"talk",abc)   # 将abc函数添加到对象中p中，并命名为talk
+    p.talk(p)               # 调用talk方法，因为这是额外添加的方法，需手动传入对象
+
+
+    setattr(p,"age",30)     # 添加一个变量age,复制为30
+    print(p.age)            # 打印结果:30
+
+* delattr
+
+删除对象中的变量。注意：不能用于删除方法
+
+.. code::
+
+    class Person(object):
+        def __init__(self,name):
+            self.name = name
+        def talk(self):
+            print("%s正在交谈"%self.name)
+
+    p = Person("laowang")
+
+    delattr(p,"name")       # 删除name变量
+    print(p.name)           # 此时将报错
+
+对编程语言比较熟悉的朋友，应该知道“反射”这个机制。Python作为一门动态语言，当然不会缺少这一重要功能。然而，在网络上却很少见到有详细或者深刻的剖析论文。下面结合一个web路由的实例来阐述python的反射机制的使用场景和核心本质。
+
+一.  前言
+
+.. code::
+
+    def f1():
+        print("f1是这个函数的名字！")
+     
+    s = "f1"
+    print("%s是个字符串" % s)
+    
+在上面的代码中，我们必须区分两个概念，f1和"f1"。前者是函数f1的函数名，后者只是一个叫”f1“的字符串，两者是不同的事物。我们可以用f1()的方式调用函数f1，但我们不能用"f1"()的方式调用函数。说白了就是，不能通过字符串来调用名字看起来相同的函数！
+
+二. Web实例
+
+考虑有这么一个场景，根据用户输入的url的不同，调用不同的函数，实现不同的操作，也就是一个url路由器的功能，这在web框架里是核心部件之一。下面有一个精简版的示例：
+
+首先，有一个commons模块，它里面有几个函数，分别用于展示不同的页面，代码如下：
+
+.. code::
+
+    def login():
+        print("这是一个登陆页面！")
+     
+     
+    def logout():
+        print("这是一个退出页面！")
+     
+     
+    def home():
+        print("这是网站主页面！")
+
+其次，有一个visit模块，作为程序入口，接受用户输入，展示相应的页面，代码如下：（这段代码是比较初级的写法）
+
+.. code::
+
+    import commons
+ 
+    def run():
+        inp = input("请输入您想访问页面的url：  ").strip()
+        if inp == "login":
+            commons.login()
+        elif inp == "logout":
+            commons.logout()
+        elif inp == "home":
+            commons.home()
+        else:
+            print("404")
+     
+     
+    if __name__ == '__main__':
+        run()
+
+我们运行visit.py，输入：home，页面结果如下：
+
+.. code::
+
+    请输入您想访问页面的url：  home
+    这是网站主页面！
+
+这就实现了一个简单的WEB路由功能，根据不同的url，执行不同的函数，获得不同的页面。
+然而，让我们考虑一个问题，如果commons模块里有成百上千个函数呢(这非常正常)?。难道你在visit模块里写上成百上千个elif?显然这是不可能的！那么怎么破？
+
+三. 反射机制
+
+仔细观察visit中的代码，我们会发现用户输入的url字符串和相应调用的函数名好像！如果能用这个字符串直接调用函数就好了！但是，前面我们已经说了字符串是不能用来调用函数的。为了解决这个问题，python为我们提供一个强大的内置函数：getattr!我们将前面的visit修改一下，代码如下：
+
+.. code::
+
+    import commons
+     
+    def run():
+        inp = input("请输入您想访问页面的url：  ").strip()
+        func = getattr(commons,inp)
+        func()
+     
+     
+    if __name__ == '__main__':
+        run()
+
+首先说明一下getattr函数的使用方法：它接收2个参数，前面的是一个对象或者模块，后面的是一个字符串，注意了！是个字符串！
+
+例子中，用户输入储存在inp中，这个inp就是个字符串，getattr函数让程序去commons这个模块里，寻找一个叫inp的成员（是叫，不是等于），这个过程就相当于我们把一个字符串变成一个函数名的过程。然后，把获得的结果赋值给func这个变量，实际上func就指向了commons里的某个函数。最后通过调用func函数，实现对commons里函数的调用。这完全就是一个动态访问的过程，一切都不写死，全部根据用户输入来变化。
+
+执行上面的代码，结果和最开始的是一样的。
+
+这就是python的反射，它的核心本质其实就是利用字符串的形式去对象（模块）中操作（查找/获取/删除/添加）成员，一种基于字符串的事件驱动！
+
+这段话，不一定准确，但大概就是这么个意思。
+
+四. 进一步完善
+
+上面的代码还有个小瑕疵，那就是如果用户输入一个非法的url，比如jpg，由于在commons里没有同名的函数，肯定会产生运行错误，具体如下：
+
+.. code::
+
+    请输入您想访问页面的url：  jpg
+    Traceback (most recent call last):
+      File "F:/Python/pycharm/s13/reflect/visit.py", line 16, in <module>
+        run()
+      File "F:/Python/pycharm/s13/reflect/visit.py", line 11, in run
+        func = getattr(commons,inp)
+    AttributeError: module 'commons' has no attribute 'jpg'
+
+那怎么办呢？其实，python考虑的很全面了，它同样提供了一个叫hasattr的内置函数，用于判断commons中是否具有某个成员。我们将代码修改一下：
+
+.. code::
+
+    import commons
+     
+    def run():
+        inp = input("请输入您想访问页面的url：  ").strip()
+        if hasattr(commons,inp):
+            func = getattr(commons,inp)
+            func()
+        else:
+            print("404")
+     
+    if __name__ == '__main__':
+        run()
+
+通过hasattr的判断，可以防止非法输入错误，并将其统一定位到错误页面。
+
+其实，研究过python内置函数的朋友，应该注意到还有delattr和setattr两个内置函数。从字面上已经很好理解他们的作用了。
+
+python的四个重要内置函数：getattr、hasattr、delattr和setattr较为全面的实现了基于字符串的反射机制。他们都是对内存内的模块进行操作，并不会对源文件进行修改。
+
+五. 动态导入模块
+
+上面的例子是在某个特定的目录结构下才能正常实现的，也就是commons和visit模块在同一目录下，并且所有的页面处理函数都在commons模块内。如下图：
+
+.. image:: images/PythonCookbook/1.png
+
+但在现实使用环境中，页面处理函数往往被分类放置在不同目录的不同模块中，也就是如下图：
+
+.. image:: images/PythonCookbook/2.png
+
+难道我们要在visit模块里写上一大堆的import 语句逐个导入account、manage、commons模块吗？要是有1000个这种模块呢？
+刚才我们分析完了基于字符串的反射，实现了动态的函数调用功能，我们不禁会想那么能不能动态导入模块呢？这完全是可以的！
+python提供了一个特殊的方法：__import__(字符串参数)。通过它，我们就可以实现类似的反射功能。__import__()方法会根据参数，动态的导入同名的模块。
+我们再修改一下上面的visit模块的代码
+
+.. code::
+
+    def run():
+        inp = input("请输入您想访问页面的url：  ").strip()
+        modules, func = inp.split("/")
+        obj = __import__(modules)
+        if hasattr(obj, func):
+            func = getattr(obj, func)
+            func()
+        else:
+            print("404")
+     
+    if __name__ == '__main__':
+        run()
+
+运行一下：
+
+.. code::
+
+    请输入您想访问页面的url：  commons/home
+    这是网站主页面！
+     
+    请输入您想访问页面的url：  account/find
+    这是一个查找功能页面！
+
+我们来分析一下上面的代码：
+
+首先，我们并没有定义任何一行import语句；
+
+其次，用户的输入inp被要求为类似“commons/home”这种格式，其实也就是模拟web框架里的url地址，斜杠左边指向模块名，右边指向模块中的成员名。
+
+然后，modules,func = inp.split("/")处理了用户输入，使我们获得的2个字符串，并分别保存在modules和func变量里。
+
+接下来，最关键的是obj = __import__(modules)这一行，它让程序去导入了modules这个变量保存的字符串同名的模块，并将它赋值给obj变量。
+
+最后的调用中，getattr去modules模块中调用func成员的含义和以前是一样的。
+
+总结：通过__import__函数，我们实现了基于字符串的动态的模块导入。
+
+同样的，这里也有个小瑕疵！
+
+如果我们的目录结构是这样的：
+
+.. image:: images/PythonCookbook/3.png
+
+那么在visit的模块调用语句中，必须进行修改，我们想当然地会这么做：
+
+..code::
+
+    def run():
+        inp = input("请输入您想访问页面的url：  ").strip()
+        modules, func = inp.split("/")
+        obj = __import__("lib." + modules)      #注意字符串的拼接
+        if hasattr(obj, func):
+            func = getattr(obj, func)
+            func()
+        else:
+            print("404")
+     
+    if __name__ == '__main__':
+        run()
+        
+改了这么一个地方:obj = __import__("lib." + modules)，看起来似乎没什么问题，和import lib.commons的传统方法类似，但实际上运行的时候会有错误。
+
+.. code::
+
+    请输入您想访问页面的url：  commons/home
+    404
+     
+    请输入您想访问页面的url：  account/find
+    404
+
+为什么呢？因为对于lib.xxx.xxx.xxx这一类的模块导入路径，__import__默认只会导入最开头的圆点左边的目录，也就是“lib”。我们可以做个测试，在visit同级目录内新建一个文件，代码如下：
+
+.. code::
+
+    obj = __import__("lib.commons")
+    print(obj)
+
+执行结果：
+
+.. code::
+
+    <module 'lib' (namespace)>
+
+这个问题怎么解决呢？加上fromlist = True参数即可！
+
+.. code::
+
+    def run():
+        inp = input("请输入您想访问页面的url：  ").strip()
+        modules, func = inp.split("/")
+        obj = __import__("lib." + modules, fromlist=True)  # 注意fromlist参数
+        if hasattr(obj, func):
+            func = getattr(obj, func)
+            func()
+        else:
+            print("404")
+     
+    if __name__ == '__main__':
+        run()
+    
+至此，动态导入模块的问题基本都解决了，只剩下最后一个，那就是万一用户输入错误的模块名呢？比如用户输入了somemodules/find，由于实际上不存在somemodules这个模块，必然会报错！那有没有类似上面hasattr内置函数这么个功能呢？答案是没有！碰到这种，你只能通过异常处理来解决。
+    
+六. 最后的思考    
+    
+可能有人会问python不是有两个内置函数exec和eval吗？他们同样能够执行字符串。比如：
+
+.. code::
+
+    exec("print('haha')")
+     
+    结果：
+     
+    haha
+
+那么直接使用它们不行吗？非要那么费劲地使用getattr，__import__干嘛？
+
+其实，在上面的例子中，围绕的核心主题是如何利用字符串驱动不同的事件，比如导入模块、调用函数等等，这些都是python的反射机制，是一种编程方法、设计模式的体现，凝聚了高内聚、松耦合的编程思想，不能简单的用执行字符串来代替。当然，exec和eval也有它的舞台，在web框架里也经常被使用。
 
 
