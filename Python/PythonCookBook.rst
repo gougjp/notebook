@@ -1286,4 +1286,51 @@ python提供了一个特殊的方法：__import__(字符串参数)。通过它�
 
 其实，在上面的例子中，围绕的核心主题是如何利用字符串驱动不同的事件，比如导入模块、调用函数等等，这些都是python的反射机制，是一种编程方法、设计模式的体现，凝聚了高内聚、松耦合的编程思想，不能简单的用执行字符串来代替。当然，exec和eval也有它的舞台，在web框架里也经常被使用。
 
+Python用lxml模块解析XML编码问题
+----------------------------------------
+
+最近在用lxml模块解析一个XML文件的时候, XML文件中有中文的时候:
+
+代码如下:
+
+..code::
+
+    etree.parse(cloc_file)
+
+会出现如下错误:
+
+..code::
+
+    Traceback (most recent call last):
+      File "gen_reports.py", line 481, in <module>
+        SummaryHtml(build_list, db).build_html()
+      File "gen_reports.py", line 309, in __init__
+        self.cloc_result = ClocResult()
+      File "gen_reports.py", line 134, in __init__
+        self.analysis_result(os.path.join(report_root, 'Lint', 'software'))
+      File "gen_reports.py", line 152, in analysis_result
+        self.result[software_type] = self.__analysis_cloc(os.path.join(root, filename))
+      File "gen_reports.py", line 138, in __analysis_cloc
+        tree = etree.parse(cloc_file)
+      File "src/lxml/etree.pyx", line 3426, in lxml.etree.parse
+      File "src/lxml/parser.pxi", line 1840, in lxml.etree._parseDocument
+      File "src/lxml/parser.pxi", line 1866, in lxml.etree._parseDocumentFromURL
+      File "src/lxml/parser.pxi", line 1770, in lxml.etree._parseDocFromFile
+      File "src/lxml/parser.pxi", line 1163, in lxml.etree._BaseParser._parseDocFromFile
+      File "src/lxml/parser.pxi", line 601, in lxml.etree._ParserContext._handleParseResultDoc
+      File "src/lxml/parser.pxi", line 711, in lxml.etree._handleParseResult
+      File "src/lxml/parser.pxi", line 640, in lxml.etree._raiseParseError
+      File "/var/lib/jenkins/userContent/platform/software_middleware/8/Lint/software/equipment/cloc.xml", line 13
+    lxml.etree.XMLSyntaxError: Input is not proper UTF-8, indicate encoding !
+    Bytes: 0xC6 0xC0 0xB9 0xC0, line 13, column 150
+
+改成如下这种即可:
+
+..code::
+
+    etree.parse(cloc_file, parser=etree.XMLParser(encoding="gb2312"))
+
+
+
+
 
