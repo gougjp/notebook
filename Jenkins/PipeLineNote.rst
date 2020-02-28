@@ -773,3 +773,26 @@ SoftwareMiddleware配置实例
         }
     }
 
+在PipeLine中使用groovy语法，判断文件存在时执行某些操作
+--------------------------------------------------------------
+
+..code::
+
+    stage("Reports") {
+        steps {
+            dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
+                script {
+                    if (fileExists("02 ci/04 common/collection_log.sh")) {
+                        sh '"02 ci/04 common/collection_log.sh"'
+                    } else {
+                        sh "cp -f ${WORKSPACE}/git_log.html ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/Download/"
+                        sh "python \"02 ci/04 common/gen_reports.py\""
+                        sh "cp -f ${WORKSPACE}/summary.html ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/"
+                        sh "cp -f ${WORKSPACE}/build_list ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/"
+                        sh "cp -f ${WORKSPACE}/build_list ${JENKINS_HOME}/userContent/${GITLAB_GROUP}/${GITLAB_NAME}/${TRIGGER_NUM}/"
+                    }
+                }
+            }
+        }
+    }
+
