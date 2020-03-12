@@ -4,12 +4,14 @@ Git Note
 Git查看某个提交的文件列表
 ----------------------------
 
+* 使用git show命令
+
 .. code::
 
     git show --pretty=format:""  --name-only <commit_id1>..<commit_id2>
     
     如:
-    git show --pretty=format:""  --name-only aa282dcb8dbd03d83b3d196cad6cdb43e7e15dbf..c221841eddb41efbab0b4ab342a1c21663dde508
+    >> git show --pretty=format:""  --name-only aa282dcb8dbd03d83b3d196cad6cdb43e7e15dbf..c221841eddb41efbab0b4ab342a1c21663dde508
     04 src/02 firmware/Source/Committee/PasswordDM.c
     04 src/02 firmware/Source/Committee/PasswordDM.h
     04 src/02 firmware/Source/Common/control.c
@@ -27,6 +29,34 @@ Git查看某个提交的文件列表
     04 src/02 firmware/Source/Common/control.c
     04 src/02 firmware/Source/Mcu/i2cs.c
     04 src/02 firmware/Source/history.xlsx
+
+* 使用git log --name-status命令
+
+.. code::
+
+    git log --name-status <commit_id1>..<commit_id2>
+    
+    如:
+    >> git log --name-status c81a665043ac406c4132d9844217f9a58592ebbe..dbca8d84acb723776c745d7fc2c213a32c389a71
+    commit 2cdb267cf98a27084198ec5a010874ad4978926f (HEAD -> master, origin/master, origin/HEAD)
+    Author: junping.gou <junping.gou@superxon.cn>
+    Date:   Tue Mar 3 11:49:45 2020 +0800
+
+        <E5><A2><9E><E5><8A><A0><E7><83><BD><E7><81><AB><E5><8A><A0><E5><AF><86><E6><B5><8B><E8><AF><95><E7><94><A8><E4><BE><8B>
+
+    M       02 ci/02 firmware/hlt/Libraries/TestEncryption.py
+    M       02 ci/02 firmware/hlt/TestCases/TestEncryptionCases.robot
+
+    commit 34516865a021550389ae8b763bf119c7ab3dbe37
+    Merge: e0a4f2e 19766a7
+    Author: zesong.xiang <zesong.xiang@superxon.cn>
+    Date:   Tue Mar 3 11:38:37 2020 +0800
+
+        Merge branch 'develop_fh' into 'master'
+
+        <E9><87><8D><E6><96><B0><E4><B8><8A><E4><BC><A0><E4><BB><A3><E7><A0><81><E5><88><B0><E6><96><B0><E5><88><86><E6><94><AF>
+
+        See merge request project/sfp_plus_10g_epon_olt!296
 
 Git hooks
 ----------------------
