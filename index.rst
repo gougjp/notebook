@@ -82,6 +82,13 @@
    :caption: Ant
     
    Ant/*
+   
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :caption: Xslt
+    
+   Xslt/*
 
 .. toctree::
    :glob:
