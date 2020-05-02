@@ -92,7 +92,10 @@ post-merge文件类容:
 * git hooks只保存在本地, 无法提交到服务器; 可以保存在其他目录, 克隆代码库过后自动拷贝到.git/hooks目录下; 或者在代码库跟目录下执行
 git config core.hooksPath .githooks命令, 其中.githooks是自定义的一个目录, 里面放的是所有的hooks文件
 
+Git删除本地分支的命令
+---------------------------
 
+git branch -D <branch_name>
 
 
 
