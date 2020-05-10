@@ -26,19 +26,24 @@ find的-mtime +150参数表示找出150天前的文件
 Ubuntu 服务查看命令
 --------------------------------
 
-service --status-all
+**service --status-all**
+
 查看所有服务
 
-service 服务名 start
+**service 服务名 start**
+
 启动服务
 
-service 服务名 stop
+**service 服务名 stop**
+
 停止服务
 
-service 服务名 restart
+**service 服务名 restart**
+
 重启服务
 
-service 服务名 status
+**service 服务名 status**
+
 查看服务状态
 
 
