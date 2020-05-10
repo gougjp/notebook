@@ -93,6 +93,13 @@
 .. toctree::
    :glob:
    :maxdepth: 2
+   :caption: Linux
+    
+   Linux/*
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
    :caption: Help
     
    Help/*
