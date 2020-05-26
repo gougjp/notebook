@@ -8,18 +8,30 @@ jenkins 服务器日志空间清理
 
     set +x
 
-    used=$(df -h | grep '/dev/dm-0' | awk -F " " '{print $(NF-1)}' | tr -d %)
-    echo "Used:${used}"
-    if [ ${used} -ge 95 ]; then
-        cd ${JENKINS_HOME}/userContent
+    max_days=180
 
-        find project/ -maxdepth 2 -mindepth 2 -type d -mtime +150 | xargs -I {} bash -c "echo '{}'; rm -rf '{}'"
-        find new_project/ -maxdepth 2 -mindepth 2 -type d -mtime +150 | xargs -I {} bash -c "echo '{}'; rm -rf '{}'"
-        find platform/ -maxdepth 2 -mindepth 2 -type d -mtime +150 | xargs -I {} bash -c "echo '{}'; rm -rf '{}'"
-        echo "Clean up success"
-    else
-        echo "Do not need to clean up"
-    fi
+    while true
+    do
+        used=$(df -h | grep '/dev/dm-0' | awk -F " " '{print $(NF-1)}' | tr -d %)
+        echo "Used:${used}"
+        if [ ${used} -ge 85 ]; then
+            cd ${JENKINS_HOME}/userContent
+        
+            echo ${max_days}
+            max_days=$(($max_days-2))
+            if [ ${max_days} -lt 30 ]; then
+                break
+            fi
+        
+            find project/ -maxdepth 2 -mindepth 2 -type d -mtime +${max_days} | xargs -I {} bash -c "echo '{}'; rm -rf '{}'"
+            find new_project/ -maxdepth 2 -mindepth 2 -type d -mtime +${max_days} | xargs -I {} bash -c "echo '{}'; rm -rf '{}'"
+            find platform/ -maxdepth 2 -mindepth 2 -type d -mtime +${max_days} | xargs -I {} bash -c "echo '{}'; rm -rf '{}'"
+            echo "Clean up success"
+        else
+            echo "Do not need to clean up"
+            break
+        fi
+    done
 
 find的-mtime +150参数表示找出150天前的文件
 
