@@ -100,6 +100,13 @@
 .. toctree::
    :glob:
    :maxdepth: 2
+   :caption: SourceMonitor
+    
+   SourceMonitor/*
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
    :caption: Help
     
    Help/*

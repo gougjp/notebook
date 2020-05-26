@@ -8,7 +8,7 @@ Git查看某个提交的文件列表
 
 .. code::
 
-    git show --pretty=format:""  --name-only <commit_id1>..<commit_id2>
+    git show --pretty=format:"" --name-only <commit_id1>..<commit_id2>
     
     如:
     >> git show --pretty=format:""  --name-only aa282dcb8dbd03d83b3d196cad6cdb43e7e15dbf..c221841eddb41efbab0b4ab342a1c21663dde508
@@ -97,7 +97,47 @@ Git删除本地分支的命令
 
 git branch -D <branch_name>
 
+Git查看两个版本之间差异
+-----------------------------
 
+* 只看两个版本之间提交的文件
+
+git diff --name-only <commit_id1>..<commit_id2>
+
+.. code::
+
+
+    E:\CODE\sfp_plus_10g_epon_olt>git diff --name-only 5ad7a96665058bc8cf4589181f4e3db4ced36bb9..ae2c29bd6136e7424756b2ca61878dfb47c96d07
+    02 ci/02 firmware/hlt/Libraries/Common.py
+    02 ci/02 firmware/hlt/Libraries/TestBackupFlush.py
+    02 ci/02 firmware/hlt/Libraries/TestBase.py
+    02 ci/02 firmware/hlt/Libraries/TestCalculation.py
+    02 ci/02 firmware/hlt/Libraries/TestCommittee.py
+    02 ci/02 firmware/hlt/Libraries/TestEncryption.py
+    02 ci/02 firmware/hlt/Libraries/TestFeatures.py
+    02 ci/02 firmware/hlt/Libraries/TestI2c.py
+    02 ci/02 firmware/hlt/Libraries/TestPowerFunction.py
+    02 ci/02 firmware/hlt/Libraries/TestReliability.py
+    02 ci/02 firmware/hlt/Libraries/TestTecDac.py
+    02 ci/02 firmware/hlt/Libraries/TestTxDisableAndTrigger.py
+    02 ci/02 firmware/hlt/Libraries/TestWarningFlag.py
+    02 ci/02 firmware/hlt/TestCases/CommonOperation.robot
+    02 ci/02 firmware/hlt/TestCases/TestBackupFlushCases.robot
+    02 ci/02 firmware/hlt/TestCases/TestCalculation.robot
+    02 ci/02 firmware/hlt/TestCases/TestCommittee.robot
+    02 ci/02 firmware/hlt/TestCases/TestEncryptionCases.robot
+    02 ci/02 firmware/hlt/TestCases/TestFeaturesCases.robot
+    02 ci/02 firmware/hlt/TestCases/TestI2cCases.robot
+    02 ci/02 firmware/hlt/TestCases/TestPowerFunction.robot
+    02 ci/02 firmware/hlt/TestCases/TestReliabilityCases.robot
+    02 ci/02 firmware/hlt/TestCases/TestTxDisableAndTrigger.robot
+    02 ci/02 firmware/hlt/TestCases/TestWarningFlag.robot
+    02 ci/04 common/control.sh
+    02 ci/04 common/release_firmware.py
+    04 src/03 software/MainPortal.exe
+    04 src/03 software/common/src/OLT_SFPPLUS.c
+
+如果不加--name-only则会显示详细差异
 
 
 
