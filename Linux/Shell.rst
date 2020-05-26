@@ -46,7 +46,7 @@ Ubuntu 服务查看命令
 
 查看服务状态
 
-在Linux免用户名密码执行git命令
+在Linux下免用户名密码执行git命令
 --------------------------------------
 
 1. 在用户的(home目录)~/目录下新建.git-credentials文件; 并在文件中输入如下信息
@@ -80,7 +80,7 @@ Ubuntu 服务查看命令
     git config --global user.name "bryan.sun"
     git config --global user.email "bryan.sun@gmail.com"
 
-执行完成后在home目录下会生成一个.gitconfig文件, 内容如下:
+执行完成后会在.gitconfig文件中增加如下信息, 内容如下:
 
 .. code::
 
