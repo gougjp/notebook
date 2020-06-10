@@ -124,4 +124,13 @@ for, while, if else写在一行
     while [ ! -f git_log ]; do sleep 1; done
     while true;  do if [ ! -f git_log ]; then sleep 1; echo "git_log is not exist"; else echo "git_log is exist"; break; fi; done
 
+Shell Parameter Expansion -- Shell 参数扩展
+-------------------------------------------------
+
+.. role:: red
+
+* **:red:`${parameter:−word}`**
+
+如果parameter没有设置或者为空，则替换为word；否则替换为parameter的值。
+
 
