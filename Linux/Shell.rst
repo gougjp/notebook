@@ -103,6 +103,25 @@ Ubuntu 服务查看命令
             email = bryan.sun@gmail.com
             name = bryan.sun
 
+for, while, if else写在一行
+-------------------------------------
 
+.. code::
+
+    #判断文件test.txt是否存在且不为空, 如果存在且不为空, 输出111, 否则输出222
+    if [ -s test.txt ]; then echo 111; else echo 222; fi
+
+    #也可以包括elif
+    if [ -s test.txt ]; then echo 111; elif [ -s make.sh ]; then echo 222; else echo 333; fi
+
+    #if在for循环内
+    for i in {1..10}; do if [ ! -f git_log ]; then sleep 1; echo "git_log is not exist";fi; done
+
+    #更复杂一点的
+    for i in {1..10}; do if [ ! -f git_log ]; then sleep 1; echo "git_log is not exist"; else echo "git_log is exist"; break; fi; done
+
+    #while循环, 这样容易导致死循环
+    while [ ! -f git_log ]; do sleep 1; done
+    while true;  do if [ ! -f git_log ]; then sleep 1; echo "git_log is not exist"; else echo "git_log is exist"; break; fi; done
 
 
