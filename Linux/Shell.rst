@@ -129,7 +129,7 @@ Shell Parameter Expansion -- Shell 参数扩展
 
 .. role:: red
 
-* **:red:`${parameter:−word}`**
+* ** :red:`${parameter:−word}`**
 
 如果parameter没有设置或者为空，则替换为word；否则替换为parameter的值。
 
