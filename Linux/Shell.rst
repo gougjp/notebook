@@ -1,4 +1,4 @@
-Shell Note Rst
+笔记
 ==============
 
 jenkins 服务器日志空间清理
