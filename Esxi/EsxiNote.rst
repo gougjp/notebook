@@ -96,7 +96,7 @@ net55-r8168驱动支持网卡型号（Realtek RTL8111B / RTL8168B / RTL8111/RTL8
 
 .. code::
 
-.\\ESXi-Customizer-PS-v2.6.0.ps1 -izip .\\ESXi670-201905001.zip -pkgDir whsir\\
+    .\\ESXi-Customizer-PS-v2.6.0.ps1 -izip .\\ESXi670-201905001.zip -pkgDir whsir\\
 
 注意：打包时会自动在whsir文件夹内查找vib的驱动，生成的ESXI6.7.iso镜像会在当前目录下
 

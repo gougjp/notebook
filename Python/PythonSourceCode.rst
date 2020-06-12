@@ -102,6 +102,7 @@ Python 源代码学习(3.7.5)
 | 所以在实际发布的Python版本中, PyObject的定义非常简单
 
 .. code::
+
     [Include/object.h]
     typedef struct _object {
         Py_ssize_t ob_refcnt;
