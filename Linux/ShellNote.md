@@ -2,7 +2,7 @@
 
 ## xargs后面跟多条命令
 
-```
+```Shell
 #这里执行了grep和echo两条命令
 find ./ -iname "*pusch*.csv" -print0 | xargs -0 -I {} bash -c "grep 'numOfDlHarqSubframesPacked' {}; echo {}"
 #其中bash可以改成sh:
@@ -15,7 +15,7 @@ find ./ -iname "*pusch*.csv" -print0 | xargs -0 -I {} sh -c "grep 'numOfDlHarqSu
 
 该选项用于排除目录树中的某个目录, 它的功能就是: "如果文件是目录, 就不要向下遍历这个目录"
 
-```
+```Shell
 #查找当前路径下的所有文件和目录
 $ find .
 .
@@ -47,7 +47,7 @@ $ find . ! -name . -prune
 ./area.pm
 ./C
 ./test.c
-./temp 
+./temp
 
 #跟上例结果相同的另一种方法
 $ find ./* -prune
@@ -59,7 +59,7 @@ $ find ./* -prune
 
 <font color="red">记住: find命令可以接收一个路径或者一系列路径来搜索, ./\*会得到当前目录下所有的文件和目录, 因此从这个列表中, prune将阻止对子目录的遍历; 但是这种方法不推荐, 因为 1.我们应该只给出查找的路径中的目录, 2.如果文件和目录的列表巨大, 这个命令将会出现性能问题</font>
 
-```
+```Shell
 #'-name temp'找出所有名字为temp的文件, prune表示不要遍历名字为temp的目录; 因此结果为所有名字为temp的文件和目录
 $ find . -name temp -prune
 ./C/temp
@@ -122,7 +122,7 @@ $ find . -name "temp" -prune -o -perm 644 -print
 ./area.pm
 ./C/f2.c
 
-#找出所有权限为644的文件, 除了全名为./temp的文件 
+#找出所有权限为644的文件, 除了全名为./temp的文件
 $ find . -wholename "./temp" -prune -o -perm 644 -print
 ./area.pm
 ./C/temp
