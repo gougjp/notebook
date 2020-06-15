@@ -149,3 +149,69 @@ $ find . ! -path "./C/*" -name "*.c"
 http://blog.csdn.net/mrtitan/article/details/11068879
 http://www.cnblogs.com/skynet/archive/2010/12/25/1916873.html
 http://www.cnblogs.com/wangkangluo1/archive/2012/09/06/2673030.html
+
+
+## jenkins 服务器日志空间清理
+
+```Shell
+set +x
+
+max_days=180
+
+while true
+do
+    used=$(df -h | grep '/dev/dm-0' | awk -F " " '{print $(NF-1)}' | tr -d %)
+    echo "Used:${used}"
+    if [ ${used} -ge 85 ]; then
+        cd ${JENKINS_HOME}/userContent
+    
+        echo ${max_days}
+        max_days=$(($max_days-2))
+        if [ ${max_days} -lt 30 ]; then
+            break
+        fi
+    
+        find project/ -maxdepth 2 -mindepth 2 -type d -mtime +${max_days} | xargs -I {} bash -c "echo '{}'; rm -rf '{}'"
+        find new_project/ -maxdepth 2 -mindepth 2 -type d -mtime +${max_days} | xargs -I {} bash -c "echo '{}'; rm -rf '{}'"
+        find platform/ -maxdepth 2 -mindepth 2 -type d -mtime +${max_days} | xargs -I {} bash -c "echo '{}'; rm -rf '{}'"
+        echo "Clean up success"
+    else
+        echo "Do not need to clean up"
+        break
+    fi
+done
+```
+
+find的-mtime +150参数表示找出150天前的文件
+
+## Ubuntu 服务查看命令
+
+- 查看所有服务
+
+```Shel
+service --status-all
+```
+
+- 启动服务
+
+```Shel
+service 服务名 start
+```
+
+- 停止服务
+
+```Shel
+service 服务名 stop
+```
+
+- 重启服务
+
+```Shel
+service 服务名 restart
+```
+
+- 查看服务状态
+
+```Shel
+service 服务名 status
+```
