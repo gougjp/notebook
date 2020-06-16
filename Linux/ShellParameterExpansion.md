@@ -233,8 +233,8 @@ b c
 [jgou@localhost ~]$
 ```
 
-- **<font color='red'>${!prefix\*}<font>**
-- **<font color='red'>${!prefix@}<font>**
+- **<font color='red'>${!prefix\*}</font>**
+- **<font color='red'>${!prefix@}</font>**
 
 扩展名字以prefix开头的变量,以特殊变量IFS的第一个字符分割. 如果使用了"@"，并且在双引号内扩展, 则每个变量都扩展成单独的单词.
 
@@ -253,8 +253,8 @@ varA varB varC
 varA varB varC
 ```
 
-- **<font color='red'>${!name[\*]}<font>**
-- **<font color='red'>${!name[@]}<font>**
+- **<font color='red'>${!name[\*]}</font>**
+- **<font color='red'>${!name[@]}</font>**
 
 如果name是一个数组变量, 扩展成name数组下标或者键名的列表. 如果name不是不是数组变量, 当name变量存在则返回0, 如果name变量不存在则返回空. 如果使用了"@"，并且在双引号内扩展, 则每个变量都扩展成单独的单词.
 
@@ -281,7 +281,7 @@ varA varB varC
 0 1 2 3 4 5 6
 ```
 
-- **<font color='red'>${#parameter}<font>**
+- **<font color='red'>${#parameter}</font>**
 
 被替换成parameter扩展值的字符串的长度. 如果parameter是'*'或者'@', 则替换为位置参数的个数. 如果parameter是下标为'*'或者'@'的数组名, 则替换为数组中元素的个数. 如果parameter是一个负数下标作为索引的数组名, 这个数字被解释为相对于parameter最大索引, 所以负的下标是从数组结尾倒数的, 索引-1代表最后一个元素.
 
@@ -296,8 +296,8 @@ varA varB varC
 17
 ```
 
-- **<font color='red'>${parameter#word}<font>**
-- **<font color='red'>${parameter##word}<font>**
+- **<font color='red'>${parameter#word}</font>**
+- **<font color='red'>${parameter##word}</font>**
 
 shell像文件名扩展中那样扩展word. 如果模式匹配parameter扩展值的开始, 那么parameter扩展值扩展的结果, 在'#'情况下将删除最短的匹配, 在'##'情况下将删除最长的匹配. 如果parameter是'@'或者'\*', 则模式删除操作依次应用于每个位置参数, 并且扩展的结果是一个列表. 如果parameter是一个下标为'@'或者'\*'的数组变量, 则模式删除操作依次应用于每个数组元素,并且扩展的结果是一个列表.
 
@@ -334,8 +334,8 @@ txt pdf xls csv py bat sh
 txt pdf xls csv py bat sh
 ```
 
-- **<font color='red'>${parameter%word}<font>**
-- **<font color='red'>${parameter%%word}<font>**
+- **<font color='red'>${parameter%word}</font>**
+- **<font color='red'>${parameter%%word}</font>**
 
 shell像文件名扩展中那样扩展word.如果模式匹配parameter扩展值的结尾,那么parameter扩展值扩展的结果,在'%'情况下将删除最短的匹配,在'%%'情况下将删除最长的匹配.如果parameter是'@'或者'\*',则模式删除操作依次应用于每个位置参数,并且扩展的结果是一个列表.如果parameter是一个下标为'@'或者'\*'的数组变量,则模式删除操作依次应用于每个数组元素,并且扩展的结果是一个列表.
 
@@ -370,7 +370,7 @@ acde edgs adsasdf roeij alsdkfjoerj alsdfj asldfjk
 acde edgs adsasdf roeij alsdkfjoerj alsdfj asldfjk
 ```
 
-- **<font color='red'>${parameter/pattern/string}<font>**
+- **<font color='red'>${parameter/pattern/string}</font>**
 
 shell像文件名扩展中那样扩展pattern.parameter被扩展,并且匹配pattern最长(贪婪匹配)的值被替换成string.如果pattern以/开头,pattern匹配到的所有部分都会被替换成string(如${var//\[0-9]\/'\-'}),而正常情况下只是第一个匹配到的
 被替换。如果pattern以"#"开始，则它必须匹配parameter扩展值的开始部分。如果pattern以"%"开始，则它必须匹配parameter扩展值的结尾部分。如果string为null，pattern匹配到的部分将被删掉，pattern后面的/可以省略。如果启用了shell的nocasematch选项，则匹配不区分大小写。如果parameter是@或者*,替换操作轮流应用于每个位置参数，扩展的结果是列表。如果parameter是下标为@或者*的数组变量，替换操作轮流应用于数组的每个元素，扩展的结果是列表。
@@ -413,12 +413,12 @@ acde- edgs- adsasdf- roeij- alsdkfjoerj- alsdfj- asldfjk-
 1cde.txt 1dgs.pdf 1dsasdf.xls 1oeij.csv 1lsdkfjoerj.py 1lsdfj.bat 1sldfjk.sh
 ```
 
-- **<font color='red'>${parameter^pattern}<font>**
-- **<font color='red'>${parameter^^pattern}<font>**
-- **<font color='red'>${parameter,pattern}<font>**
-- **<font color='red'>${parameter,,pattern}<font>**
-- **<font color='red'>${parameter~pattern}<font>**
-- **<font color='red'>${parameter~~pattern}<font>**
+- **<font color='red'>${parameter^pattern}</font>**
+- **<font color='red'>${parameter^^pattern}</font>**
+- **<font color='red'>${parameter,pattern}</font>**
+- **<font color='red'>${parameter,,pattern}</font>**
+- **<font color='red'>${parameter~pattern}</font>**
+- **<font color='red'>${parameter~~pattern}</font>**
 
 这些扩展修改parameter中字母字符的大小写,shell像文件名扩展中那样扩展pattern。parameter扩展值的每一个字符都要对pattern进行测试,如果它匹配这个模式,就会转换这个字符的大小写.模式不应该尝试匹配多个字符.'^'操作将pattern匹配到的字母从小写转换成大写,','操作将匹配到的大写字母转换成小写,'~'将匹配到的字符转换成相反的大小写。'^^',',,'和'~~'扩展转换扩展值中的每一个匹配到的字符;而'^',','和'~'扩展只匹配和转换扩展值中的第一个字符.如果pattern被省略，则它会被当成'?',匹配任意字符。如果parameter是'@'或在'\*',大小写转换操作轮流应用于每个位置参数,扩展的结果是列表。如果parameter是下标为@或者\*的数组变量,大小写转换操作轮流应用于数组的每个元素，扩展的结果是列表。
 
@@ -535,7 +535,7 @@ ACDE.TXT ELJSFDLS.PDF AASDFSASDF.XLS ROEIJ.CSV ALSDFKFJKFRJ.PY ALSSFSLJ.BAT ASLD
 ACDE.TXT ELJSFDLS.PDF AASDFSASDF.XLS ROEIJ.CSV ALSDFKFJKFRJ.PY ALSSFSLJ.BAT ASLDFJK.SH NALKS.CPP
 ```
 
-- **<font color='red'>文件名扩展中的字符集:<font>**
+- **<font color='red'>文件名扩展中的字符集:</font>**
 
 字符集两端的字符均包括在匹配字符中。在C语言区域中,\[a-dx-z]和\[abcdxyz]是等价的;而在许多区域语言中,字符都是按词典顺序排列的,导致这两种通常是不等价的,如\[a-dx-z]通常等价于\[aAbBcCdxXyYz].为了方括号表达式中使用在传统意义上的范围,可以把环境变量LC_COLLATE或者LC_ALL设为"C"以强制使用C语言区域
 
@@ -603,7 +603,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYz
 Abcdefghijklmnopqrstuvwxyz
 ```
 
-- **<font color='red'>${parameter@operator}<font>**
+- **<font color='red'>${parameter@operator}</font>**
 
 Bash4.4中新增
 这个扩展要么是parameter值的转换，要么是parameter本身信息的转换，依赖于operator的值。每个operator是一个单独的字母。
