@@ -215,3 +215,75 @@ service 服务名 restart
 ```Shel
 service 服务名 status
 ```
+
+## 在Linux下免用户名密码执行git命令
+
+1. 在用户的(home目录)~/目录下新建.git-credentials文件; 并在文件中输入如下信息
+
+```
+http://<username>:<password>@<serverip>
+
+username: git提交时用到的用户名
+password: git提交时用到的密码
+serverip: git服务器IP
+```
+
+2. 执行如下命令
+
+```
+git config --global credential.helper store
+```
+
+执行完成后在home目录下会生成一个.gitconfig文件, 内容如下:
+
+```Shell
+jenkins@superxon33:~$ cat .gitconfig
+[credential]
+        helper = store
+```
+
+3. 执行如下命令配置用户和邮箱
+
+```Shell
+git config --global user.name "bryan.sun"
+git config --global user.email "bryan.sun@gmail.com"
+```
+
+执行完成后会在.gitconfig文件中增加如下信息, 内容如下:
+
+```Shell
+jenkins@superxon33:~$ cat .gitconfig
+[credential]
+        helper = store
+[user]
+        email = bryan.sun@gmail.com
+        name = bryan.sun
+```
+
+## for, while, if else写在一行
+
+```Shell
+#判断文件test.txt是否存在且不为空, 如果存在且不为空, 输出111, 否则输出222
+if [ -s test.txt ]; then echo 111; else echo 222; fi
+
+#也可以包括elif
+if [ -s test.txt ]; then echo 111; elif [ -s make.sh ]; then echo 222; else echo 333; fi
+
+#if在for循环内
+for i in {1..10}; do if [ ! -f git_log ]; then sleep 1; echo "git_log is not exist";fi; done
+
+#更复杂一点的
+for i in {1..10}; do if [ ! -f git_log ]; then sleep 1; echo "git_log is not exist"; else echo "git_log is exist"; break; fi; done
+
+#while循环, 这样容易导致死循环
+while [ ! -f git_log ]; do sleep 1; done
+while true;  do if [ ! -f git_log ]; then sleep 1; echo "git_log is not exist"; else echo "git_log is exist"; break; fi; done
+```
+
+
+
+
+
+
+
+
