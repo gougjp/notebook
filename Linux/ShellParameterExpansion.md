@@ -87,7 +87,7 @@ bash: varB: 123
 [jgou@localhost ~]$ echo ${varB:?456}
 bash: varB: 456
 [jgou@localhost ~]$ echo ${varB:?${varC}}
-bash: varB: 
+bash: varB:
 
 [ian@pinguino ~]$ ( unset x;y="abc def"; echo "/${x:?'XYZ'}/${y:?'XYZ'}/$x/$y/" ) >so.txt 2>se.txt
 [ian@pinguino ~]$ cat so.txt
@@ -120,7 +120,7 @@ bash: varB:
 - **<font color='red'>${parameter:offset:length}</font>**
 
 扩展为parameter中从offset开始的不超过length的字符。如果没有指定length，扩展为parameter中从offset开始的子字符串。length和offset都是算术表达式。这又叫做"子字符串扩展".
-length的值必须是一个大于或等于0的数字. 如果length小于0, 它就会被当成parameter所表示的字符串中从结尾开始的偏移量. 如果parameter是"@", 结果就是从offset开始的第length个位置参数; 如果parameter是带有"@"或"*"下标的下标数组名, 则结果是该数组中从${parameter[offset]}开始的length个元素. 负的偏移量是从数组中比最大的下标大一的数字开始的。对键值数组进行子字符串扩展的结果没有定
+length的值必须是一个大于或等于0的数字. 如果length小于0, 它就会被当成parameter所表示的字符串中从结尾开始的偏移量. 如果parameter是"@", 结果就是从offset开始的第length个位置参数; 如果parameter是带有"@"或"\*"下标的下标数组名, 则结果是该数组中从${parameter[offset]}开始的length个元素. 负的偏移量是从数组中比最大的下标大一的数字开始的。对键值数组进行子字符串扩展的结果没有定
 义。注意，负数的偏移量与冒号之间至少得有一个空格，这样可以避免与":-"扩展相混淆。查找子字
 符串的下标是从0 开始的；但是如果使用了位置参数，则默认从1 开始。如果使用位置参数时offset是0，则会把$@添加到结果前面.
 
@@ -142,7 +142,7 @@ bcdefgh
 bc
 [jgou@localhost ~]$ echo ${string: -7:-2}
 bcdef
-[jgou@localhost ~]$ 
+[jgou@localhost ~]$
 
 
 [jgou@localhost ~]$ set -- 01234567890abcdefgh
@@ -210,7 +210,7 @@ b c
 [jgou@localhost ~]$ echo ${@: -7:0}
 ```
 
-如果parameter是一个有索引的下标为'@'或者'*'的数组名, 则结果为从数组的${parameter[offset]}开始, length个元素. 负的offset是相对于数组最大索引的. 如果length小于0则出错.
+如果parameter是一个有索引的下标为'@'或者'\*'的数组名, 则结果为从数组的${parameter[offset]}开始, length个元素. 负的offset是相对于数组最大索引的. 如果length小于0则出错.
 
 ```Shell
 [jgou@localhost ~]$ array=(0 1 2 3 4 5 6 7 8 9 0 a b c d e f g h)
@@ -283,7 +283,7 @@ varA varB varC
 
 - **<font color='red'>${#parameter}</font>**
 
-被替换成parameter扩展值的字符串的长度. 如果parameter是'*'或者'@', 则替换为位置参数的个数. 如果parameter是下标为'*'或者'@'的数组名, 则替换为数组中元素的个数. 如果parameter是一个负数下标作为索引的数组名, 这个数字被解释为相对于parameter最大索引, 所以负的下标是从数组结尾倒数的, 索引-1代表最后一个元素.
+被替换成parameter扩展值的字符串的长度. 如果parameter是'\*'或者'@', 则替换为位置参数的个数. 如果parameter是下标为'\*'或者'@'的数组名, 则替换为数组中元素的个数. 如果parameter是一个负数下标作为索引的数组名, 这个数字被解释为相对于parameter最大索引, 所以负的下标是从数组结尾倒数的, 索引-1代表最后一个元素.
 
 ```Shell
 [jgou@localhost ~]$ var=0123456789abcdefg
@@ -666,4 +666,3 @@ https://my.oschina.net/leejun2005/blog/368777
 http://xstarcd.github.io/wiki/shell/ShellParameterExpansion.html
 http://blog.csdn.net/jiankun_wang/article/details/4349013
 http://www.cnblogs.com/ziyunfei/p/4918675.html
-
