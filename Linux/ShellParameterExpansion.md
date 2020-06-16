@@ -608,7 +608,7 @@ Abcdefghijklmnopqrstuvwxyz
 Bash4.4中新增
 这个扩展要么是parameter值的转换，要么是parameter本身信息的转换，依赖于operator的值。每个operator是一个单独的字母。
 
-1. Q quote 的缩写，这个 operator 的功能是把 parameter 的值加上合适的引号，从而转换成在脚本中可重用的(reused)字符串形式：
+1.Q quote 的缩写，这个 operator 的功能是把 parameter 的值加上合适的引号，从而转换成在脚本中可重用的(reused)字符串形式：
 
 ```Shell
 $ foo=1
@@ -618,7 +618,7 @@ $ echo ${IFS@Q}
 ' \t\n' # 因为 IFS 中有不可打印字符，所以转换后的值会自动使用 ANSI 转义形式的引号 $'...'，并且里面的字符也会使用反斜杠转义的形式
 ```
 
-2. E escape 的缩写，这个 operator 的功能是把 parameter 的值中包含的转义序列解义(unescape)，就仿佛是把 parameter 的值放在了 $'...' 中间一样：
+2.E escape 的缩写，这个 operator 的功能是把 parameter 的值中包含的转义序列解义(unescape)，就仿佛是把 parameter 的值放在了 $'...' 中间一样：
 
 ```Shell
 $ foo='\u4e00'
@@ -628,7 +628,7 @@ $ echo ${foo@E}
 一 # 识别并转换 foo 的值中的转义序列，就像是执行了 echo $'\u4e00' 一样
 ```
 
-3. P prompt 的缩写，这个 operator 的功能是把 parameter 的值按照提示符变量(PS1...)的转义规则解义，就像 Bash 解义 PS1... 一样：
+3.P prompt 的缩写，这个 operator 的功能是把 parameter 的值按照提示符变量(PS1...)的转义规则解义，就像 Bash 解义 PS1... 一样：
 
 ```Shell
 $ foo=1
@@ -642,7 +642,7 @@ $ echo ${foo@A}
 declare -rx foo='1' # 变成了两个属性 rx
 ```
 
-4. a attribute 的缩写，这个 operator 的功能是获取 parameter 的所有属性：
+4.a attribute 的缩写，这个 operator 的功能是获取 parameter 的所有属性：
 
 ```Shell
 $ declare -irtu foo=1

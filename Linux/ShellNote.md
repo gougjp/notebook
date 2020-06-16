@@ -282,7 +282,7 @@ while true;  do if [ ! -f git_log ]; then sleep 1; echo "git_log is not exist"; 
 
 ## Sed 常用命令
 
-* 插入行
+- 插入行
 
 ```Shell
 # 在文件test.conf的第5行之前插入this is a test line
@@ -301,7 +301,7 @@ sed -i '/#   StrictHostKeyChecking ask/iStrictHostKeyChecking no' /etc/ssh/ssh_c
 sed -i '$a\somestring' file.txt
 ```
 
-* 替换
+- 替换
 
 ```Shell
 #将文件file中的text替换为replace, 替换每一行的第一个text, 如果某一行有多个text, 后面的几个都不会被替换
@@ -314,7 +314,7 @@ sed -i 's/text/replace/g' file
 sed -i '20s/text/replace/g' file
 ```
 
-* 删除行
+- 删除行
 
 ```Shell
 #删除匹配到的行, 匹配到多行的话就删除匹配到的所有行
@@ -345,7 +345,7 @@ sed '/somestring/,+n'd filename
 sed '/^$/d' filename
 ```
 
-* 在行首行位加HTML标签
+- 在行首行位加HTML标签
 
 ```Shell
 # 这里分号用于分割命令; q退出命令, 这样程序只处理第一行文本
