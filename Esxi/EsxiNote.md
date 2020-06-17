@@ -4,25 +4,30 @@
 
 去官网下载iso包, 刻录到U盘, 然后从U盘启动即可
 
-    * No Network Adapters
+  * No Network Adapters
 
-    以前安装6.0的时候没有出现过任何错误, 但是最近安装新版本(6.7)的时候, 出现了以下错误, 提示没有网络适配器
-    ![](images/0-1.jpeg)
-    可以通过以下方式解决(当前是以win7 x64环境):
+	以前安装6.0的时候没有出现过任何错误, 但是最近安装新版本(6.7)的时候, 出现了以下错误, 提示没有网络适配器
 
-        + 安装 VMware PowerCLI
+	![](images/0-1.jpeg)
+
+	可以通过以下方式解决(当前是以win7 x64环境):
+
+      + 安装 VMware PowerCLI
 
         下载地址: http://down.whsir.com/downloads/VMware-PowerCLI-6.5.0-4624819.exe
-        ![](images/0-2.jpeg)
+        
+		![](images/0-2.jpeg)
         ![](images/0-3.jpeg)
 
         可能会弹出提示需要下载PowerShell3.0, 下载地址：https://download.microsoft.com/download/E/7/6/E76850B8-DA6E-4FF5-8CCE-A24FC513FD16/Windows6.1-KB2506143-x64.msu
 
         如果还有其他依赖缺失，请自行下载
+
         ![](images/0-4.jpeg)
         ![](images/0-5.jpeg)
 
         重启系统后重新运行VMware-PowerCLI-6.5.0安装
+
         ![](images/0-6.jpeg)
         ![](images/0-7.jpeg)
         ![](images/0-8.jpeg)
@@ -30,16 +35,19 @@
         ![](images/0-10.jpeg)
 
         安装完成后电脑桌面会生成一个VMware PowerCLI，运行后如果看到以下报错
+
         ![](images/0-11.jpeg)
 
         解决办法：开始-所有程序-附件-Windows PowerShell(管理员身份运行), 输入以下命令
         ```Shell
         Set-ExecutionPolicy Unrestricted
         ```
+
         ![](images/0-11.jpeg)
 
         然后重新启动VMware PowerCLI会有个默认的设置, 直接回车即可, 第二次启动后可以看到如下画面, 此时VMware PowerCLI安装完成
-        ![](images/0-13.jpeg)
+        
+		![](images/0-13.jpeg)
 
         + 下载 http://down.whsir.com/downloads/ESXi-Customizer-PS-v2.6.0.ps1
 
@@ -50,13 +58,14 @@
         .\\ESXi-Customizer-PS-v2.6.0.ps1  -v67  -vft  -load  net55-r8168,sata-xahci
         ```
         参数解释：
-    　　-v67    指定是VMware ESXI为 6.7版本
-    　　-vft      在线连接到V-Front在线仓库下载驱动到VMware ESXI.ISO镜像包
-    　　-load   指定要添加到VMware ESXI.ISO镜像的驱动
-    　　Sata-xahci   常用的SATA控制器
+    　　  -v67    指定是VMware ESXI为 6.7版本
+    　　  -vft      在线连接到V-Front在线仓库下载驱动到VMware ESXI.ISO镜像包
+      　　-load   指定要添加到VMware ESXI.ISO镜像的驱动
+      　　Sata-xahci   常用的SATA控制器
     
         详细命令参数可以查看此网址： https://www.v-front.de/p/esxi-customizer-ps.html#download
-        ![](images/0-14.jpeg)
+        
+		![](images/0-14.jpeg)
 
         等执行结束后就可以看到当前目录下有个ESXi-6.7.0-20190802001-standard-customized.iso镜像文件了
 
@@ -74,7 +83,8 @@
         注意：打包时会自动在whsir文件夹内查找vib的驱动，生成的ESXI6.7.iso镜像会在当前目录下
 
         如果一切正常，可看到以下内容
-        ![](images/0-15.jpeg)
+        
+		![](images/0-15.jpeg)
 
     * 系统内存强制要求大于4G
 
@@ -106,12 +116,15 @@
     华硕BIOS中的intel vt-d为Intel 虚拟化技术选项, 可以通过在BIOS中的System Agent Configuration选项开启VT。具体设置步骤如下：
 
     * 开机后按“DEL”或“F2”进入BIOS
+    
     ![](images/0-16.jpeg)
     
     * 在Advanced选项页中找到System Agent Configuration并选择进入
+    
     ![](images/0-17.jpeg)
     
     * 进入System Agent Configuration后将VT-D选项设置为Enabled即可
+    
     ![](images/0-18.jpeg)
     ![](images/0-19.jpeg)
 
@@ -121,31 +134,39 @@
 
 点击主机 -> 配置 -> 硬件 -> 高级设置, 如果现实当前主机不支持直通, 则可能是硬件不支持, 或者BIOS中没有打开vt-d
 然后点击右侧的编辑 -> 在弹出的界面中选择要直通的设备 -> 确定即可
+
 ![](images/0-20.jpeg)
 
 然后选择虚拟机 -> 编辑虚拟机设置 -> 硬件 -> 添加 -> usb设备; 点击下一步就会出现刚才插入的设备, 选中对应的设备添加即可, 然后就可以在虚拟机中看到对应的USB
+
 ![](images/0-21.jpeg)
 
 - 在直通配置的时候, 如果选中了Intel Corporation HD Graphics 630这个显卡设备, 则在重启服务器的时候, 就卡在了vmkapi-v2_2_0_0_vmkernel_shim loaded successfully步骤
+
 ![](images/0-22.jpeg)
 ![](images/0-23.jpeg)
 
 - 在直通配置的时候, 如果选中了网卡, 则启动后出现以下错误: No compatible network adapter found. Please consult the product's Hardware Compatibility Guide(HCG) for a list of supported adapters.
+
 ![](images/0-24.jpeg)
 
 # 虚拟机克隆
 
 - ssh登录到ESXI服务器
 
-```Shell
-#创建要克隆的虚拟机的目录
-mkdir /vmfs/volumes/datastore1/ate-tester2
-#将已有的虚拟机ate-tester1.vmdk克隆到ate-tester2
-vmkfstools -i /vmfs/volumes/datastore1/ate-tester1/ate-tester1.vmdk /vmfs/volumes/datastore1/ate-tester2/ate-tester2.vmdk -d thin
-```
+		```Shell
+		#创建要克隆的虚拟机的目录
+		mkdir /vmfs/volumes/datastore1/ate-tester2
+		#将已有的虚拟机ate-tester1.vmdk克隆到ate-tester2
+		vmkfstools -i /vmfs/volumes/datastore1/ate-tester1/ate-tester1.vmdk /vmfs/volumes/datastore1/ate-tester2/ate-tester2.vmdk -d thin
+		```
 
 参考:
 https://vibsdepot.v-front.de/wiki/index.php/Welcome
+
 http://www.mamicode.com/info-detail-2754061.html
+
 https://blog.whsir.com/post-4462.html
+
 https://www.cnblogs.com/Sunzz/p/11438066.html
+
