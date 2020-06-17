@@ -14,6 +14,7 @@
 	常见的动态语言包括：D、JavaScript、ActionScript、Erlang、Groovy、Lisp、Lua、Perl、PHP、Python、Ruby、
 	Scala、Smalltalk、Tcl、VBScript等
 
+
 - 静态编程语言
 
 	静态类型语言:(Statically Typed Language-静态类型语言)静态类型语言与动态类型语言刚好相反, 它的数据类型是
@@ -32,6 +33,7 @@
 
 	是一旦变量的类型被确定，就不能转化的语言。实际上所谓的貌似转化，都是通过中间变量来达到，原本的变量的类
 	型肯定是没有变化的。
+
 
 - 弱类型语言
 
