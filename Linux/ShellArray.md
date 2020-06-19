@@ -172,3 +172,39 @@ echo ${fruits_value[apple]}
 |  ${array\[@]}          | 取关联数组所有值 |
 |  ${#array\[\*]}        | 取关联数组的长度 |
 |  ${#array\[@]}         | 取关联数组的长度 |
+
+<table>
+    <thead>
+        <tr>
+            <th>语法</th>
+            <th>描述</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>${!array\[\*]}</th>
+            <th>取关联数组所有键</th>
+        </tr>
+        <tr>
+            <th>${!array\[@]}</th>
+            <th>取关联数组所有键</th>
+        </tr>
+        <tr>
+            <th>${array\[\*]}</th>
+            <th>取关联数组所有值</th>
+        </tr>
+        <tr>
+            <th>${array\[@]}</th>
+            <th>取关联数组所有值</th>
+        </tr>
+        <tr>
+            <th>${#array\[\*]}</th>
+            <th>取关联数组的长度</th>
+        </tr>
+        <tr>
+            <th>${#array\[@]}</th>
+            <th>取关联数组的长度</th>
+        </tr>
+    </tbody>
+</table>
+
