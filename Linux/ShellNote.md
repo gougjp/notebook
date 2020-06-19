@@ -188,31 +188,31 @@ find的-mtime +150参数表示找出150天前的文件
 
 - 查看所有服务
 
-```Shel
+```Shell
 service --status-all
 ```
 
 - 启动服务
 
-```Shel
+```Shell
 service 服务名 start
 ```
 
 - 停止服务
 
-```Shel
+```Shell
 service 服务名 stop
 ```
 
 - 重启服务
 
-```Shel
+```Shell
 service 服务名 restart
 ```
 
 - 查看服务状态
 
-```Shel
+```Shell
 service 服务名 status
 ```
 
