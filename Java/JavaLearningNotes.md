@@ -25,20 +25,30 @@ public class HelloDate {
 
 "**错误: 找不到或无法加载主类 HelloDate.class**"
 
-删除class后缀则能成功执行: java HelloDate
+配置如下环境变量, 然后删除class后缀则能成功执行: java HelloDate
 
+```Shell
+set JAVA_HOME="C:\Program Files (x86)\Java\jre1.8.0_251"
+set CLASSPATH=".;%JAVA_HOME%\\lib:%JAVA_HOME%\\lib\\tools.jar"
+```
 
 ## 基本语法
 
-- 注释
+### 注释
 
 多行注释: /\* ... \*/
 单行注释: // ...
 注释文档: /\*\* ... \*/
 
-- 编码风格
+### 编码风格
 
 类名大写字母开头, 后面驼峰风格
 方法, 变量, 对象引用等名字以小写字母开头, 后面驼峰风格
+
+### 操作符
+
+
+
+
 
 
