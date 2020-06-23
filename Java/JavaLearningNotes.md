@@ -47,7 +47,9 @@ set CLASSPATH=".;%JAVA_HOME%\\lib:%JAVA_HOME%\\lib\\tools.jar"
 
 ### 操作符
 
+- 单个字符用单引号, 字符串用双引号
 
+- 
 
 
 

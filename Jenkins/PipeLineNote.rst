@@ -172,9 +172,9 @@ AtePipeline配置实例
                         currentBuild.description = "<a href=\"${REPORT_LINK}\">${REPORT_LINK}</a>"
                         
                         if (env.GITLAB_BRANCH != "master") {
-                            sh "grep \"${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}\" ${JENKINS_HOME}/userContent/Joblist.txt | awk -F':' '{print \$NF}' > prebuildnumber"
+                            sh "grep \"${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}\" ${JENKINS_HOME}/userContent/JobList.txt | awk -F':' '{print \$NF}' > prebuildnumber"
                             sh "[ \"`cat prebuildnumber`\" != \"\" ] && curl -X POST http://172.16.0.33:8080/job/${JOB_NAME}/`cat prebuildnumber`/stop --user junping.gou:@gjp1234 || exit 0"
-                            sh "echo ${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}:${TRIGGER_NUM} >> ${JENKINS_HOME}/userContent/Joblist.txt"
+                            sh "echo ${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}:${TRIGGER_NUM} >> ${JENKINS_HOME}/userContent/JobList.txt"
                         }
 
                         try {
@@ -210,6 +210,7 @@ AtePipeline配置实例
                         Compile_Software = "No"
                         Test_Firmware = "No"
                         Test_Software = "No"
+                        Compile_Result = "PASS"
 
                         if (fileExists("${GITLAB_GROUP}\\${GITLAB_NAME}\\02 ci\\02 firmware\\hlt\\robotRun.py")) {
                             Test_Firmware = "Yes"
@@ -237,6 +238,7 @@ AtePipeline配置实例
                         println("Compile_Software: ${Compile_Software}")
                         println("Test_Firmware: ${Test_Firmware}")
                         println("Test_Software: ${Test_Software}")
+                        println("currentBuild.result: ${currentBuild.result}")
                     }
                     updateGitlabCommitStatus name: 'Prepare', state: 'success'
                 }
@@ -244,7 +246,7 @@ AtePipeline配置实例
             
             stage("Compile") {
                 parallel {
-                    stage("Firmware") {
+                    stage("Firmware Compile") {
                         when { equals expected: Compile_Firmware, actual: "Yes" }
                         stages {
                             stage('Firmware Compile') {
@@ -274,10 +276,35 @@ AtePipeline配置实例
                                                 updateGitlabCommitStatus name: "FirmwareCompile", state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post compile firmware")
+                                                println("currentBuild.result: ${currentBuild.result}")
                                             }
                                         }
                                     }
-                                    
+                                    updateGitlabCommitStatus name: "FirmwareCompile", state: 'success'
+                                }
+                            }
+                        }
+                    }
+                            
+                    stage('Firmware Static') {
+                        when { equals expected: Compile_Firmware, actual: "Yes" }
+                        stages {
+                            stage('Firmware Static') {
+                                agent { label "static" }
+                                steps {
+                                    updateGitlabCommitStatus name: "FirmwareStatic", state: 'running'
+                                    // 下载代码
+                                    checkout changelog: false, poll: false, 
+                                        scm: [$class: "GitSCM", 
+                                              branches: [[name: "${GITLAB_COMMIT}"]], 
+                                              doGenerateSubmoduleConfigurations: false, 
+                                              extensions: [[$class:"RelativeTargetDirectory",
+                                                            relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
+                                                           [$class: "CleanCheckout"]], 
+                                              submoduleCfg: [], 
+                                              userRemoteConfigs: [[credentialsId: "123", 
+                                                                   url: "${GITLAB_HTTPURL}"]]]
+
                                     // 静态解析固件代码
                                     dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
                                         script {
@@ -286,7 +313,7 @@ AtePipeline配置实例
                                             } catch (err) {
                                                 echo "Caught error in firmware static: ${err}"
                                                 currentBuild.result = 'FAILURE'
-                                                updateGitlabCommitStatus name: "FirmwareCompile", state: 'failed'
+                                                updateGitlabCommitStatus name: "FirmwareStatic", state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post static firmware")
                                             }
@@ -300,12 +327,13 @@ AtePipeline配置实例
                                     //                displayStyleSeverity: true, 
                                     //                displayWarningSeverity: true, 
                                     //                pattern: 'cppcheck.xml'            
-                                    updateGitlabCommitStatus name: "FirmwareCompile", state: 'success'
+                                    updateGitlabCommitStatus name: "FirmwareStatic", state: 'success'
                                 }
                             }
                         }
                     }
-                    stage("Software") {
+
+                    stage("Software Compile") {
                         when { equals expected: Compile_Software, actual: "Yes" }
                         stages {
                             stage('Software Compile') {
@@ -338,7 +366,31 @@ AtePipeline配置实例
                                             }
                                         }
                                     }
-                                    
+                                    updateGitlabCommitStatus name: 'SoftwareCompile', state: 'success'
+                                }
+                            }
+                        }
+                    }
+
+                    stage('Software Static') {
+                        when { equals expected: Compile_Software, actual: "Yes" }
+                        stages {
+                            stage('Software Static') {
+                                agent { label "static" }
+                                steps {
+                                    updateGitlabCommitStatus name: 'SoftwareStatic', state: 'running'
+                                    // 下载代码
+                                    checkout changelog: false, poll: false, 
+                                        scm: [$class: "GitSCM", 
+                                              branches: [[name: "${GITLAB_COMMIT}"]], 
+                                              doGenerateSubmoduleConfigurations: false, 
+                                              extensions: [[$class:"RelativeTargetDirectory",
+                                                            relativeTargetDir:"${GITLAB_GROUP}/${GITLAB_NAME}"],
+                                                           [$class: "CleanCheckout"]], 
+                                              submoduleCfg: [], 
+                                              userRemoteConfigs: [[credentialsId: "123", 
+                                                                   url: "${GITLAB_HTTPURL}"]]]
+
                                     // 静态解析软件代码
                                     dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
                                         script {
@@ -347,7 +399,7 @@ AtePipeline配置实例
                                             } catch (err) {
                                                 echo "Caught error in software static: ${err}"
                                                 currentBuild.result = 'FAILURE'
-                                                updateGitlabCommitStatus name: 'SoftwareCompile', state: 'failed'
+                                                updateGitlabCommitStatus name: 'SoftwareStatic', state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post static software")
                                             }
@@ -361,7 +413,7 @@ AtePipeline配置实例
                                     //                displayStyleSeverity: true, 
                                     //                displayWarningSeverity: true, 
                                     //                pattern: 'cppcheck.xml'     
-                                    updateGitlabCommitStatus name: 'SoftwareCompile', state: 'success'
+                                    updateGitlabCommitStatus name: 'SoftwareStatic', state: 'success'
                                 }
                             }
                         }
@@ -372,13 +424,19 @@ AtePipeline配置实例
             stage("Test") {
                 parallel {
                     stage("Firmware") {
-                        when { equals expected: Test_Firmware, actual: "Yes" }
+                        when {
+                            allOf {
+                                equals expected: currentBuild.result, actual: "null"
+                                equals expected: Test_Firmware, actual: "Yes"
+                            }
+                        }
                         stages {
-                            stage('PreCheck') {
+                            stage('PreTest') {
                                 agent { label "master" }
                                 steps {
                                     script {
-                                        sh "for i in {1..180}; do if [ `grep \"${GITLAB_GROUP}:${GITLAB_NAME}\" ${JENKINS_HOME}/userContent/Joblist.txt | wc -l` -ge 2 ]; then echo \"Wait for the last job to finish ...\";sleep 10; else break; fi;done"
+                                        sh "echo \"${GITLAB_GROUP}:${GITLAB_NAME}\" >> ${JENKINS_HOME}/userContent/TestList.txt"
+                                        sh "set +x;for i in `seq 1 180`; do if [ `grep \"${GITLAB_GROUP}:${GITLAB_NAME}\" ${JENKINS_HOME}/userContent/TestList.txt | wc -l` -ge 2 ]; then echo \"Wait for the last job to finish ...\";sleep 10; else break; fi;done"
                                     }
                                 }
                             }
@@ -432,7 +490,12 @@ AtePipeline配置实例
                         }
                     }
                     stage("Software") {
-                        when { equals expected: Test_Software, actual: "Yes" }
+                        when {
+                            allOf {
+                                equals expected: currentBuild.result, actual: "null"
+                                equals expected: Test_Software, actual: "Yes"
+                            }
+                        }
                         stages {
                             stage('Software Test') {
                                 agent { label "software_test" }
@@ -490,6 +553,11 @@ AtePipeline配置实例
                     updateGitlabCommitStatus name: 'CollectionReports', state: 'success'
                     dir("${WORKSPACE}/${GITLAB_GROUP}/${GITLAB_NAME}") {
                         sh "\"02 ci/04 common/control.sh\""
+                        script {
+                            if (fileExists("02 ci/04 common/release_firmware.py")) {
+                                sh "python \"02 ci/04 common/release_firmware.py\""
+                            }
+                        }
                     }
                 }
             }
@@ -517,8 +585,10 @@ AtePipeline配置实例
                          to: '${FILE,path="mail_list"} ${DEFAULT_RECIPIENTS}'
             }
             always {
-                sh "sed -i \"/${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}/d\" ${JENKINS_HOME}/userContent/Joblist.txt"
-                sh "sed -i \"/^ *\$/d\" ${JENKINS_HOME}/userContent/Joblist.txt"
+                sh "sed -i \"/${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}/d\" ${JENKINS_HOME}/userContent/JobList.txt"
+                sh "sed -i \"/^ *\$/d\" ${JENKINS_HOME}/userContent/JobList.txt"
+                sh "sed -i \"/^${GITLAB_GROUP}:${GITLAB_NAME}\$/d\" ${JENKINS_HOME}/userContent/TestList.txt"
+                sh "sed -i \"/^ *\$/d\" ${JENKINS_HOME}/userContent/TestList.txt"
             }
         }
     }
