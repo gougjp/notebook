@@ -278,10 +278,11 @@ AtePipeline配置实例
                                                 println("currentBuild.result: ${currentBuild.result}")
                                             }
 
-                                            buildlog = readFile('build.log')
-                                            if (buildlog.contains('--- Build failed ----')) {
-                                                Test_Firmware = 'No'
-                                                currentBuild.result = 'FAILURE'
+                                            if (fileExists('build.log')) {
+                                                buildlog = readFile('build.log')
+                                                if (buildlog.contains('--- Build failed ----')) {
+                                                    Test_Firmware = "No"
+                                                }
                                             }
                                         }
                                     }
@@ -318,7 +319,7 @@ AtePipeline配置实例
                                             } catch (err) {
                                                 echo "Caught error in firmware static: ${err}"
                                                 currentBuild.result = 'FAILURE'
-                                                Test_Firmware = 'No'
+                                                Test_Firmware = "No"
                                                 updateGitlabCommitStatus name: "FirmwareStatic", state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post static firmware")
@@ -590,7 +591,6 @@ AtePipeline配置实例
             }
         }
     }
-
 
 SoftwareMiddleware配置实例
 ---------------------------------
