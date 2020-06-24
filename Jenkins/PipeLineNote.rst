@@ -210,7 +210,6 @@ AtePipeline配置实例
                         Compile_Software = "No"
                         Test_Firmware = "No"
                         Test_Software = "No"
-                        Compile_Result = "PASS"
 
                         if (fileExists("${GITLAB_GROUP}\\${GITLAB_NAME}\\02 ci\\02 firmware\\hlt\\robotRun.py")) {
                             Test_Firmware = "Yes"
@@ -278,6 +277,12 @@ AtePipeline配置实例
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post compile firmware")
                                                 println("currentBuild.result: ${currentBuild.result}")
                                             }
+
+                                            buildlog = readFile('build.log')
+                                            if (buildlog.contains('--- Build failed ----')) {
+                                                Test_Firmware = 'No'
+                                                currentBuild.result = 'FAILURE'
+                                            }
                                         }
                                     }
                                     updateGitlabCommitStatus name: "FirmwareCompile", state: 'success'
@@ -313,6 +318,7 @@ AtePipeline配置实例
                                             } catch (err) {
                                                 echo "Caught error in firmware static: ${err}"
                                                 currentBuild.result = 'FAILURE'
+                                                Test_Firmware = 'No'
                                                 updateGitlabCommitStatus name: "FirmwareStatic", state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post static firmware")
@@ -360,6 +366,7 @@ AtePipeline配置实例
                                             } catch (err) {
                                                 echo "Caught error in software compile: ${err}"
                                                 currentBuild.result = 'FAILURE'
+                                                Test_Firmware = "No"
                                                 updateGitlabCommitStatus name: 'SoftwareCompile', state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post compile software")
@@ -399,6 +406,7 @@ AtePipeline配置实例
                                             } catch (err) {
                                                 echo "Caught error in software static: ${err}"
                                                 currentBuild.result = 'FAILURE'
+                                                Test_Firmware = "No"
                                                 updateGitlabCommitStatus name: 'SoftwareStatic', state: 'failed'
                                             } finally {
                                                 bat("call \"02 ci\\04 common\\common_script.bat\" post static software")
@@ -424,12 +432,7 @@ AtePipeline配置实例
             stage("Test") {
                 parallel {
                     stage("Firmware") {
-                        when {
-                            allOf {
-                                equals expected: currentBuild.result, actual: "null"
-                                equals expected: Test_Firmware, actual: "Yes"
-                            }
-                        }
+                        when { equals expected: Test_Firmware, actual: "Yes" }
                         stages {
                             stage('PreTest') {
                                 agent { label "master" }
@@ -490,12 +493,7 @@ AtePipeline配置实例
                         }
                     }
                     stage("Software") {
-                        when {
-                            allOf {
-                                equals expected: currentBuild.result, actual: "null"
-                                equals expected: Test_Software, actual: "Yes"
-                            }
-                        }
+                        when { equals expected: Test_Software, actual: "Yes" }
                         stages {
                             stage('Software Test') {
                                 agent { label "software_test" }
@@ -592,6 +590,7 @@ AtePipeline配置实例
             }
         }
     }
+
 
 SoftwareMiddleware配置实例
 ---------------------------------
