@@ -352,4 +352,22 @@ sed '/^$/d' filename
 sed -n 's/^/<h1>/;s/$/<\/h1>p;q' rime.txt
 ```
 
+## Centos 下卸载包
 
+rpm -qa | grep <packagename>
+rpm -e --nodeps <fullpackagename>
+
+## Centos 下安装Maven最新版本
+
+- 下载: http://maven.apache.org/download.cgi, 选择二进制包(Binary tar.gz archive)下载
+
+- 解压到/opt下, 其他目录下也可以
+
+- 配置/etc/profile
+
+```Shell
+export MAVEN_HOME=/opt/apache-maven-3.6.3
+export PATH=$PATH:$MAVEN_HOME/bin
+
+source /etc/profile
+```
