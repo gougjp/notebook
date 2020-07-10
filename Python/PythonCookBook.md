@@ -1350,5 +1350,49 @@ def task_run():
         print(str(err))
 ```
 
+## Python 生成全排列数组
+
+- 自己实现
+
+```Python
+import copy
+
+def permutation(lst,k):
+    result = []
+    length = len(lst)
+    tmp = [0]*k
+
+    def next_num(a,ni=0):
+        if ni == k:
+            result.append(copy.copy(tmp))
+            return
+        for lj in a:
+            tmp[ni] = lj
+            b = a[:]
+            b.pop(a.index(lj))
+            next_num(b,ni+1)
+
+    c = lst[:]
+    next_num(c,0)
+
+    return result
+    
+
+if __name__ == '__main__':
+    lst = [1, 2, 3, 4]
+    for i in permutation(lst, len(lst)):
+        print(i)
+```
+
+- 使用itertools中的permutations函数
+
+```Python
+from itertools import permutations
+
+s = [3, 2, 1, 4]
+l = permutations(sorted(s))
+for x in l:
+    print(x)
+```
 
 

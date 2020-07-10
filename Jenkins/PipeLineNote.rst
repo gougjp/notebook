@@ -439,7 +439,7 @@ AtePipeline配置实例
                                 agent { label "master" }
                                 steps {
                                     script {
-                                        sh "echo \"${GITLAB_GROUP}:${GITLAB_NAME}\" >> ${JENKINS_HOME}/userContent/TestList.txt"
+                                        sh "echo \"${GITLAB_GROUP}:${GITLAB_NAME}:${TRIGGER_NUM}\" >> ${JENKINS_HOME}/userContent/TestList.txt"
                                         sh "set +x;for i in `seq 1 180`; do if [ `grep \"${GITLAB_GROUP}:${GITLAB_NAME}\" ${JENKINS_HOME}/userContent/TestList.txt | wc -l` -ge 2 ]; then echo \"Wait for the last job to finish ...\";sleep 10; else break; fi;done"
                                     }
                                 }
@@ -586,7 +586,7 @@ AtePipeline配置实例
             always {
                 sh "sed -i \"/${GITLAB_GROUP}:${GITLAB_NAME}:${GITLAB_BRANCH}/d\" ${JENKINS_HOME}/userContent/JobList.txt"
                 sh "sed -i \"/^ *\$/d\" ${JENKINS_HOME}/userContent/JobList.txt"
-                sh "sed -i \"/^${GITLAB_GROUP}:${GITLAB_NAME}\$/d\" ${JENKINS_HOME}/userContent/TestList.txt"
+                sh "sed -i \"/^${GITLAB_GROUP}:${GITLAB_NAME}:${TRIGGER_NUM}\$/d\" ${JENKINS_HOME}/userContent/TestList.txt"
                 sh "sed -i \"/^ *\$/d\" ${JENKINS_HOME}/userContent/TestList.txt"
             }
         }
