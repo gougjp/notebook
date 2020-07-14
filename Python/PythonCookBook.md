@@ -1395,4 +1395,30 @@ for x in l:
     print(x)
 ```
 
+## Python2 写文件的时候有中文出现UnicodeEncodeError错误
 
+- 错误信息
+
+```Shell
+UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-78: ordinal not in range(128)
+```
+
+本来以为数据读取错误，我特将fp.write改成print，结果数据全部读取并显示在命令控制台上了，证明代码是没有问题的，
+仔细看了下异常信息，貌似是因为编码问题：Unicode编码与ASCII编码的不兼容，其实这个Python脚本文件是由utf-8编码的，
+同时SQlite3数据库存取的也是UTF-8格式，Python默认环境编码通过下面的方法可以获取
+
+- 可以通过如下方法解决
+
+```Python
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+```
+
+如果缺少reload(sys)一句则会出现以下错误
+
+```Shell
+Traceback (most recent call last):
+File "<stdin>", line 1, in <module>
+AttributeError: 'module' object has no attribute 'setdefaultencoding'
+```
