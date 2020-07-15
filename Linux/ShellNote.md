@@ -371,3 +371,17 @@ export PATH=$PATH:$MAVEN_HOME/bin
 
 source /etc/profile
 ```
+
+## Linux下挂载网盘
+
+- 在/etc/fstab文件中增加如下内容
+
+```Shell
+//<ip>/dll    /home/releasedll    cifs    rw,dir_mode=0777,file_mode=0777,username=<user>,password=<password>  0 0
+```
+
+- 然后执行如下命令
+
+```Shell
+mount -a
+```
