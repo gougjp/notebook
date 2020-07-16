@@ -1422,3 +1422,70 @@ Traceback (most recent call last):
 File "<stdin>", line 1, in <module>
 AttributeError: 'module' object has no attribute 'setdefaultencoding'
 ```
+
+## pyenv实现多个Python版本
+
+系统 Centos 7
+
+- 安装依赖包: 
+
+```Shell
+yum -y install gcc gcc-c++ make git patch openssl-devel zlib-devel readline-devel sqlite-devel bzip2-devel bzip2-libs
+```
+
+- 下载pyenv
+
+```Shell
+git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+```
+
+- 配置
+
+将如下语句加入到~/.bashrc中
+
+```Shell
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+
+if command -v pyenv 1>/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+fi
+```
+
+使配置生效
+
+```Shell
+source .bashrc
+```
+
+- 安装某个Python版本
+
+首先我们可以查看一下有哪些版本的python 可以安装
+
+```Shell
+pyenv install --list
+```
+
+安装
+
+```Shell
+pyenv install 3.6.9
+```
+
+
+
+- 常用命令
+
+```Shell
+pyenv version            # 查看当前系统使用的python版本
+pyenv versions           # 查看当前系统拥有的python版本
+pyenv install 3.6.9      # 安装3.6.9，可使用-v参数查看详细输出
+pyenv uninstall 3.6.9    # 卸载
+pyenv local 3.6.9        # local仅对当前目录及子目录生效，告诉当前目录使用版本3.6.9，
+pyenv global             # 告诉全局环境使用某个版本，为了不破坏系统环境，不建议使用global设置全局版本
+pyenv rehash             # 重建环境变量，每当你增删 Python 版本或带有可执行文件的包（如 pip）以后，都应该执行一次本命令
+```
+
+
+
+
