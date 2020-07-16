@@ -1486,6 +1486,26 @@ pyenv global             # 告诉全局环境使用某个版本，为了不破�
 pyenv rehash             # 重建环境变量，每当你增删 Python 版本或带有可执行文件的包（如 pip）以后，都应该执行一次本命令
 ```
 
+- 配置pip国内源
 
+新建文件 ~/.pip/pip.conf
 
+并在文件中配置如下内容
 
+```Shell
+[root@localhost ate]# cat ~/.pip/pip.conf
+[global]
+index-url = http://mirrors.aliyun.com/pypi/simple/
+[install]
+trusted-host = mirrors.aliyun.com
+```
+
+也可以使用其他国内源
+
+```
+阿里云 http://mirrors.aliyun.com/pypi/simple/ 
+中国科技大学 https://pypi.mirrors.ustc.edu.cn/simple/ 
+豆瓣(douban) https://pypi.douban.com/simple/ 
+清华大学 https://pypi.tuna.tsinghua.edu.cn/simple/ 
+中国科学技术大学 http://pypi.mirrors.ustc.edu.cn/simple/
+```
