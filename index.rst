@@ -114,6 +114,13 @@
 .. toctree::
    :glob:
    :maxdepth: 2
+   :caption: DataBase
+    
+   DataBase/*
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
    :caption: Help
     
    Help/*
