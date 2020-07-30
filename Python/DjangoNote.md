@@ -104,6 +104,23 @@ polls/
 1 directory, 7 files
 ```      
 
+## 配置已有数据库
+
+```Python
+DATABASES = {
+    'default': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.oracle',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': '<server_ip>:1521/Product_Test_DB',
+        'USER':'<username>',
+        'PASSWORD':'<password>',
+    }
+}
+```
+
+然后在项目中执行命令 **python manage.py inspectdb**
+
 ## 编写第一个试图
 
 打开 polls/views.py，把下面这些 Python 代码输入进去:
