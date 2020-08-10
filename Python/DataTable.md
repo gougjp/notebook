@@ -8,7 +8,7 @@
 
 - DataTable有多个配置项:
 
-```JavaScripts
+```js
 <!-- DataTables -->
 <link rel="stylesheet" href="/static/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
 
@@ -44,7 +44,7 @@ $('#table1').DataTable({
 });
 ```
 
-```JavaScripts
+```js
 $('#table1').dataTable({
         searching : false, //去掉搜索框方法一：百度上的方法，但是我用这没管用
         sDom : '"top"i',   //去掉搜索框方法二：这种方法可以，动态获取数据时会引起错误
