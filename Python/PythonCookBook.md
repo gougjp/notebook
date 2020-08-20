@@ -1509,3 +1509,42 @@ trusted-host = mirrors.aliyun.com
 清华大学 https://pypi.tuna.tsinghua.edu.cn/simple/ 
 中国科学技术大学 http://pypi.mirrors.ustc.edu.cn/simple/
 ```
+
+## 判断一个文件是二进制文件还是文本文件
+
+```Python
+def is_elffile(filename):
+    try:
+        FileStates = os.stat(filename)
+        FileMode = FileStates[stat.ST_MODE]
+        if not stat.S_ISREG(FileMode) or stat.S_ISLNK(FileMode):  # 如果文件既不是普通文件也不是链接文件
+            return False
+        with open(filename, 'rb') as f:
+            header = (bytearray(f.read(4))[1:4]).decode(encoding="utf-8")
+            if header in ["ELF"]:
+                return True
+    except UnicodeDecodeError as e:
+        pass
+ 
+    return False
+
+def is_text(filename):
+    s=open(filename).read(512)
+    text_characters = "".join(map(chr, range(32, 127)) + list("\n\r\t\b"))
+    _null_trans = string.maketrans("", "")
+    if not s:
+        # Empty files are considered text
+        return True
+    if "\0" in s:
+        # Files with null bytes are likely binary
+        return False
+    # Get the non-text characters (maps a character to itself then
+    # use the 'remove' option to get rid of the text characters.)
+    t = s.translate(_null_trans, text_characters)
+    # If more than 30% non-text characters, then
+    # this is considered a binary file
+    if float(len(t))/float(len(s)) > 0.30:
+        return False
+
+    return True
+```
