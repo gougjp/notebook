@@ -85,6 +85,12 @@ base64.b64encode('junping.gou:@gjp1234') #冒号前面是用户名，冒号后�
 base64.b64decode('anVucGluZy5nb3U6QGdqcDEyMzQ==')
 ```
 
+## 获取JOB的控制台输出
+
+```Shell
+curl -u <username>:<password> ${BUILD_URL}/consoleText --output output.log
+```
+
 ## Jenkins 插件
 
 - Job Configuration History #查看Job配置历史
