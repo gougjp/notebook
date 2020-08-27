@@ -131,6 +131,20 @@ _append_run_path()
 
 然后在应用程序中用import PyQt5之前import fix_qt_import_error; 重新打包后即能正常运行
 
+## 在label中加载图片时报以下错误
+
+```Python
+self.INBOX_LABEL_LED.setPixmap(QtGui.QPixmap("icons/blue-led.png"))
+```
+
+**Cocos2dx:libpng warning: iCCP: known incorrect sRGB profile**
+
+解决方法:
+
+https://www.cnblogs.com/Fallever/p/6843235.html
+
+
+
 参考:
 https://stackoverflow.com/questions/56949297/how-to-fix-importerror-unable-to-find-qt5core-dll-on-path-after-pyinstaller-b
 
