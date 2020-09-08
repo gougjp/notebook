@@ -1548,3 +1548,30 @@ def is_text(filename):
 
     return True
 ```
+
+## python 日志模块logging的简单实用
+
+- 在主文件中配置日志
+
+```Python
+import logging
+
+computername = os.getenv('COMPUTERNAME')
+timestamp = datetime.datetime.today().strftime("%Y-%m-%d(%H)")
+
+logging.basicConfig(
+    filename = 'C:\\ATE\\{}\\FQC_{}.log'.format(computername, timestamp),
+    level = logging.DEBUG,
+    format = '%(asctime)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s',
+)
+```
+
+- 然后在所有源文件中都可以直接实用, 包括主文件; 这样日志都记录到配置的日志文件中了
+
+```Python
+import logging
+logging.info('test in {}'.format(__file__))
+```
+
+
+
