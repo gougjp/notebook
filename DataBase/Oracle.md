@@ -261,3 +261,15 @@ END;
 - 在view(视图)中, 只能使用as
 - 在corsor(游标)中, 只能使用is
 - 对于procedure(存储过程), function(函数), package(程序包)来说, as和is没有区别. 只是使用习惯而已.
+
+## 查询数据库表每个字段的信息, 包括字段名, 字段类型, 字段长度等
+
+下面是查询用户SUPERXON下STORAGEMANAGE_CONFIG的字段信息; 用户名和表名必须大写
+```Sql
+select column_name, data_type, data_length from dba_tab_columns where table_name = 'STORAGEMANAGE_CONFIG' and owner = 'SUPERXON'
+```
+
+也可以使用星号查询所有信息
+```Sql
+select * from dba_tab_columns where table_name = 'STORAGEMANAGE_CONFIG' and owner = 'SUPERXON'
+```
