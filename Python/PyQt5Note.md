@@ -85,6 +85,34 @@ self.ui.textEdit_2.textCursor().block().text()
 self.ui.textEdit_2.textCursor().blockNumber()
 ```
 
+- 界面设置代码
+
+```Python
+# 设置窗口透明度
+Ui_MainWindow.setWindowOpacity(0.9)
+
+# 隐藏边框
+Ui_MainWindow.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+
+# 设置背景色
+pe = QPalette()
+Ui_MainWindow.setAutoFillBackground(True)
+pe.setColor(QPalette.Window,Qt.lightGray)
+Ui_MainWindow.setPalette(pe)
+
+# 设置图标
+Ui_MainWindow.setWindowIcon(QIcon('Amg.jpg'))
+
+# 设置QSS样式
+self.pushbutton_close.setStyleSheet('''QPushButton{background:#F76677;border-radius:15px;} QPushButton:hover{background:red;}''')
+
+# 字体居中
+self.text_label.setAlignment(Qt.AlignCenter)
+self.label.setAlignment(Qt.AlignCenter)
+```
+
+
+
 ## ImportError: unable to find Qt5Core.dll on PATH
 
 - 现象：
