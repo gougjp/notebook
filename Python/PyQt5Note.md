@@ -159,6 +159,17 @@ _append_run_path()
 
 然后在应用程序中用import PyQt5之前import fix_qt_import_error; 重新打包后即能正常运行
 
+## QtAwesome界面图标
+
+- 安装方法:
+
+```Shell
+pip install QtAwesome
+```
+
+https://pypi.org/project/QtAwesome/
+https://fontawesome.com/v4.7.0/icons/
+
 ## 在label中加载图片时报以下错误
 
 ```Python
