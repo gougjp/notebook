@@ -273,3 +273,129 @@ select column_name, data_type, data_length from dba_tab_columns where table_name
 ```Sql
 select * from dba_tab_columns where table_name = 'STORAGEMANAGE_CONFIG' and owner = 'SUPERXON'
 ```
+
+## Oracle存储二进制文件
+
+可以通过BLOB类型的字段来存储二进制文件, BLOB是指二进制大对象, 也就是英文Binary Large Object的缩写.
+
+以下是通过Python来实现BLOB数据的读写的例子:
+
+```Python
+import cx_Oracle
+
+class DBInterFace():
+    def __init__(self, oracle_ip, username, password):
+        self.oracle_ip = oracle_ip
+        self.username = username
+        self.password = password
+        self.oracle_port = '1521'
+        self.oracle_service = 'Product_Test_DB'
+        self.conn = None
+
+    def connect(self):
+        command = self.username + "/" + self.password + "@" + self.oracle_ip + "/" + self.oracle_service
+        self.conn = cx_Oracle.connect(command)
+
+    def close(self):
+        self.conn.close()
+
+    def execute(self, sql_command):
+        logging.info(sql_command)
+        cursor = self.conn.cursor()
+        cursor.execute(sql_command)        
+        result = self.conn.commit()
+        cursor.close()
+        return result
+        
+    def execute_blob(self, sql_command, content):
+        logging.info(sql_command)
+        cursor = self.conn.cursor()
+        cursor.setinputsizes(blobData = cx_Oracle.BLOB)
+        cursor.execute(sql_command, {'blobData': content})
+        result = self.conn.commit()
+        cursor.close()
+        return result
+
+    def query(self, sql_command):
+        logging.info(sql_command)
+        cursor = self.conn.cursor()
+        cursor.execute(sql_command)
+        datas = cursor.fetchall()
+        logging.info(datas)
+        return datas
+
+class DBOperation():
+    def __init__(self, oracle_ip, username, password):
+        self.db = DBInterFace(oracle_ip, username, password)
+        self.oper = username
+
+    def connect(self):
+        self.db.connect()
+
+    def close(self):
+        self.db.close()
+
+    def get_system_date(self):
+        sqlstr = 'select sysdate from dual'
+        date_info = self.db.query(sqlstr)
+        if len(date_info) == 0:
+            datestr = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            datestr = date_info[0][0].strftime("%Y-%m-%d %H:%M:%S")
+
+        return datestr
+
+    def update_fw_image(self, datas, pn, bom, sfrmnum, fwtype, fwversion, fepnumber):
+        sqlstr = "select count(1) from superxon.autodt_spec_image where partnumber = '{}' and version = '{}'".format(pn, bom)
+        countinfo = self.db.query(sqlstr)
+        if len(countinfo) == 0:
+            raise Exception(u'获取老固件失败')
+        count = int(countinfo[0][0])
+    
+        modify_date = self.get_system_date()
+        if count == 0:
+            sqlstr = '''insert into superxon.autodt_spec_image 
+                            (id, partnumber, version, firmware_ver, firmware_flag, firmware_image, modifydate, sfrm_number, fep_number) 
+                        values 
+                            (superxon.s_id.nextval, '{}', '{}', '{}', '{}', :blobData, '{}', '{}', '{}')
+                        '''.format(pn, bom, fwversion, fwtype, modify_date, sfrmnum, fepnumber)
+        else:
+            sqlstr = '''update superxon.autodt_spec_image 
+                        set firmware_ver = '{}', 
+                            firmware_image = :blobData, 
+                            modifydate = '{}' 
+                        where 
+                            partnumber = '{}' and version = '{}'
+                     '''.format(fwversion, modify_date, pn, bom)
+
+        self.db.execute_blob(sqlstr, datas)
+        
+        sqlstr = "select firmware_image from superxon.autodt_spec_image where partnumber = '{}' and version = '{}'".format(pn, bom)
+        date_info = self.db.query(sqlstr)
+        if len(date_info) != 1:
+            raise Exception(u'回读固件失败')
+
+        read_datas = date_info[0][0].read()
+        if datas != read_datas:
+            raise Exception(u'固件回读检查失败')
+```
+
+调用update_fw_image的时候, 第一个参数datas就是二进制文件的数据, 数据类型为byte, 可以用bytes()函数将Python中的列表转成byte
+
+```Python
+>>> bytes([1,2,3,4])
+b'\x01\x02\x03\x04'
+>>>
+```
+
+二进制bin文件读取方式, 这里返回的就是byte类型:
+
+```Python
+def read_binfile(fwfile):
+    with open(fwfile, 'rb') as fr:
+        return fr.read()
+```
+
+
+
+
