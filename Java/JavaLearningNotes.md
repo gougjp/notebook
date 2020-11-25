@@ -85,3 +85,21 @@ i = (int)lng2;           // 必须进行显示转换
 
 ### 控制执行流程
 
+- Java不允许将一个非布尔值, 比如数字作为布尔值使用
+
+- 支持的控制语句: if-else, while, do-while, for, return, break, countinue, switch; 不支持goto
+
+- Java里唯一用到逗号操作符的地方就是for循环的控制表达式
+
+- foreach语法: 
+
+```Java
+for (float x : f)
+    System.out.println(x)
+```
+
+这里f是一个浮点数数组, 在循环中float x定义了一个float临时变量, 然后循环把f中的每一个元素赋值给x进行循环
+
+
+
+
