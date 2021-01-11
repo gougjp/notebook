@@ -85,6 +85,8 @@ base64.b64encode('junping.gou:@gjp1234') #冒号前面是用户名，冒号后�
 base64.b64decode('anVucGluZy5nb3U6QGdqcDEyMzQ==')
 ```
 
+也可以在Jenkins的用户设置界面直接查看API Token: 点击右上的用户名, 点击左边的设置, 点击API Token下的Show API Token 
+
 ## 获取JOB的控制台输出
 
 ```Shell
