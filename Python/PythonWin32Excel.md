@@ -1,6 +1,8 @@
 # 使用pywin32处理excel文件
 
 Windows官方接口
+https://docs.microsoft.com/zh-cn/office/vba/api/word.document.exportasfixedformat
+https://docs.microsoft.com/en-us/office/vba/api/excel.range.exportasfixedformat
 
 ```Python
 #!/usr/bin/env python
