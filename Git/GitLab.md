@@ -150,7 +150,19 @@ if __name__ == '__main__':
         sys.exit(-1)
 ```
 
+### GitLab服务器搭建
 
+系统为CentOS7
+
+1. 下在gitlab的rpm包: 在https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7/网址找最新的版本
+
+    ```Shell
+    wget https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7/gitlab-ce-13.9.1-ce.0.el7.x86_64.rpm
+    ```
+
+2. 安装: rpm -ivh gitlab-ce-13.9.1-ce.0.el7.x86_64.rpm
+
+    ![](images/gitlabinstall.jpg)
 
 
 
