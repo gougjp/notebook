@@ -160,12 +160,21 @@ if __name__ == '__main__':
     wget https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7/gitlab-ce-13.9.1-ce.0.el7.x86_64.rpm
     ```
 
-2. 安装: rpm -ivh gitlab-ce-13.9.1-ce.0.el7.x86_64.rpm
+2. 安装: rpm -ivh gitlab-ce-13.9.1-ce.0.el7.x86_64.rpm, 出现如下图显示则说明安装成功
 
     ![](images/gitlabinstall.jpg)
+    
+3. 配置gitlab的IP和端口
 
+    ![](images/gitlabconfig.jpg)
 
+4. 重新配置gitlab: **gitlab-ctl reconfigure**
 
+    ![](images/gilabtreconfig.jpeg)
+
+5. 启动GitLab：gitlab-ctl restart
+
+    ![](images/gitlabrestart.jpeg)
 
 
 
