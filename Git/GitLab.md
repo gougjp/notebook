@@ -175,6 +175,8 @@ if __name__ == '__main__':
 5. 启动GitLab：gitlab-ctl restart
 
     ![](images/gitlabrestart.jpeg)
+    
+6. 用web客户端访问gitlab
 
 
 
