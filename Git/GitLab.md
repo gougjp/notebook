@@ -178,6 +178,8 @@ if __name__ == '__main__':
     
 6. 用web客户端访问gitlab
 
+7. 停止GitLab: gitlab-ctl stop
+
 
 
 

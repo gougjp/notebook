@@ -121,6 +121,13 @@
 .. toctree::
    :glob:
    :maxdepth: 2
+   :caption: Docker
+    
+   Docker/*
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
    :caption: Help
     
    Help/*
