@@ -216,3 +216,220 @@
     =============
     jenkins@17755738c01e:~/userContent$
     ```
+    
+### 使用registry镜像创建本地仓库
+
+1. 拉取registry镜像
+
+    ```Shell
+    [root@localhost ~]# docker pull registry
+    Using default tag: latest
+    latest: Pulling from library/registry
+    0a6724ff3fcd: Pull complete
+    d550a247d74f: Pull complete
+    1a938458ca36: Pull complete
+    acd758c36fc9: Pull complete
+    9af6d68b484a: Pull complete
+    Digest: sha256:d5459fcb27aecc752520df4b492b08358a1912fcdfa454f7d2101d4b09991daa
+    Status: Downloaded newer image for registry:latest
+    docker.io/library/registry:latest
+    [root@localhost ~]#
+    [root@localhost ~]# docker images
+    REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+    registry     latest    678dfa38fcfa   2 months ago   26.2MB
+    ```
+
+2. 在/usr/lib/systemd/system/docker.service文件的ExecStart字段中增加--insecure-registry \<ip\>:5000配置, 其中\<ip\>为当前系统的IP地址
+
+    ```Shell
+    [root@localhost ~]# cat /usr/lib/systemd/system/docker.service
+    [Unit]
+    Description=Docker Application Container Engine
+    Documentation=https://docs.docker.com
+    After=network-online.target firewalld.service containerd.service
+    Wants=network-online.target
+    Requires=docker.socket containerd.service
+
+    [Service]
+    Type=notify
+    # the default is not to use systemd for cgroups because the delegate issues still
+    # exists and systemd currently does not support the cgroup feature set required
+    # for containers run by docker
+    ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock --insecure-registry 172.20.3.139:5000
+    ExecReload=/bin/kill -s HUP $MAINPID
+    TimeoutSec=0
+    RestartSec=2
+    Restart=always
+
+    # Note that StartLimit* options were moved from "Service" to "Unit" in systemd 229.
+    # Both the old, and new location are accepted by systemd 229 and up, so using the old location
+    # to make them work for either version of systemd.
+    StartLimitBurst=3
+
+    # Note that StartLimitInterval was renamed to StartLimitIntervalSec in systemd 230.
+    # Both the old, and new name are accepted by systemd 230 and up, so using the old name to make
+    # this option work for either version of systemd.
+    StartLimitInterval=60s
+
+    # Having non-zero Limit*s causes performance problems due to accounting overhead
+    # in the kernel. We recommend using cgroups to do container-local accounting.
+    LimitNOFILE=infinity
+    LimitNPROC=infinity
+    LimitCORE=infinity
+
+    # Comment TasksMax if your systemd version does not support it.
+    # Only systemd 226 and above support this option.
+    TasksMax=infinity
+
+    # set delegate yes so that systemd does not reset the cgroups of docker containers
+    Delegate=yes
+
+    # kill only the docker process, not all processes in the cgroup
+    KillMode=process
+    OOMScoreAdjust=-500
+
+    [Install]
+    WantedBy=multi-user.target
+    [root@localhost ~]#
+    ```
+
+3. 重启docker服务
+
+    ```Shell
+    [root@localhost ~]# systemctl daemon-reload
+    [root@localhost ~]# systemctl restart docker
+    ```
+
+4. 运行容器
+
+    ```Shell
+    [root@localhost ~]# mkdir /usr/local/registry
+    [root@localhost ~]#
+    [root@localhost ~]# docker run -d -p 5000:5000 -v /usr/local/registry:/var/lib/registry registry
+    2e58f8e33125403ea814bd6b3f67912d7512bb673ed3c552953059b75ac4c6f1
+    [root@localhost ~]#
+    [root@localhost ~]# docker ps
+    CONTAINER ID   IMAGE      COMMAND                  CREATED         STATUS         PORTS                    NAMES
+    2e58f8e33125   registry   "/entrypoint.sh /etc…"   4 seconds ago   Up 3 seconds   0.0.0.0:5000->5000/tcp   agitated_kalam
+    ```
+
+5. 拉取一个Jenkins容器
+
+    ```Shell
+    [root@localhost ~]# docker pull jenkins:2.60.3
+    2.60.3: Pulling from library/jenkins
+    55cbf04beb70: Pull complete
+    1607093a898c: Pull complete
+    9a8ea045c926: Pull complete
+    d4eee24d4dac: Pull complete
+    c58988e753d7: Pull complete
+    794a04897db9: Pull complete
+    70fcfa476f73: Pull complete
+    0539c80a02be: Pull complete
+    54fefc6dcf80: Pull complete
+    911bc90e47a8: Pull complete
+    38430d93efed: Pull complete
+    7e46ccda148a: Pull complete
+    c0cbcb5ac747: Pull complete
+    35ade7a86a8e: Pull complete
+    aa433a6a56b1: Pull complete
+    841c1dd38d62: Pull complete
+    b865dcb08714: Pull complete
+    5a3779030005: Pull complete
+    12b47c68955c: Pull complete
+    1322ea3e7bfd: Pull complete
+    Digest: sha256:eeb4850eb65f2d92500e421b430ed1ec58a7ac909e91f518926e02473904f668
+    Status: Downloaded newer image for jenkins:2.60.3
+    docker.io/library/jenkins:2.60.3
+    [root@localhost ~]#
+    [root@localhost ~]# docker images
+    REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+    registry     latest    678dfa38fcfa   2 months ago   26.2MB
+    jenkins      2.60.3    cd14cecfdb3a   2 years ago    696MB
+    [root@localhost ~]#
+    ```
+
+6. 在本地host上, 重命名镜像, 上传到本地仓库中, 添加新的tag, 使之与registry相匹配
+
+    ```Shell
+    [root@localhost ~]# docker tag jenkins:2.60.3 172.20.3.139:5000/jenkins_test
+    [root@localhost ~]# docker images
+    REPOSITORY                       TAG       IMAGE ID       CREATED        SIZE
+    registry                         latest    678dfa38fcfa   2 months ago   26.2MB
+    172.20.3.139:5000/jenkins_test   latest    cd14cecfdb3a   2 years ago    696MB
+    jenkins                          2.60.3    cd14cecfdb3a   2 years ago    696MB
+    [root@localhost ~]#
+    [root@localhost ~]# docker push 172.20.3.139:5000/jenkins_test
+    Using default tag: latest
+    The push refers to repository [172.20.3.139:5000/jenkins_test]
+    0577e068c587: Pushed
+    b1891bf16fa7: Pushed
+    37c1d818eb0b: Pushed
+    d51e4482f53a: Pushed
+    ceed640cbb93: Pushed
+    047f9c957a2e: Pushed
+    1db731634011: Pushed
+    a0775f499ef1: Pushed
+    c19390bb619a: Pushed
+    6ff38243bfb8: Pushed
+    9fe468dbb76f: Pushed
+    571ae0d6961a: Pushed
+    518c9e7eb326: Pushed
+    c3ebb2aa7787: Pushed
+    9c2e8b91bfa8: Pushed
+    c477b6c8ca45: Pushed
+    fa0c3f992cbd: Pushed
+    ce6466f43b11: Pushed
+    719d45669b35: Pushed
+    3b10514a95be: Pushed
+    latest: digest: sha256:0de43cde2c4b864a8e4a84bbd9958e47c5d851319f118203303d040b0a74f159 size: 4501
+    [root@localhost ~]# 
+    ```
+
+7. 删除本地镜像, 重新从本地仓库拉取
+
+    ```Shell
+    [root@localhost ~]# docker rmi 172.20.3.139:5000/jenkins_test:latest
+    Untagged: 172.20.3.139:5000/jenkins_test:latest
+    Untagged: 172.20.3.139:5000/jenkins_test@sha256:0de43cde2c4b864a8e4a84bbd9958e47c5d851319f118203303d040b0a74f159
+    [root@localhost ~]#
+    [root@localhost ~]# docker images
+    REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+    registry     latest    678dfa38fcfa   2 months ago   26.2MB
+    jenkins      2.60.3    cd14cecfdb3a   2 years ago    696MB
+    [root@localhost ~]#
+    [root@localhost ~]# docker pull 172.20.3.139:5000/jenkins_test
+    Using default tag: latest
+    latest: Pulling from jenkins_test
+    Digest: sha256:0de43cde2c4b864a8e4a84bbd9958e47c5d851319f118203303d040b0a74f159
+    Status: Downloaded newer image for 172.20.3.139:5000/jenkins_test:latest
+    172.20.3.139:5000/jenkins_test:latest
+    [root@localhost ~]# docker images
+    REPOSITORY                       TAG       IMAGE ID       CREATED        SIZE
+    registry                         latest    678dfa38fcfa   2 months ago   26.2MB
+    172.20.3.139:5000/jenkins_test   latest    cd14cecfdb3a   2 years ago    696MB
+    jenkins                          2.60.3    cd14cecfdb3a   2 years ago    696MB
+    [root@localhost ~]#
+    ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
