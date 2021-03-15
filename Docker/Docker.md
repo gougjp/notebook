@@ -412,6 +412,9 @@
     [root@localhost ~]#
     ```
 
+8. 可以在浏览器中访问http://172.20.3.139:5000/v2/_catalog查看镜像上传日志
+
+    [](images/repositorycatalog.jpeg)
 
 
 
