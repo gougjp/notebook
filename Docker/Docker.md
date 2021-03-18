@@ -138,17 +138,17 @@
 
 1. 加速器配置: 阿里云为例, https://cr.console.aliyun.com/cn-qingdao/instances/mirrors
 
-    [](images/jiasuqi.jpeg)
+    ![](images/jiasuqi.jpeg)
 
 2. 下载镜像: 以Jenkins镜像为例
 
     镜像搜索:
     
-    [](images/imagesearch.jpeg)
+    ![](images/imagesearch.jpeg)
     
     因为Jenkins镜像没有latest版本, 所以在pull的时候需要跟tag号
     
-    [](images/jenkinsimage.jpeg)
+    ![](images/jenkinsimage.jpeg)
 
     ```Shell
     [root@localhost opt]# docker pull jenkins:2.60.3
@@ -485,7 +485,7 @@
 
 8. 可以在浏览器中访问http://172.20.3.139:5000/v2/_catalog查看镜像上传日志
 
-    [](images/repositorycatalog.jpeg)
+    ![](images/repositorycatalog.jpeg)
 
 ### Jenkins中的slave使用docker
 
@@ -508,11 +508,11 @@
 
 3. Manage Jenkins -> Configure System -> Cloud 配置docker slave
 
-    [](images/configureclouds-01.jpeg)
+    ![](images/configureclouds-01.jpeg)
     
 4. Add a new cloud -> Docker
 
-    [](images/configureclouds-02.jpeg)
+    ![](images/configureclouds-02.jpeg)
 
 5. 配置docker cloud
 
@@ -522,7 +522,7 @@
     
     - Enable需要勾选
 
-    [](images/configureclouds-03.jpeg)
+    ![](images/configureclouds-03.jpeg)
 
 
 
