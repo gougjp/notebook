@@ -63,6 +63,77 @@
     [root@localhost opt]#
     ```
 
+6. Docker卸载
+
+    ```Shell
+    [root@localhost ~]# yum remove docker docker-common docker-selinux docker-engine docker-ce-cli
+    Loaded plugins: fastestmirror, langpacks
+    No Match for argument: docker
+    No Match for argument: docker-common
+    No Match for argument: docker-engine
+    Resolving Dependencies
+    --> Running transaction check
+    ---> Package container-selinux.noarch 2:2.119.2-1.911c772.el7_8 will be erased
+    --> Processing Dependency: container-selinux >= 2:2.74 for package: containerd.io-1.4.4-3.1.el7.x86_64
+    --> Processing Dependency: container-selinux >= 2:2.74 for package: 3:docker-ce-20.10.5-3.el7.x86_64
+    --> Running transaction check
+    ---> Package containerd.io.x86_64 0:1.4.4-3.1.el7 will be erased
+    ---> Package docker-ce.x86_64 3:20.10.5-3.el7 will be erased
+    --> Processing Dependency: docker-ce for package: docker-ce-rootless-extras-20.10.5-3.el7.x86_64
+    --> Running transaction check
+    ---> Package docker-ce-rootless-extras.x86_64 0:20.10.5-3.el7 will be erased
+    --> Finished Dependency Resolution
+    extras/7/x86_64                                                                                                                              | 2.9 kB  00:00:00
+    mysql-connectors-community/x86_64                                                                                                            | 2.6 kB  00:00:00
+    mysql-tools-community/x86_64                                                                                                                 | 2.6 kB  00:00:00
+    mysql56-community/x86_64                                                                                                                     | 2.6 kB  00:00:00
+    nux-dextop/x86_64                                                                                                                            | 2.9 kB  00:00:01
+    updates/7/x86_64                                                                                                                             | 2.9 kB  00:00:00
+
+    Dependencies Resolved
+
+    ====================================================================================================================================================================
+     Package                                       Arch                       Version                                       Repository                             Size
+    ====================================================================================================================================================================
+    Removing:
+     container-selinux                             noarch                     2:2.119.2-1.911c772.el7_8                     @extras                                41 k
+    Removing for dependencies:
+     containerd.io                                 x86_64                     1.4.4-3.1.el7                                 @docker-ce-stable                     128 M
+     docker-ce                                     x86_64                     3:20.10.5-3.el7                               @docker-ce-stable                     115 M
+     docker-ce-rootless-extras                     x86_64                     20.10.5-3.el7                                 @docker-ce-stable                      24 M
+
+    Transaction Summary
+    ====================================================================================================================================================================
+    Remove  1 Package (+3 Dependent packages)
+
+    Installed size: 268 M
+    Is this ok [y/N]: y
+    Downloading packages:
+    Running transaction check
+    Running transaction test
+    Transaction test succeeded
+    Running transaction
+      Erasing    : docker-ce-rootless-extras-20.10.5-3.el7.x86_64                                                                                                   1/4
+      Erasing    : 3:docker-ce-20.10.5-3.el7.x86_64                                                                                                                 2/4
+      Erasing    : containerd.io-1.4.4-3.1.el7.x86_64                                                                                                               3/4
+      Erasing    : 2:container-selinux-2.119.2-1.911c772.el7_8.noarch                                                                                               4/4
+      Verifying  : containerd.io-1.4.4-3.1.el7.x86_64                                                                                                               1/4
+      Verifying  : 3:docker-ce-20.10.5-3.el7.x86_64                                                                                                                 2/4
+      Verifying  : docker-ce-rootless-extras-20.10.5-3.el7.x86_64                                                                                                   3/4
+      Verifying  : 2:container-selinux-2.119.2-1.911c772.el7_8.noarch                                                                                               4/4
+
+    Removed:
+      container-selinux.noarch 2:2.119.2-1.911c772.el7_8
+
+    Dependency Removed:
+      containerd.io.x86_64 0:1.4.4-3.1.el7               docker-ce.x86_64 3:20.10.5-3.el7               docker-ce-rootless-extras.x86_64 0:20.10.5-3.el7
+
+    Complete!
+    [root@localhost ~]# rm -rf /var/lib/docker
+    [root@localhost ~]# rm -f /etc/docker/daemon.json
+    [root@localhost ~]# rm -f /usr/lib/systemd/system/docker.service
+    ```
+
 ### Docker配置
 
 1. 加速器配置: 阿里云为例, https://cr.console.aliyun.com/cn-qingdao/instances/mirrors
@@ -416,6 +487,28 @@
 
     [](images/repositorycatalog.jpeg)
 
+### Jenkins中的slave使用docker
+
+1. 配置docker服务器
+
+    在/usr/lib/systemd/system/docker.service文件中的ExecStart增加"-H tcp://0.0.0.0:2375"
+    
+    ```Shell
+    ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H fd:// --containerd=/run/containerd/containerd.sock
+    ```
+
+    然后重启服务
+    
+    ```Shell
+    systemctl daemon-reload
+    systemctl restart docker
+    ```
+
+2. jenkins安装Docker plugin插件
+
+3. Manage Jenkins -> Configure System -> Cloud 配置docker slave
+
+    [](images/configureclouds-01.jpeg)
 
 
 
@@ -433,6 +526,4 @@
 
 
 
-
-
-
+Docker官方链接: https://docs.docker.com/
