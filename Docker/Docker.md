@@ -560,10 +560,43 @@
     
     ![](images/configureclouds-08.jpeg)
     
+6. 配置JOB时使用Docker
+
+    - New Item -> 输入Job名TestDocker -> 选择Freestyle project
     
+    - 勾选Restrict where this project can be run, 并在Label Expression中设置Docker-slave, 该label就是在上一步配置cloud的时候设置的
 
+    - 配置build步骤
+    
+    - 保存
+    
+7. 执行上一步新建的Job, 可以看到任务在新建的docker容器上运行
 
+    ![](images/configureclouds-09.jpeg)
 
+8. 去docker服务器上查看docker容器
+
+    ```Shell
+    [root@localhost ~]# docker images
+    REPOSITORY          TAG       IMAGE ID       CREATED         SIZE
+    jenkins/ssh-slave   latest    fb7b3847769f   11 months ago   514MB
+    [root@localhost ~]# docker ps
+    CONTAINER ID   IMAGE                      COMMAND                  CREATED         STATUS         PORTS                   NAMES
+    28c75644378b   jenkins/ssh-slave:latest   "setup-sshd /usr/sbi…"   2 minutes ago   Up 2 minutes   0.0.0.0:49198->22/tcp   silly_volhard
+    [root@localhost ~]# docker exec -it 28c75644378b bash
+    root@28c75644378b:/home/jenkins# ls -al
+    total 1484
+    drwxr-xr-x 5 jenkins jenkins     124 Mar 18 02:54 .
+    drwxr-xr-x 1 root    root         21 Apr 13  2020 ..
+    -rw-r--r-- 1 jenkins jenkins     220 Apr 18  2019 .bash_logout
+    -rw-r--r-- 1 jenkins jenkins    3526 Apr 18  2019 .bashrc
+    drwxr-xr-x 3 jenkins jenkins      17 Mar 18 02:54 .cache
+    -rw-r--r-- 1 jenkins jenkins     807 Apr 18  2019 .profile
+    drwxr-xr-x 4 jenkins jenkins      34 Mar 18 02:54 remoting
+    -rw-r--r-- 1 jenkins jenkins 1506923 Mar 18 02:54 remoting.jar
+    drwxr-xr-x 3 jenkins jenkins      24 Mar 18 02:54 workspace
+    root@28c75644378b:/home/jenkins#
+    ```
 
 
 
