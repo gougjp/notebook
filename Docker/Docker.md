@@ -509,6 +509,22 @@
 3. Manage Jenkins -> Configure System -> Cloud 配置docker slave
 
     [](images/configureclouds-01.jpeg)
+    
+4. Add a new cloud -> Docker
+
+    [](images/configureclouds-02.jpeg)
+
+5. 配置docker cloud
+
+    - Docker Host URI: 配置为tcp://172.20.3.139:2375, 其中的IP为docker服务器的IP, 端口为步骤1中配置的端口
+    
+    - 点击Test Connection: 测试是否能连接成功, 连接成功后会显示docker服务器的版本
+    
+    - Enable需要勾选
+
+    [](images/configureclouds-03.jpeg)
+
+
 
 
 
