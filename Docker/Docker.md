@@ -524,17 +524,43 @@
 
     ![](images/configureclouds-03.jpeg)
 
+    - 其他配置使用默认值
+    
+    - 点击Docker Agent templates... -> Add Docker Template
+    
+    ![](images/configureclouds-04.jpeg)
 
+    - Labels: 配置docker salve的标签, 在配置Job的时候需要指定这个label
+    
+    - Enable需要勾选
+    
+    - Name: 随便指定
+    
+    - Docker Image: 镜像名称jenkins/ssh-slave:latest, 第一次连接的时候, 如果服务器中没有这个镜像, 则会自动去仓库下载, 目前该镜像测试能正常运行
 
+    ![](images/configureclouds-05.jpeg)
 
+    - Remote File System Root: 设置slave中工作根目录为/home/jenkins
+    
+    - Usage: 选择Use this node as much as possible
+    
+    - Connect method: 选择连接方式为Connect with SSH
 
+    ![](images/configureclouds-06.jpeg)
+    
+    - SSH key: 选择Inject SSH key
+    
+    - User: 设置为jenkins, 目前测试该用户名能正常连接
+    
+    - Pull strategy: pull镜像策略选择Pull once and update latest
+    
+    ![](images/configureclouds-07.jpeg)
 
-
-
-
-
-
-
+    - 点击Advanced... -> 配置JavaPath为/usr/local/openjdk-8/bin/java, 如果不配置Java路径, 则在连接docker的时候会默认去PATH环境变量的路径去查找, 如果查找不到则会连接失败
+    
+    ![](images/configureclouds-08.jpeg)
+    
+    
 
 
 
