@@ -724,7 +724,20 @@
     
     ![](images/configureclouds-11.jpeg)
 
-8. 在Job中直接调度即可
+8. 在Job中直接调度即可, Job运行的时候可以直接在docker服务器上看到下载的镜像和运行的容器
+
+    ```Shell
+    [root@localhost ~]# docker images
+    REPOSITORY                        TAG       IMAGE ID       CREATED         SIZE
+    172.20.3.139:5000/jenkins-slave   latest    618aba88f635   9 minutes ago   570MB
+    registry                          latest    678dfa38fcfa   3 months ago    26.2MB
+    centos                            7         8652b9f0cb4c   4 months ago    204MB
+    [root@localhost ~]# docker ps
+    CONTAINER ID   IMAGE                             COMMAND                  CREATED          STATUS          PORTS                             NAMES
+    31f52a6e20bc   172.20.3.139:5000/jenkins-slave   "/usr/sbin/sshd -D -…"   20 seconds ago   Up 18 seconds   5000/tcp, 0.0.0.0:49193->22/tcp   modest_shockley
+    ffd0d6d11c11   registry                          "/entrypoint.sh /etc…"   55 minutes ago   Up 55 minutes   0.0.0.0:5000->5000/tcp            lucid_agnesi
+    [root@localhost ~]#
+    ```
 
 
 
