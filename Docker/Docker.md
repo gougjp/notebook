@@ -598,6 +598,135 @@
     root@28c75644378b:/home/jenkins#
     ```
 
+### Jenkins中的slave使用基于Centos7, 并且安装自定义软件的docker容器
+
+1. 搭建好本地仓库, 拉取Centos7官方镜像
+
+    ```Shell
+    [root@localhost ~]# docker ps
+    CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS          PORTS                    NAMES
+    ffd0d6d11c11   registry   "/entrypoint.sh /etc…"   25 minutes ago   Up 25 minutes   0.0.0.0:5000->5000/tcp   lucid_agnesi
+    [root@localhost ~]# docker images
+    REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+    registry     latest    678dfa38fcfa   3 months ago   26.2MB
+    [root@localhost ~]# docker pull centos:7
+    7: Pulling from library/centos
+    2d473b07cdd5: Pull complete
+    Digest: sha256:0f4ec88e21daf75124b8a9e5ca03c37a5e937e0e108a255d890492430789b60e
+    Status: Downloaded newer image for centos:7
+    docker.io/library/centos:7
+    [root@localhost ~]# docker images
+    REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+    registry     latest    678dfa38fcfa   3 months ago   26.2MB
+    centos       7         8652b9f0cb4c   4 months ago   204MB
+    [root@localhost ~]#
+    ```
+
+2. 用centos7镜像启动容器
+
+    ```Shell
+    [root@localhost ~]# docker run -it -d --privileged=true -p 6000:5000 centos:7 /sbin/init
+    3babe3df6154f5ea1dbbf5f3ef4e70c417cbd91e32b732a40cada01cf10a68c7
+    [root@localhost ~]# docker ps
+    CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS          PORTS                    NAMES
+    3babe3df6154   centos:7   "/sbin/init"             5 seconds ago    Up 5 seconds    0.0.0.0:6000->5000/tcp   distracted_lehmann
+    ffd0d6d11c11   registry   "/entrypoint.sh /etc…"   30 minutes ago   Up 30 minutes   0.0.0.0:5000->5000/tcp   lucid_agnesi
+    [root@localhost ~]# docker exec -it 3babe3df6154 bash
+    [root@3babe3df6154 /]#
+    ```
+
+3. 安装java, ssh服务, 以及其他一些相关工具
+
+    ```Shell
+    yum list java*
+    yum -y install java-1.8.0-openjdk
+    yum -y install openssh-server openssh-clients
+    yum -y install net-tools vim
+    ```
+    
+4. 启动ssh服务
+
+    ```Shell
+    [root@3babe3df6154 /]# systemctl status sshd.service
+    ● sshd.service - OpenSSH server daemon
+       Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)
+       Active: inactive (dead)
+         Docs: man:sshd(8)
+               man:sshd_config(5)
+    [root@3babe3df6154 /]# systemctl start sshd.service
+    [root@3babe3df6154 /]# systemctl status sshd.service
+    ● sshd.service - OpenSSH server daemon
+       Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)
+       Active: active (running) since Fri 2021-03-19 08:04:41 UTC; 2s ago
+         Docs: man:sshd(8)
+               man:sshd_config(5)
+     Main PID: 366 (sshd)
+       CGroup: /docker/3babe3df6154f5ea1dbbf5f3ef4e70c417cbd91e32b732a40cada01cf10a68c7/system.slice/sshd.service
+               └─366 /usr/sbin/sshd -D
+               ‣ 366 /usr/sbin/sshd -D
+
+    Mar 19 08:04:41 3babe3df6154 systemd[1]: Starting OpenSSH server daemon...
+    Mar 19 08:04:41 3babe3df6154 sshd[366]: Server listening on 0.0.0.0 port 22.
+    Mar 19 08:04:41 3babe3df6154 sshd[366]: Server listening on :: port 22.
+    Mar 19 08:04:41 3babe3df6154 systemd[1]: Started OpenSSH server daemon.
+    [root@3babe3df6154 /]# systemctl enable sshd.service
+    [root@3babe3df6154 /]# netstat -tlunp
+    Active Internet connections (only servers)
+    Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+    tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      366/sshd
+    tcp6       0      0 :::22                   :::*                    LISTEN      366/sshd
+    [root@3babe3df6154 /]#
+    ``` 
+
+5. 基于前面修改的容器创建镜像, 镜像名jenkins-slave
+
+    ```Shell
+    [root@localhost ~]# docker commit 3babe3df6154 jenkins-slave
+    sha256:618aba88f6358836bdbd8013bbc9ec4ae17260dfe3a1463fb501d9ee0d26724e
+    [root@localhost ~]# docker images
+    REPOSITORY      TAG       IMAGE ID       CREATED         SIZE
+    jenkins-slave   latest    618aba88f635   2 minutes ago   570MB
+    registry        latest    678dfa38fcfa   3 months ago    26.2MB
+    centos          7         8652b9f0cb4c   4 months ago    204MB
+    ```
+
+6. 将镜像上传到本地仓库, 然后删除本地原始镜像
+
+    ```Shell
+    [root@localhost ~]# docker tag jenkins-slave:latest 172.20.3.139:5000/jenkins-slave
+    [root@localhost ~]# docker push 172.20.3.139:5000/jenkins-slave
+    Using default tag: latest
+    The push refers to repository [172.20.3.139:5000/jenkins-slave]
+    f2308b611323: Pushed
+    174f56854903: Pushed
+    latest: digest: sha256:9f491d52e0d9e00d5b4458b2388bd68de06c243a197206b1ac56608433d8c737 size: 742
+    [root@localhost ~]# docker rmi jenkins-slave
+    Untagged: jenkins-slave:latest
+    [root@localhost ~]# docker rmi 172.20.3.139:5000/jenkins-slave
+    Untagged: 172.20.3.139:5000/jenkins-slave:latest
+    Untagged: 172.20.3.139:5000/jenkins-slave@sha256:9f491d52e0d9e00d5b4458b2388bd68de06c243a197206b1ac56608433d8c737
+    Deleted: sha256:618aba88f6358836bdbd8013bbc9ec4ae17260dfe3a1463fb501d9ee0d26724e
+    Deleted: sha256:ccbafe7b80db22222059388be68df054ec1c5b99919769e69ff469141bbfa363
+    [root@localhost ~]# docker images
+    REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+    registry     latest    678dfa38fcfa   3 months ago   26.2MB
+    centos       7         8652b9f0cb4c   4 months ago   204MB
+    [root@localhost ~]#
+    ```
+
+7. 修改Jenkins中Docker的配置
+
+    修改镜像名
+    
+    ![](images/configureclouds-10.jpeg)
+
+    修改用户名为root; 创建了jenkins用户, 但是容器创建好后登录失败, 后续再研究; 另外JavaPath不需要配置, 因为在前面安装Java, 会自动安装到PATH环境变量所在的路径
+    
+    ![](images/configureclouds-11.jpeg)
+
+8. 在Job中直接调度即可
+
+
 
 
 
