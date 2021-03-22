@@ -1430,7 +1430,7 @@ AttributeError: 'module' object has no attribute 'setdefaultencoding'
 - 安装依赖包: 
 
 ```Shell
-yum -y install gcc gcc-c++ make git patch openssl-devel zlib-devel readline-devel sqlite-devel bzip2-devel bzip2-libs
+yum -y install gcc gcc-c++ make git patch openssl-devel zlib-devel readline-devel sqlite-devel bzip2-devel bzip2-libs ncurses-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
 ```
 
 - 下载pyenv

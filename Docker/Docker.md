@@ -624,6 +624,8 @@
 
 2. 用centos7镜像启动容器
 
+    启动命令需要带参数-it, --privileged=true, \/sbin\/init, 否则后面无法启动SSH服务
+
     ```Shell
     [root@localhost ~]# docker run -it -d --privileged=true -p 6000:5000 centos:7 /sbin/init
     3babe3df6154f5ea1dbbf5f3ef4e70c417cbd91e32b732a40cada01cf10a68c7
