@@ -121,9 +121,9 @@
 .. toctree::
    :glob:
    :maxdepth: 2
-   :caption: Docker
+   :caption: DockerAndKubernetes
     
-   Docker/*
+   DockerAndKubernetes/*
 
 .. toctree::
    :glob:
