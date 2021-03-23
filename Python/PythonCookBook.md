@@ -46,22 +46,22 @@
 
 ### Python CRC计算
 
-    CRC-16/IBM x16 + x15 + x2 + 1
+CRC-16/IBM x16 + x15 + x2 + 1
 
-    ```Python
-    def crc_check(data):
-        crc_temp = 0x0000
-        for data_item in data:
-            crc_temp ^= data_item
-            for j in range(8):
-                if crc_temp & 0x01:
-                    crc_temp = (crc_temp >> 1) ^ 0xA001
-                else:
-                    crc_temp = crc_temp >> 1
-        return crc_temp
-    ```
+```Python
+def crc_check(data):
+    crc_temp = 0x0000
+    for data_item in data:
+        crc_temp ^= data_item
+        for j in range(8):
+            if crc_temp & 0x01:
+                crc_temp = (crc_temp >> 1) ^ 0xA001
+            else:
+                crc_temp = crc_temp >> 1
+    return crc_temp
+```
 
-    参考：http://www.ip33.com/crc.html
+参考：http://www.ip33.com/crc.html
 
 ### Python向Excel中插入文件
 
@@ -91,61 +91,61 @@
 
 ### Python十六进制和十进制浮点数转换
 
-    python 2.7.15版本
+python 2.7.15版本
 
-    ```Python
-    import struct
+```Python
+import struct
 
-    def float_to_hex(float_data):
-        result = []
-        hex_data = struct.pack('!f', float_data).encode('hex')
-        print str(float_data), hex_data
-        for i in range(0, len(hex_data), 2):
-            result.append(int(hex_data[i:i+2],16))
-        return result
+def float_to_hex(float_data):
+    result = []
+    hex_data = struct.pack('!f', float_data).encode('hex')
+    print str(float_data), hex_data
+    for i in range(0, len(hex_data), 2):
+        result.append(int(hex_data[i:i+2],16))
+    return result
 
-    def hex_to_float(hex_data):
-        '''
-        hex_data: [0x3F,0xA0,0x00,0x00]
-        '''
-        hex_data_str = ''.join(['%02x'%data for data in hex_data])
-        float_data = struct.unpack('!f', hex_data_str.decode('hex'))[0]
-        print hex_data_str, str(float_data)
-        return float_data
-    ```
+def hex_to_float(hex_data):
+    '''
+    hex_data: [0x3F,0xA0,0x00,0x00]
+    '''
+    hex_data_str = ''.join(['%02x'%data for data in hex_data])
+    float_data = struct.unpack('!f', hex_data_str.decode('hex'))[0]
+    print hex_data_str, str(float_data)
+    return float_data
+```
 
-    Python 3.6.8版本
+Python 3.6.8版本
 
-    ```Python
-    def float_to_hex(float_data):
-        result = []
-        hex_data = struct.pack('!f', float_data).hex()
-        logger.info('float:{},hex list:{}'.format(str(float_data), hex_data))
-        for i in range(0, len(hex_data), 2):
-            result.append(int(hex_data[i:i+2],16))
-        return result
+```Python
+def float_to_hex(float_data):
+    result = []
+    hex_data = struct.pack('!f', float_data).hex()
+    logger.info('float:{},hex list:{}'.format(str(float_data), hex_data))
+    for i in range(0, len(hex_data), 2):
+        result.append(int(hex_data[i:i+2],16))
+    return result
 
-    def hex_to_float(hex_data):
-        '''
-        hex_data: [0x3F,0xA0,0x00,0x00]
-        '''
-        hex_data_str = ''.join(['%02x'%data for data in hex_data])
-        float_data = struct.unpack('!f', bytes.fromhex(hex_data_str))[0]
-        logger.info('hex string:{},float:{}'.format(hex_data_str, str(float_data)))
-        return float_data
-    ```
+def hex_to_float(hex_data):
+    '''
+    hex_data: [0x3F,0xA0,0x00,0x00]
+    '''
+    hex_data_str = ''.join(['%02x'%data for data in hex_data])
+    float_data = struct.unpack('!f', bytes.fromhex(hex_data_str))[0]
+    logger.info('hex string:{},float:{}'.format(hex_data_str, str(float_data)))
+    return float_data
+```
 
-    调用举例
+调用举例
 
-    ```Python
-    float_to_hex(3.78)
-    3.78 4071eb85
-    [64, 113, 235, 133]
+```Python
+float_to_hex(3.78)
+3.78 4071eb85
+[64, 113, 235, 133]
 
-    hex_to_float([64, 113, 235, 133])
-    4071eb85 3.77999997139
-    3.7799999713897705
-    ```
+hex_to_float([64, 113, 235, 133])
+4071eb85 3.77999997139
+3.7799999713897705
+```
 
 ### python 各进制转换
 
@@ -196,346 +196,346 @@
 
 ### python 捕获键盘和鼠标输入
     
-    https://github.com/ethanhs/pyhooked/blob/master/pyhooked/__init__.py
+https://github.com/ethanhs/pyhooked/blob/master/pyhooked/__init__.py
 
-    ```Python
-    """
-    This file is part of pyhooked, an LGPL licensed pure Python hotkey module for Windows
-    Copyright (C) 2016 Ethan Smith
-    """
-    import ctypes
-    from ctypes import wintypes
-    from ctypes import CFUNCTYPE, POINTER, c_int, c_uint, c_void_p, windll
-    from ctypes import byref
-    from warnings import warn
-    from traceback import format_exc
-    import atexit
+```Python
+"""
+This file is part of pyhooked, an LGPL licensed pure Python hotkey module for Windows
+Copyright (C) 2016 Ethan Smith
+"""
+import ctypes
+from ctypes import wintypes
+from ctypes import CFUNCTYPE, POINTER, c_int, c_uint, c_void_p, windll
+from ctypes import byref
+from warnings import warn
+from traceback import format_exc
+import atexit
 
-    __version__ = '0.8.1'
+__version__ = '0.8.1'
 
-    cmp_func = CFUNCTYPE(c_int, c_int, wintypes.HINSTANCE, POINTER(c_void_p))
+cmp_func = CFUNCTYPE(c_int, c_int, wintypes.HINSTANCE, POINTER(c_void_p))
 
-    # redefine names to avoid needless clutter
-    GetModuleHandleA = ctypes.windll.kernel32.GetModuleHandleA
-    SetWindowsHookExA = ctypes.windll.user32.SetWindowsHookExA
-    GetMessageW = ctypes.windll.user32.GetMessageW
-    DispatchMessageW = ctypes.windll.user32.DispatchMessageW
-    TranslateMessage = ctypes.windll.user32.TranslateMessage
-    CallNextHookEx = ctypes.windll.user32.CallNextHookEx
-    UnhookWindowsHookEx = ctypes.windll.user32.UnhookWindowsHookEx
+# redefine names to avoid needless clutter
+GetModuleHandleA = ctypes.windll.kernel32.GetModuleHandleA
+SetWindowsHookExA = ctypes.windll.user32.SetWindowsHookExA
+GetMessageW = ctypes.windll.user32.GetMessageW
+DispatchMessageW = ctypes.windll.user32.DispatchMessageW
+TranslateMessage = ctypes.windll.user32.TranslateMessage
+CallNextHookEx = ctypes.windll.user32.CallNextHookEx
+UnhookWindowsHookEx = ctypes.windll.user32.UnhookWindowsHookEx
 
-    # specify the argument and return types of functions
-    GetModuleHandleA.restype = wintypes.HMODULE
-    GetModuleHandleA.argtypes = [wintypes.LPCWSTR]
-    SetWindowsHookExA.restype = c_int
-    SetWindowsHookExA.argtypes = [c_int, cmp_func, wintypes.HINSTANCE, wintypes.DWORD]
-    GetMessageW.argtypes = [POINTER(wintypes.MSG), wintypes.HWND, c_uint, c_uint]
-    TranslateMessage.argtypes = [POINTER(wintypes.MSG)]
-    DispatchMessageW.argtypes = [POINTER(wintypes.MSG)]
-
-
-    def _callback_pointer(handler):
-        """Create and return C-pointer"""
-        return cmp_func(handler)
+# specify the argument and return types of functions
+GetModuleHandleA.restype = wintypes.HMODULE
+GetModuleHandleA.argtypes = [wintypes.LPCWSTR]
+SetWindowsHookExA.restype = c_int
+SetWindowsHookExA.argtypes = [c_int, cmp_func, wintypes.HINSTANCE, wintypes.DWORD]
+GetMessageW.argtypes = [POINTER(wintypes.MSG), wintypes.HWND, c_uint, c_uint]
+TranslateMessage.argtypes = [POINTER(wintypes.MSG)]
+DispatchMessageW.argtypes = [POINTER(wintypes.MSG)]
 
 
-    class BaseEvent(object):
-        """A keyboard or mouse event."""
-        pass
-
-    class KeyboardEvent(BaseEvent):
-        """Class to describe an event triggered by the keyboard"""
-
-        def __init__(self, current_key=None, event_type=None, pressed_key=None, key_code=None):
-            self.current_key = current_key
-            self.event_type = event_type
-            self.pressed_key = pressed_key
-            self.key_code = key_code
+def _callback_pointer(handler):
+    """Create and return C-pointer"""
+    return cmp_func(handler)
 
 
-    class MouseEvent(BaseEvent):
-        """Class to describe an event triggered by the mouse"""
+class BaseEvent(object):
+    """A keyboard or mouse event."""
+    pass
 
-        def __init__(self, current_key=None, event_type=None, mouse_x=None, mouse_y=None):
-            self.current_key = current_key
-            self.event_type = event_type
-            self.mouse_x = mouse_x
-            self.mouse_y = mouse_y
+class KeyboardEvent(BaseEvent):
+    """Class to describe an event triggered by the keyboard"""
 
-
-    # The following section contains dictionaries that map key codes and other event codes to the event type (e.g. key up)
-    # and the key or button doing the action (e.g. Tab)
-    MOUSE_ID_TO_KEY = {512: 'Move',
-                       513: 'LButton',
-                       514: 'LButton',
-                       516: 'RButton',
-                       517: 'RButton',
-                       519: 'WheelButton',
-                       520: 'WheelButton',
-                       522: 'Wheel'}
-
-    MOUSE_ID_TO_EVENT_TYPE = {512: None,
-                              513: 'key down',
-                              514: 'key up',
-                              516: 'key down',
-                              517: 'key up',
-                              519: 'key down',
-                              520: 'key up',
-                              522: None}
-
-    # stores the relation between keyboard event codes and the key pressed. Reference:
-    # https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
-    # seems to only work on 32 bits
-    ID_TO_KEY = {8: 'Back',
-                 9: 'Tab',
-                 13: 'Return',
-                 20: 'Capital',
-                 27: 'Escape',
-                 32: 'Space',
-                 33: 'Prior',
-                 34: 'Next',
-                 35: 'End',
-                 36: 'Home',
-                 37: 'Left',
-                 38: 'Up',
-                 39: 'Right',
-                 40: 'Down',
-                 44: 'PrtScr',
-                 46: 'Delete',
-                 48: '0',
-                 49: '1',
-                 50: '2',
-                 51: '3',
-                 52: '4',
-                 53: '5',
-                 54: '6',
-                 55: '7',
-                 56: '8',
-                 57: '9',
-                 65: 'A',
-                 66: 'B',
-                 67: 'C',
-                 68: 'D',
-                 69: 'E',
-                 70: 'F',
-                 71: 'G',
-                 72: 'H',
-                 73: 'I',
-                 74: 'J',
-                 75: 'K',
-                 76: 'L',
-                 77: 'M',
-                 78: 'N',
-                 79: 'O',
-                 80: 'P',
-                 81: 'Q',
-                 82: 'R',
-                 83: 'S',
-                 84: 'T',
-                 85: 'U',
-                 86: 'V',
-                 87: 'W',
-                 88: 'X',
-                 89: 'Y',
-                 90: 'Z',
-                 91: 'Lwin',
-                 92: 'Rwin',
-                 93: 'App',
-                 95: 'Sleep',
-                 96: 'Numpad0',
-                 97: 'Numpad1',
-                 98: 'Numpad2',
-                 99: 'Numpad3',
-                 100: 'Numpad4',
-                 101: 'Numpad5',
-                 102: 'Numpad6',
-                 103: 'Numpad7',
-                 104: 'Numpad8',
-                 105: 'Numpad9',
-                 106: 'Multiply',
-                 107: 'Add',
-                 109: 'Subtract',
-                 110: 'Decimal',
-                 111: 'Divide',
-                 112: 'F1',
-                 113: 'F2',
-                 114: 'F3',
-                 115: 'F4',
-                 116: 'F5',
-                 117: 'F6',
-                 118: 'F7',
-                 119: 'F8',
-                 120: 'F9',
-                 121: 'F10',
-                 122: 'F11',
-                 123: 'F12',
-                 144: 'Numlock',
-                 160: 'Lshift',
-                 161: 'Rshift',
-                 162: 'Lcontrol',
-                 163: 'Rcontrol',
-                 164: 'Lmenu',
-                 165: 'Rmenu',
-                 186: 'Oem_1',
-                 187: 'Oem_Plus',
-                 188: 'Oem_Comma',
-                 189: 'Oem_Minus',
-                 190: 'Oem_Period',
-                 191: 'Oem_2',
-                 192: 'Oem_3',
-                 219: 'Oem_4',
-                 220: 'Oem_5',
-                 221: 'Oem_6',
-                 222: 'Oem_7',
-                 #223: 'OEM_8',
-                 1001: 'mouse left',  # mouse hotkeys
-                 1002: 'mouse right',
-                 1003: 'mouse middle',
-                 1000: 'mouse move',  # single event hotkeys
-                 1004: 'mouse wheel up',
-                 1005: 'mouse wheel down',
-                 1010: 'Ctrl',  # merged hotkeys
-                 1011: 'Alt',
-                 1012: 'Shift',
-                 1013: 'Win',
-                 }
-
-    event_types = {0x100: 'key down',  # WM_KeyDown for normal keys
-                   0x101: 'key up',  # WM_KeyUp for normal keys
-                   0x104: 'key down',  # WM_SYSKEYDOWN, used for Alt key.
-                   0x105: 'key up',  # WM_SYSKEYUP, used for Alt key.
-                   }
-    # these are used for specifying the hook type we want to make
-    WH_KEYBOARD_LL = 0x00D
-    WH_MOUSE_LL = 0x0E
-    # the Windows quit message, if the program quits while listening.
-    WM_QUIT = 0x0012
+    def __init__(self, current_key=None, event_type=None, pressed_key=None, key_code=None):
+        self.current_key = current_key
+        self.event_type = event_type
+        self.pressed_key = pressed_key
+        self.key_code = key_code
 
 
-    class Hook(object):
-        """Main hotkey class used to and listen for hotkeys. Set an event handler to check what keys are pressed."""
+class MouseEvent(BaseEvent):
+    """Class to describe an event triggered by the mouse"""
 
-        def __init__(self, warn_unrecognised = False):
-            """Initializer of the Hook class, creates class attributes. If warn_unrecognised is True, warn when an unrecognised key is pressed."""
-            self.warn_unrecognised = warn_unrecognised
-            self.pressed_keys = []
-            self.keyboard_id = None
-            self.mouse_id = None
-            self.mouse_is_hook = False
-            self.keyboard_is_hook = True
+    def __init__(self, current_key=None, event_type=None, mouse_x=None, mouse_y=None):
+        self.current_key = current_key
+        self.event_type = event_type
+        self.mouse_x = mouse_x
+        self.mouse_y = mouse_y
 
-        def handler(self, event):
-            """Handle keyboard and mouse events."""
-            raise NotImplementedError()
-        
-        def stop(self):
-            """Stop this object from listening."""
-            windll.user32.PostQuitMessage (0)
-        
-        def hook(self, keyboard=True, mouse=False):
-            """Hook mouse and/or keyboard events"""
-            self.mouse_is_hook = mouse
-            self.keyboard_is_hook = keyboard
 
-            # check that we are going to hook into at least one device
-            if not self.mouse_is_hook and not self.keyboard_is_hook:
-                raise Exception("You must hook into either the keyboard and/or mouse events")
+# The following section contains dictionaries that map key codes and other event codes to the event type (e.g. key up)
+# and the key or button doing the action (e.g. Tab)
+MOUSE_ID_TO_KEY = {512: 'Move',
+                   513: 'LButton',
+                   514: 'LButton',
+                   516: 'RButton',
+                   517: 'RButton',
+                   519: 'WheelButton',
+                   520: 'WheelButton',
+                   522: 'Wheel'}
 
-            if self.keyboard_is_hook:
-                def keyboard_low_level_handler(code, event_code, kb_data_ptr):
-                    """Used to catch keyboard events and deal with the event"""
-                    key_code = 0xFFFFFFFF & kb_data_ptr[0]  # key code
-                    current_key = ID_TO_KEY.get(key_code) # check the type of event (see ID_TO_KEY for a list)
-                    if current_key is None:
-                        event = None # We can check this later.
-                        if self.warn_unrecognised:
-                            warn('Unrecognised key ID %d.' % key_code)
-                    else:
-                        event_type = event_types[0xFFFFFFFF & event_code]
+MOUSE_ID_TO_EVENT_TYPE = {512: None,
+                          513: 'key down',
+                          514: 'key up',
+                          516: 'key down',
+                          517: 'key up',
+                          519: 'key down',
+                          520: 'key up',
+                          522: None}
 
-                        if event_type == 'key down':  # add key to those down to list
-                            if current_key not in self.pressed_keys:
-                                self.pressed_keys.append(current_key)
+# stores the relation between keyboard event codes and the key pressed. Reference:
+# https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
+# seems to only work on 32 bits
+ID_TO_KEY = {8: 'Back',
+             9: 'Tab',
+             13: 'Return',
+             20: 'Capital',
+             27: 'Escape',
+             32: 'Space',
+             33: 'Prior',
+             34: 'Next',
+             35: 'End',
+             36: 'Home',
+             37: 'Left',
+             38: 'Up',
+             39: 'Right',
+             40: 'Down',
+             44: 'PrtScr',
+             46: 'Delete',
+             48: '0',
+             49: '1',
+             50: '2',
+             51: '3',
+             52: '4',
+             53: '5',
+             54: '6',
+             55: '7',
+             56: '8',
+             57: '9',
+             65: 'A',
+             66: 'B',
+             67: 'C',
+             68: 'D',
+             69: 'E',
+             70: 'F',
+             71: 'G',
+             72: 'H',
+             73: 'I',
+             74: 'J',
+             75: 'K',
+             76: 'L',
+             77: 'M',
+             78: 'N',
+             79: 'O',
+             80: 'P',
+             81: 'Q',
+             82: 'R',
+             83: 'S',
+             84: 'T',
+             85: 'U',
+             86: 'V',
+             87: 'W',
+             88: 'X',
+             89: 'Y',
+             90: 'Z',
+             91: 'Lwin',
+             92: 'Rwin',
+             93: 'App',
+             95: 'Sleep',
+             96: 'Numpad0',
+             97: 'Numpad1',
+             98: 'Numpad2',
+             99: 'Numpad3',
+             100: 'Numpad4',
+             101: 'Numpad5',
+             102: 'Numpad6',
+             103: 'Numpad7',
+             104: 'Numpad8',
+             105: 'Numpad9',
+             106: 'Multiply',
+             107: 'Add',
+             109: 'Subtract',
+             110: 'Decimal',
+             111: 'Divide',
+             112: 'F1',
+             113: 'F2',
+             114: 'F3',
+             115: 'F4',
+             116: 'F5',
+             117: 'F6',
+             118: 'F7',
+             119: 'F8',
+             120: 'F9',
+             121: 'F10',
+             122: 'F11',
+             123: 'F12',
+             144: 'Numlock',
+             160: 'Lshift',
+             161: 'Rshift',
+             162: 'Lcontrol',
+             163: 'Rcontrol',
+             164: 'Lmenu',
+             165: 'Rmenu',
+             186: 'Oem_1',
+             187: 'Oem_Plus',
+             188: 'Oem_Comma',
+             189: 'Oem_Minus',
+             190: 'Oem_Period',
+             191: 'Oem_2',
+             192: 'Oem_3',
+             219: 'Oem_4',
+             220: 'Oem_5',
+             221: 'Oem_6',
+             222: 'Oem_7',
+             #223: 'OEM_8',
+             1001: 'mouse left',  # mouse hotkeys
+             1002: 'mouse right',
+             1003: 'mouse middle',
+             1000: 'mouse move',  # single event hotkeys
+             1004: 'mouse wheel up',
+             1005: 'mouse wheel down',
+             1010: 'Ctrl',  # merged hotkeys
+             1011: 'Alt',
+             1012: 'Shift',
+             1013: 'Win',
+             }
 
-                        if event_type == 'key up':  # remove when no longer pressed
-                            try:
-                                self.pressed_keys.remove(current_key)
-                            except ValueError:
-                                pass # current_key is not in the list.
+event_types = {0x100: 'key down',  # WM_KeyDown for normal keys
+               0x101: 'key up',  # WM_KeyUp for normal keys
+               0x104: 'key down',  # WM_SYSKEYDOWN, used for Alt key.
+               0x105: 'key up',  # WM_SYSKEYUP, used for Alt key.
+               }
+# these are used for specifying the hook type we want to make
+WH_KEYBOARD_LL = 0x00D
+WH_MOUSE_LL = 0x0E
+# the Windows quit message, if the program quits while listening.
+WM_QUIT = 0x0012
 
-                        # wrap the keyboard information grabbed into a container class
-                        event = KeyboardEvent(current_key, event_type, self.pressed_keys, key_code)
 
-                    # Call the event handler to deal with keys in the list
-                    try:
-                        if event:
-                            self.handler(event)
-                    except Exception as e:
-                        warn('While handling {}, self.handler produced a traceback:\n{}'.format(event, format_exc()))
-                    finally:
-                        # TODO: fix return here to use non-blocking call
-                        return CallNextHookEx(self.keyboard_id, code, event_code, kb_data_ptr)
+class Hook(object):
+    """Main hotkey class used to and listen for hotkeys. Set an event handler to check what keys are pressed."""
 
-                keyboard_pointer = _callback_pointer(keyboard_low_level_handler)
+    def __init__(self, warn_unrecognised = False):
+        """Initializer of the Hook class, creates class attributes. If warn_unrecognised is True, warn when an unrecognised key is pressed."""
+        self.warn_unrecognised = warn_unrecognised
+        self.pressed_keys = []
+        self.keyboard_id = None
+        self.mouse_id = None
+        self.mouse_is_hook = False
+        self.keyboard_is_hook = True
 
-                self.keyboard_id = SetWindowsHookExA(WH_KEYBOARD_LL, keyboard_pointer,
-                                                     GetModuleHandleA(None),
-                                                     0)
+    def handler(self, event):
+        """Handle keyboard and mouse events."""
+        raise NotImplementedError()
+    
+    def stop(self):
+        """Stop this object from listening."""
+        windll.user32.PostQuitMessage (0)
+    
+    def hook(self, keyboard=True, mouse=False):
+        """Hook mouse and/or keyboard events"""
+        self.mouse_is_hook = mouse
+        self.keyboard_is_hook = keyboard
 
-            if self.mouse_is_hook:
-                def mouse_low_level_handler(code, event_code, kb_data_ptr):
-                    """Used to catch and deal with mouse events"""
-                    current_key = MOUSE_ID_TO_KEY.get(event_code)  # check the type of event (see MOUSE_ID_TO_KEY for a list)
-                    if current_key is None:
-                        event = None # We can check this later.
-                        if self.warn_unrecognised:
-                            warn('Unrecognised mouse ID %d.' % event_code)
-                    else:
-                        if current_key != 'Move':  # if we aren't moving, then we deal with a mouse click
-                            event_type = MOUSE_ID_TO_EVENT_TYPE[event_code]
-                            # the first two members of kb_data_ptr hold the mouse position, x and y
-                            event = MouseEvent(current_key, event_type, kb_data_ptr[0], kb_data_ptr[1])
+        # check that we are going to hook into at least one device
+        if not self.mouse_is_hook and not self.keyboard_is_hook:
+            raise Exception("You must hook into either the keyboard and/or mouse events")
 
-                    try:
-                        if event:
-                            self.handler(event)
-                    except Exception as e:
-                        warn('While handling {}, self.handler produced a traceback:\n{}'.format(event, format_exc()))
-                    finally:
-                       # TODO: fix return here to use non-blocking call
-                        return CallNextHookEx(self.mouse_id, code, event_code, kb_data_ptr)
-
-                mouse_pointer = _callback_pointer(mouse_low_level_handler)
-                self.mouse_id = SetWindowsHookExA(WH_MOUSE_LL, mouse_pointer,
-                                                  GetModuleHandleA(None), 0)
-
-            atexit.register(UnhookWindowsHookEx, self.keyboard_id)
-            atexit.register(UnhookWindowsHookEx, self.mouse_id)
-
-            message = wintypes.MSG()
-            while self.mouse_is_hook or self.keyboard_is_hook:
-                msg = GetMessageW(byref(message), 0, 0, 0)
-                if msg in [0, -1]:
-                    self.unhook_keyboard()
-                    self.unhook_mouse()
-                    break # Exit the loop.
-
+        if self.keyboard_is_hook:
+            def keyboard_low_level_handler(code, event_code, kb_data_ptr):
+                """Used to catch keyboard events and deal with the event"""
+                key_code = 0xFFFFFFFF & kb_data_ptr[0]  # key code
+                current_key = ID_TO_KEY.get(key_code) # check the type of event (see ID_TO_KEY for a list)
+                if current_key is None:
+                    event = None # We can check this later.
+                    if self.warn_unrecognised:
+                        warn('Unrecognised key ID %d.' % key_code)
                 else:
-                    TranslateMessage(byref(message))
-                    DispatchMessageW(byref(message))
+                    event_type = event_types[0xFFFFFFFF & event_code]
 
-        def unhook_mouse(self):
-            """Stop listening to the mouse"""
-            if self.mouse_is_hook:
-                self.mouse_is_hook = False
-                UnhookWindowsHookEx(self.mouse_id)
+                    if event_type == 'key down':  # add key to those down to list
+                        if current_key not in self.pressed_keys:
+                            self.pressed_keys.append(current_key)
 
-        def unhook_keyboard(self):
-            """Stop listening to the keyboard"""
-            if self.keyboard_is_hook:
-                self.keyboard_is_hook = False
-                UnhookWindowsHookEx(self.keyboard_id)
-    ```
+                    if event_type == 'key up':  # remove when no longer pressed
+                        try:
+                            self.pressed_keys.remove(current_key)
+                        except ValueError:
+                            pass # current_key is not in the list.
+
+                    # wrap the keyboard information grabbed into a container class
+                    event = KeyboardEvent(current_key, event_type, self.pressed_keys, key_code)
+
+                # Call the event handler to deal with keys in the list
+                try:
+                    if event:
+                        self.handler(event)
+                except Exception as e:
+                    warn('While handling {}, self.handler produced a traceback:\n{}'.format(event, format_exc()))
+                finally:
+                    # TODO: fix return here to use non-blocking call
+                    return CallNextHookEx(self.keyboard_id, code, event_code, kb_data_ptr)
+
+            keyboard_pointer = _callback_pointer(keyboard_low_level_handler)
+
+            self.keyboard_id = SetWindowsHookExA(WH_KEYBOARD_LL, keyboard_pointer,
+                                                 GetModuleHandleA(None),
+                                                 0)
+
+        if self.mouse_is_hook:
+            def mouse_low_level_handler(code, event_code, kb_data_ptr):
+                """Used to catch and deal with mouse events"""
+                current_key = MOUSE_ID_TO_KEY.get(event_code)  # check the type of event (see MOUSE_ID_TO_KEY for a list)
+                if current_key is None:
+                    event = None # We can check this later.
+                    if self.warn_unrecognised:
+                        warn('Unrecognised mouse ID %d.' % event_code)
+                else:
+                    if current_key != 'Move':  # if we aren't moving, then we deal with a mouse click
+                        event_type = MOUSE_ID_TO_EVENT_TYPE[event_code]
+                        # the first two members of kb_data_ptr hold the mouse position, x and y
+                        event = MouseEvent(current_key, event_type, kb_data_ptr[0], kb_data_ptr[1])
+
+                try:
+                    if event:
+                        self.handler(event)
+                except Exception as e:
+                    warn('While handling {}, self.handler produced a traceback:\n{}'.format(event, format_exc()))
+                finally:
+                   # TODO: fix return here to use non-blocking call
+                    return CallNextHookEx(self.mouse_id, code, event_code, kb_data_ptr)
+
+            mouse_pointer = _callback_pointer(mouse_low_level_handler)
+            self.mouse_id = SetWindowsHookExA(WH_MOUSE_LL, mouse_pointer,
+                                              GetModuleHandleA(None), 0)
+
+        atexit.register(UnhookWindowsHookEx, self.keyboard_id)
+        atexit.register(UnhookWindowsHookEx, self.mouse_id)
+
+        message = wintypes.MSG()
+        while self.mouse_is_hook or self.keyboard_is_hook:
+            msg = GetMessageW(byref(message), 0, 0, 0)
+            if msg in [0, -1]:
+                self.unhook_keyboard()
+                self.unhook_mouse()
+                break # Exit the loop.
+
+            else:
+                TranslateMessage(byref(message))
+                DispatchMessageW(byref(message))
+
+    def unhook_mouse(self):
+        """Stop listening to the mouse"""
+        if self.mouse_is_hook:
+            self.mouse_is_hook = False
+            UnhookWindowsHookEx(self.mouse_id)
+
+    def unhook_keyboard(self):
+        """Stop listening to the keyboard"""
+        if self.keyboard_is_hook:
+            self.keyboard_is_hook = False
+            UnhookWindowsHookEx(self.keyboard_id)
+```
 
 ### Pyinstaller 将Python脚本打包成 exe
 
@@ -667,7 +667,7 @@
     [('john', 'A', 15), ('dave', 'B', 10), ('jane', 'B', 12)]
     ```
 
--下面是对自定义对象的不同属性进行排序的例子
+- 下面是对自定义对象的不同属性进行排序的例子
 
     ```Python
     # -*- coding: utf-8 -*-
@@ -706,33 +706,33 @@
 
 ### 在Windows下用Python加载和释放动态库
 
-    ```Python
-    # 加载
-    dll = ctypes.cdll.LoadLibrary('F320.dll')
+```Python
+# 加载
+dll = ctypes.cdll.LoadLibrary('F320.dll')
 
-    # 释放
-    win32api.FreeLibrary(dll._handle)
-    ```
+# 释放
+win32api.FreeLibrary(dll._handle)
+```
 
 ### python sqlite3数据库操作
 
-    ```Python
-    import sqlite3
+```Python
+import sqlite3
 
-    conn = sqlite3.connect('atepipeline.db')
-    cursor = conn.cursor()
-    cursor.execute("create table BuildInfo (NUMBER integer PRIMARY KEY,GROUPNAME text,PROJECTNAME text,BRANCH text,COMMITID text,COMMITER text,BUILDDATE text,BUILDRESULT text);")
-    cursor.execute("create table CppCheckInfo (NUMBER integer,CODETYPE text,ERROR integer,WARNING integer,STYLE integer,PERFORMANCE integer,PORTABILITY integer);")
-    cursor.execute("create table ClocInfo (NUMBER integer,CODETYPE text,CODE integer,COMMENT integer,BLANK integer,FILE integer);")
+conn = sqlite3.connect('atepipeline.db')
+cursor = conn.cursor()
+cursor.execute("create table BuildInfo (NUMBER integer PRIMARY KEY,GROUPNAME text,PROJECTNAME text,BRANCH text,COMMITID text,COMMITER text,BUILDDATE text,BUILDRESULT text);")
+cursor.execute("create table CppCheckInfo (NUMBER integer,CODETYPE text,ERROR integer,WARNING integer,STYLE integer,PERFORMANCE integer,PORTABILITY integer);")
+cursor.execute("create table ClocInfo (NUMBER integer,CODETYPE text,CODE integer,COMMENT integer,BLANK integer,FILE integer);")
 
-    cursor.execute('insert into BuildInfo values (3011,"new_project","xfp_10g_epon_olt","develop-eric-ss","6af54fac794ec6007220d08415893c2994ed1513","eric.yao@superxon.cn","2019-11-02 10:30:25","PASS");')
-    conn.commit()
+cursor.execute('insert into BuildInfo values (3011,"new_project","xfp_10g_epon_olt","develop-eric-ss","6af54fac794ec6007220d08415893c2994ed1513","eric.yao@superxon.cn","2019-11-02 10:30:25","PASS");')
+conn.commit()
 
-    cursor.execute('insert into CppCheckInfo values (3011,"software",0,0,0,0,0);')
-    conn.commit()
+cursor.execute('insert into CppCheckInfo values (3011,"software",0,0,0,0,0);')
+conn.commit()
 
-    conn.close()
-    ```
+conn.close()
+```
 
 ### python打印存文本图片
 
@@ -1009,303 +1009,303 @@
 
 一.  前言
 
-    ```Python
-    def f1():
-        print("f1是这个函数的名字！")
-     
-    s = "f1"
-    print("%s是个字符串" % s)
-    ```
-        
-    在上面的代码中，我们必须区分两个概念，f1和"f1"。前者是函数f1的函数名，后者只是一个叫”f1“的字符串，两者是不同的事物。我们可以用f1()的方式调用函数f1，但我们不能用"f1"()的方式调用函数。说白了就是，不能通过字符串来调用名字看起来相同的函数！
+```Python
+def f1():
+    print("f1是这个函数的名字！")
+ 
+s = "f1"
+print("%s是个字符串" % s)
+```
+    
+在上面的代码中，我们必须区分两个概念，f1和"f1"。前者是函数f1的函数名，后者只是一个叫”f1“的字符串，两者是不同的事物。我们可以用f1()的方式调用函数f1，但我们不能用"f1"()的方式调用函数。说白了就是，不能通过字符串来调用名字看起来相同的函数！
 
 二. Web实例
 
-    考虑有这么一个场景，根据用户输入的url的不同，调用不同的函数，实现不同的操作，也就是一个url路由器的功能，这在web框架里是核心部件之一。下面有一个精简版的示例：
+考虑有这么一个场景，根据用户输入的url的不同，调用不同的函数，实现不同的操作，也就是一个url路由器的功能，这在web框架里是核心部件之一。下面有一个精简版的示例：
 
-    首先，有一个commons模块，它里面有几个函数，分别用于展示不同的页面，代码如下：
+首先，有一个commons模块，它里面有几个函数，分别用于展示不同的页面，代码如下：
 
-    ```Python
-    def login():
-        print("这是一个登陆页面！")
+```Python
+def login():
+    print("这是一个登陆页面！")
 
-    def logout():
-        print("这是一个退出页面！")
+def logout():
+    print("这是一个退出页面！")
 
-    def home():
-        print("这是网站主页面！")
-    ```
+def home():
+    print("这是网站主页面！")
+```
 
-    其次，有一个visit模块，作为程序入口，接受用户输入，展示相应的页面，代码如下：（这段代码是比较初级的写法）
+其次，有一个visit模块，作为程序入口，接受用户输入，展示相应的页面，代码如下：（这段代码是比较初级的写法）
 
-    ```Python
-    import commons
+```Python
+import commons
 
-    def run():
-        inp = input("请输入您想访问页面的url：  ").strip()
-        if inp == "login":
-            commons.login()
-        elif inp == "logout":
-            commons.logout()
-        elif inp == "home":
-            commons.home()
-        else:
-            print("404")
+def run():
+    inp = input("请输入您想访问页面的url：  ").strip()
+    if inp == "login":
+        commons.login()
+    elif inp == "logout":
+        commons.logout()
+    elif inp == "home":
+        commons.home()
+    else:
+        print("404")
 
-    if __name__ == '__main__':
-        run()
-    ```
+if __name__ == '__main__':
+    run()
+```
 
-    我们运行visit.py，输入：home，页面结果如下：
+我们运行visit.py，输入：home，页面结果如下：
 
-    ```Python
-    请输入您想访问页面的url：  home
-    这是网站主页面！
-    ```
+```Python
+请输入您想访问页面的url：  home
+这是网站主页面！
+```
 
-    这就实现了一个简单的WEB路由功能，根据不同的url，执行不同的函数，获得不同的页面。
-    然而，让我们考虑一个问题，如果commons模块里有成百上千个函数呢(这非常正常)?。难道你在visit模块里写上成百上千个elif?显然这是不可能的！那么怎么破？
+这就实现了一个简单的WEB路由功能，根据不同的url，执行不同的函数，获得不同的页面。
+然而，让我们考虑一个问题，如果commons模块里有成百上千个函数呢(这非常正常)?。难道你在visit模块里写上成百上千个elif?显然这是不可能的！那么怎么破？
 
 三. 反射机制
 
-    仔细观察visit中的代码，我们会发现用户输入的url字符串和相应调用的函数名好像！如果能用这个字符串直接调用函数就好了！但是，前面我们已经说了字符串是不能用来调用函数的。为了解决这个问题，python为我们提供一个强大的内置函数：getattr!我们将前面的visit修改一下，代码如下：
+仔细观察visit中的代码，我们会发现用户输入的url字符串和相应调用的函数名好像！如果能用这个字符串直接调用函数就好了！但是，前面我们已经说了字符串是不能用来调用函数的。为了解决这个问题，python为我们提供一个强大的内置函数：getattr!我们将前面的visit修改一下，代码如下：
 
-    ```Python
-    import commons
-     
-    def run():
-        inp = input("请输入您想访问页面的url：  ").strip()
-        func = getattr(commons,inp)
-        func()
+```Python
+import commons
+ 
+def run():
+    inp = input("请输入您想访问页面的url：  ").strip()
+    func = getattr(commons,inp)
+    func()
 
-    if __name__ == '__main__':
-        run()
-    ```
+if __name__ == '__main__':
+    run()
+```
 
-    首先说明一下getattr函数的使用方法：它接收2个参数，前面的是一个对象或者模块，后面的是一个字符串，注意了！是个字符串！
+首先说明一下getattr函数的使用方法：它接收2个参数，前面的是一个对象或者模块，后面的是一个字符串，注意了！是个字符串！
 
-    例子中，用户输入储存在inp中，这个inp就是个字符串，getattr函数让程序去commons这个模块里，寻找一个叫inp的成员（是叫，不是等于），这个过程就相当于我们把一个字符串变成一个函数名的过程。然后，把获得的结果赋值给func这个变量，实际上func就指向了commons里的某个函数。最后通过调用func函数，实现对commons里函数的调用。这完全就是一个动态访问的过程，一切都不写死，全部根据用户输入来变化。
+例子中，用户输入储存在inp中，这个inp就是个字符串，getattr函数让程序去commons这个模块里，寻找一个叫inp的成员（是叫，不是等于），这个过程就相当于我们把一个字符串变成一个函数名的过程。然后，把获得的结果赋值给func这个变量，实际上func就指向了commons里的某个函数。最后通过调用func函数，实现对commons里函数的调用。这完全就是一个动态访问的过程，一切都不写死，全部根据用户输入来变化。
 
-    执行上面的代码，结果和最开始的是一样的。
+执行上面的代码，结果和最开始的是一样的。
 
-    这就是python的反射，它的核心本质其实就是利用字符串的形式去对象（模块）中操作（查找/获取/删除/添加）成员，一种基于字符串的事件驱动！
+这就是python的反射，它的核心本质其实就是利用字符串的形式去对象（模块）中操作（查找/获取/删除/添加）成员，一种基于字符串的事件驱动！
 
-    这段话，不一定准确，但大概就是这么个意思。
+这段话，不一定准确，但大概就是这么个意思。
 
 四. 进一步完善
 
-    上面的代码还有个小瑕疵，那就是如果用户输入一个非法的url，比如jpg，由于在commons里没有同名的函数，肯定会产生运行错误，具体如下：
+上面的代码还有个小瑕疵，那就是如果用户输入一个非法的url，比如jpg，由于在commons里没有同名的函数，肯定会产生运行错误，具体如下：
 
-    ```Python
-    请输入您想访问页面的url：  jpg
-    Traceback (most recent call last):
-      File "F:/Python/pycharm/s13/reflect/visit.py", line 16, in <module>
-        run()
-      File "F:/Python/pycharm/s13/reflect/visit.py", line 11, in run
+```Python
+请输入您想访问页面的url：  jpg
+Traceback (most recent call last):
+  File "F:/Python/pycharm/s13/reflect/visit.py", line 16, in <module>
+    run()
+  File "F:/Python/pycharm/s13/reflect/visit.py", line 11, in run
+    func = getattr(commons,inp)
+AttributeError: module 'commons' has no attribute 'jpg'
+```
+
+那怎么办呢？其实，python考虑的很全面了，它同样提供了一个叫hasattr的内置函数，用于判断commons中是否具有某个成员。我们将代码修改一下：
+
+```Python
+import commons
+ 
+def run():
+    inp = input("请输入您想访问页面的url：  ").strip()
+    if hasattr(commons,inp):
         func = getattr(commons,inp)
-    AttributeError: module 'commons' has no attribute 'jpg'
-    ```
+        func()
+    else:
+        print("404")
+ 
+if __name__ == '__main__':
+    run()
+```
 
-    那怎么办呢？其实，python考虑的很全面了，它同样提供了一个叫hasattr的内置函数，用于判断commons中是否具有某个成员。我们将代码修改一下：
+通过hasattr的判断，可以防止非法输入错误，并将其统一定位到错误页面。
 
-    ```Python
-    import commons
-     
-    def run():
-        inp = input("请输入您想访问页面的url：  ").strip()
-        if hasattr(commons,inp):
-            func = getattr(commons,inp)
-            func()
-        else:
-            print("404")
-     
-    if __name__ == '__main__':
-        run()
-    ```
+其实，研究过python内置函数的朋友，应该注意到还有delattr和setattr两个内置函数。从字面上已经很好理解他们的作用了。
 
-    通过hasattr的判断，可以防止非法输入错误，并将其统一定位到错误页面。
-
-    其实，研究过python内置函数的朋友，应该注意到还有delattr和setattr两个内置函数。从字面上已经很好理解他们的作用了。
-
-    python的四个重要内置函数：getattr、hasattr、delattr和setattr较为全面的实现了基于字符串的反射机制。他们都是对内存内的模块进行操作，并不会对源文件进行修改。
+python的四个重要内置函数：getattr、hasattr、delattr和setattr较为全面的实现了基于字符串的反射机制。他们都是对内存内的模块进行操作，并不会对源文件进行修改。
 
 五. 动态导入模块
 
-    上面的例子是在某个特定的目录结构下才能正常实现的，也就是commons和visit模块在同一目录下，并且所有的页面处理函数都在commons模块内。如下图：
+上面的例子是在某个特定的目录结构下才能正常实现的，也就是commons和visit模块在同一目录下，并且所有的页面处理函数都在commons模块内。如下图：
 
-    ![](images/PythonCookbook/1.png)
+![](images/PythonCookbook/1.png)
 
-    但在现实使用环境中，页面处理函数往往被分类放置在不同目录的不同模块中，也就是如下图：
+但在现实使用环境中，页面处理函数往往被分类放置在不同目录的不同模块中，也就是如下图：
 
-    ![](images/PythonCookbook/2.png)
+![](images/PythonCookbook/2.png)
 
-    难道我们要在visit模块里写上一大堆的import 语句逐个导入account、manage、commons模块吗？要是有1000个这种模块呢？
-    刚才我们分析完了基于字符串的反射，实现了动态的函数调用功能，我们不禁会想那么能不能动态导入模块呢？这完全是可以的！
-    python提供了一个特殊的方法：__import__(字符串参数)。通过它，我们就可以实现类似的反射功能。__import__()方法会根据参数，动态的导入同名的模块。
-    我们再修改一下上面的visit模块的代码
+难道我们要在visit模块里写上一大堆的import 语句逐个导入account、manage、commons模块吗？要是有1000个这种模块呢？
+刚才我们分析完了基于字符串的反射，实现了动态的函数调用功能，我们不禁会想那么能不能动态导入模块呢？这完全是可以的！
+python提供了一个特殊的方法：__import__(字符串参数)。通过它，我们就可以实现类似的反射功能。__import__()方法会根据参数，动态的导入同名的模块。
+我们再修改一下上面的visit模块的代码
 
-    ```Python
-    def run():
-        inp = input("请输入您想访问页面的url：  ").strip()
-        modules, func = inp.split("/")
-        obj = __import__(modules)
-        if hasattr(obj, func):
-            func = getattr(obj, func)
-            func()
-        else:
-            print("404")
-     
-    if __name__ == '__main__':
-        run()
-    ```
+```Python
+def run():
+    inp = input("请输入您想访问页面的url：  ").strip()
+    modules, func = inp.split("/")
+    obj = __import__(modules)
+    if hasattr(obj, func):
+        func = getattr(obj, func)
+        func()
+    else:
+        print("404")
+ 
+if __name__ == '__main__':
+    run()
+```
 
-    运行一下：
+运行一下：
 
-    ```Python
-    请输入您想访问页面的url：  commons/home
-    这是网站主页面！
-     
-    请输入您想访问页面的url：  account/find
-    这是一个查找功能页面！
-    ```
+```Python
+请输入您想访问页面的url：  commons/home
+这是网站主页面！
+ 
+请输入您想访问页面的url：  account/find
+这是一个查找功能页面！
+```
 
-    我们来分析一下上面的代码：
+我们来分析一下上面的代码：
 
-    首先，我们并没有定义任何一行import语句；
+首先，我们并没有定义任何一行import语句；
 
-    其次，用户的输入inp被要求为类似“commons/home”这种格式，其实也就是模拟web框架里的url地址，斜杠左边指向模块名，右边指向模块中的成员名。
+其次，用户的输入inp被要求为类似“commons/home”这种格式，其实也就是模拟web框架里的url地址，斜杠左边指向模块名，右边指向模块中的成员名。
 
-    然后，modules,func = inp.split("/")处理了用户输入，使我们获得的2个字符串，并分别保存在modules和func变量里。
+然后，modules,func = inp.split("/")处理了用户输入，使我们获得的2个字符串，并分别保存在modules和func变量里。
 
-    接下来，最关键的是obj = __import__(modules)这一行，它让程序去导入了modules这个变量保存的字符串同名的模块，并将它赋值给obj变量。
+接下来，最关键的是obj = __import__(modules)这一行，它让程序去导入了modules这个变量保存的字符串同名的模块，并将它赋值给obj变量。
 
-    最后的调用中，getattr去modules模块中调用func成员的含义和以前是一样的。
+最后的调用中，getattr去modules模块中调用func成员的含义和以前是一样的。
 
-    总结：通过__import__函数，我们实现了基于字符串的动态的模块导入。
+总结：通过__import__函数，我们实现了基于字符串的动态的模块导入。
 
-    同样的，这里也有个小瑕疵！
+同样的，这里也有个小瑕疵！
 
-    如果我们的目录结构是这样的：
+如果我们的目录结构是这样的：
 
-    ![](images/PythonCookbook/3.png)
+![](images/PythonCookbook/3.png)
 
-    那么在visit的模块调用语句中，必须进行修改，我们想当然地会这么做：
+那么在visit的模块调用语句中，必须进行修改，我们想当然地会这么做：
 
-    ```Python
-    def run():
-        inp = input("请输入您想访问页面的url：  ").strip()
-        modules, func = inp.split("/")
-        obj = __import__("lib." + modules)      #注意字符串的拼接
-        if hasattr(obj, func):
-            func = getattr(obj, func)
-            func()
-        else:
-            print("404")
-     
-    if __name__ == '__main__':
-        run()
-    ```
-     
-    改了这么一个地方:obj = __import__("lib." + modules)，看起来似乎没什么问题，和import lib.commons的传统方法类似，但实际上运行的时候会有错误。
+```Python
+def run():
+    inp = input("请输入您想访问页面的url：  ").strip()
+    modules, func = inp.split("/")
+    obj = __import__("lib." + modules)      #注意字符串的拼接
+    if hasattr(obj, func):
+        func = getattr(obj, func)
+        func()
+    else:
+        print("404")
+ 
+if __name__ == '__main__':
+    run()
+```
+ 
+改了这么一个地方:obj = __import__("lib." + modules)，看起来似乎没什么问题，和import lib.commons的传统方法类似，但实际上运行的时候会有错误。
 
-    ```Python
-    请输入您想访问页面的url：  commons/home
-    404
-     
-    请输入您想访问页面的url：  account/find
-    404
-    ```
+```Python
+请输入您想访问页面的url：  commons/home
+404
+ 
+请输入您想访问页面的url：  account/find
+404
+```
 
-    为什么呢？因为对于lib.xxx.xxx.xxx这一类的模块导入路径，__import__默认只会导入最开头的圆点左边的目录，也就是“lib”。我们可以做个测试，在visit同级目录内新建一个文件，代码如下：
+为什么呢？因为对于lib.xxx.xxx.xxx这一类的模块导入路径，__import__默认只会导入最开头的圆点左边的目录，也就是“lib”。我们可以做个测试，在visit同级目录内新建一个文件，代码如下：
 
-    ```Python
-    obj = __import__("lib.commons")
-    print(obj)
-    ```
+```Python
+obj = __import__("lib.commons")
+print(obj)
+```
 
-    执行结果：
+执行结果：
 
-    ```Python
-    <module 'lib' (namespace)>
-    ```
+```Python
+<module 'lib' (namespace)>
+```
 
-    这个问题怎么解决呢？加上fromlist = True参数即可！
+这个问题怎么解决呢？加上fromlist = True参数即可！
 
-    ```Python
-    def run():
-        inp = input("请输入您想访问页面的url：  ").strip()
-        modules, func = inp.split("/")
-        obj = __import__("lib." + modules, fromlist=True)  # 注意fromlist参数
-        if hasattr(obj, func):
-            func = getattr(obj, func)
-            func()
-        else:
-            print("404")
-     
-    if __name__ == '__main__':
-        run()
-    ```
+```Python
+def run():
+    inp = input("请输入您想访问页面的url：  ").strip()
+    modules, func = inp.split("/")
+    obj = __import__("lib." + modules, fromlist=True)  # 注意fromlist参数
+    if hasattr(obj, func):
+        func = getattr(obj, func)
+        func()
+    else:
+        print("404")
+ 
+if __name__ == '__main__':
+    run()
+```
 
-    至此，动态导入模块的问题基本都解决了，只剩下最后一个，那就是万一用户输入错误的模块名呢？比如用户输入了somemodules/find，由于实际上不存在somemodules这个模块，必然会报错！那有没有类似上面hasattr内置函数这么个功能呢？答案是没有！碰到这种，你只能通过异常处理来解决。
+至此，动态导入模块的问题基本都解决了，只剩下最后一个，那就是万一用户输入错误的模块名呢？比如用户输入了somemodules/find，由于实际上不存在somemodules这个模块，必然会报错！那有没有类似上面hasattr内置函数这么个功能呢？答案是没有！碰到这种，你只能通过异常处理来解决。
         
 六. 最后的思考    
     
-    可能有人会问python不是有两个内置函数exec和eval吗？他们同样能够执行字符串。比如：
+可能有人会问python不是有两个内置函数exec和eval吗？他们同样能够执行字符串。比如：
 
-    ```Python
-    exec("print('haha')")
-     
-    结果：
-     
-    haha
-    ```
+```Python
+exec("print('haha')")
+ 
+结果：
+ 
+haha
+```
 
-    那么直接使用它们不行吗？非要那么费劲地使用getattr，__import__干嘛？
+那么直接使用它们不行吗？非要那么费劲地使用getattr，__import__干嘛？
 
-    其实，在上面的例子中，围绕的核心主题是如何利用字符串驱动不同的事件，比如导入模块、调用函数等等，这些都是python的反射机制，是一种编程方法、设计模式的体现，凝聚了高内聚、松耦合的编程思想，不能简单的用执行字符串来代替。当然，exec和eval也有它的舞台，在web框架里也经常被使用。
+其实，在上面的例子中，围绕的核心主题是如何利用字符串驱动不同的事件，比如导入模块、调用函数等等，这些都是python的反射机制，是一种编程方法、设计模式的体现，凝聚了高内聚、松耦合的编程思想，不能简单的用执行字符串来代替。当然，exec和eval也有它的舞台，在web框架里也经常被使用。
 
 ### Python用lxml模块解析XML编码问题
 
-    最近在用lxml模块解析一个XML文件的时候, XML文件中有中文的时候:
+最近在用lxml模块解析一个XML文件的时候, XML文件中有中文的时候:
 
-    代码如下:
+代码如下:
 
-    ```Python
-    etree.parse(cloc_file)
-    ```
+```Python
+etree.parse(cloc_file)
+```
 
-    会出现如下错误:
+会出现如下错误:
 
-    ```Python
-    Traceback (most recent call last):
-      File "gen_reports.py", line 481, in <module>
-        SummaryHtml(build_list, db).build_html()
-      File "gen_reports.py", line 309, in __init__
-        self.cloc_result = ClocResult()
-      File "gen_reports.py", line 134, in __init__
-        self.analysis_result(os.path.join(report_root, 'Lint', 'software'))
-      File "gen_reports.py", line 152, in analysis_result
-        self.result[software_type] = self.__analysis_cloc(os.path.join(root, filename))
-      File "gen_reports.py", line 138, in __analysis_cloc
-        tree = etree.parse(cloc_file)
-      File "src/lxml/etree.pyx", line 3426, in lxml.etree.parse
-      File "src/lxml/parser.pxi", line 1840, in lxml.etree._parseDocument
-      File "src/lxml/parser.pxi", line 1866, in lxml.etree._parseDocumentFromURL
-      File "src/lxml/parser.pxi", line 1770, in lxml.etree._parseDocFromFile
-      File "src/lxml/parser.pxi", line 1163, in lxml.etree._BaseParser._parseDocFromFile
-      File "src/lxml/parser.pxi", line 601, in lxml.etree._ParserContext._handleParseResultDoc
-      File "src/lxml/parser.pxi", line 711, in lxml.etree._handleParseResult
-      File "src/lxml/parser.pxi", line 640, in lxml.etree._raiseParseError
-      File "/var/lib/jenkins/userContent/platform/software_middleware/8/Lint/software/equipment/cloc.xml", line 13
-    lxml.etree.XMLSyntaxError: Input is not proper UTF-8, indicate encoding !
-    Bytes: 0xC6 0xC0 0xB9 0xC0, line 13, column 150
-    ```
+```Python
+Traceback (most recent call last):
+  File "gen_reports.py", line 481, in <module>
+    SummaryHtml(build_list, db).build_html()
+  File "gen_reports.py", line 309, in __init__
+    self.cloc_result = ClocResult()
+  File "gen_reports.py", line 134, in __init__
+    self.analysis_result(os.path.join(report_root, 'Lint', 'software'))
+  File "gen_reports.py", line 152, in analysis_result
+    self.result[software_type] = self.__analysis_cloc(os.path.join(root, filename))
+  File "gen_reports.py", line 138, in __analysis_cloc
+    tree = etree.parse(cloc_file)
+  File "src/lxml/etree.pyx", line 3426, in lxml.etree.parse
+  File "src/lxml/parser.pxi", line 1840, in lxml.etree._parseDocument
+  File "src/lxml/parser.pxi", line 1866, in lxml.etree._parseDocumentFromURL
+  File "src/lxml/parser.pxi", line 1770, in lxml.etree._parseDocFromFile
+  File "src/lxml/parser.pxi", line 1163, in lxml.etree._BaseParser._parseDocFromFile
+  File "src/lxml/parser.pxi", line 601, in lxml.etree._ParserContext._handleParseResultDoc
+  File "src/lxml/parser.pxi", line 711, in lxml.etree._handleParseResult
+  File "src/lxml/parser.pxi", line 640, in lxml.etree._raiseParseError
+  File "/var/lib/jenkins/userContent/platform/software_middleware/8/Lint/software/equipment/cloc.xml", line 13
+lxml.etree.XMLSyntaxError: Input is not proper UTF-8, indicate encoding !
+Bytes: 0xC6 0xC0 0xB9 0xC0, line 13, column 150
+```
 
-    改成如下这种即可:
+改成如下这种即可:
 
-    ```Python
-    etree.parse(cloc_file, parser=etree.XMLParser(encoding="gb2312"))
-    ```
+```Python
+etree.parse(cloc_file, parser=etree.XMLParser(encoding="gb2312"))
+```
 
 ### Python threading 多线程返回值
 
@@ -1414,7 +1414,7 @@
     sys.setdefaultencoding('utf-8')
     ```
 
-如果缺少reload(sys)一句则会出现以下错误
+    如果缺少reload(sys)一句则会出现以下错误
 
     ```Shell
     Traceback (most recent call last):
@@ -1511,42 +1511,42 @@
 
 ### 判断一个文件是二进制文件还是文本文件
 
-    ```Python
-    def is_elffile(filename):
-        try:
-            FileStates = os.stat(filename)
-            FileMode = FileStates[stat.ST_MODE]
-            if not stat.S_ISREG(FileMode) or stat.S_ISLNK(FileMode):  # 如果文件既不是普通文件也不是链接文件
-                return False
-            with open(filename, 'rb') as f:
-                header = (bytearray(f.read(4))[1:4]).decode(encoding="utf-8")
-                if header in ["ELF"]:
-                    return True
-        except UnicodeDecodeError as e:
-            pass
-     
+```Python
+def is_elffile(filename):
+    try:
+        FileStates = os.stat(filename)
+        FileMode = FileStates[stat.ST_MODE]
+        if not stat.S_ISREG(FileMode) or stat.S_ISLNK(FileMode):  # 如果文件既不是普通文件也不是链接文件
+            return False
+        with open(filename, 'rb') as f:
+            header = (bytearray(f.read(4))[1:4]).decode(encoding="utf-8")
+            if header in ["ELF"]:
+                return True
+    except UnicodeDecodeError as e:
+        pass
+ 
+    return False
+
+def is_text(filename):
+    s=open(filename).read(512)
+    text_characters = "".join(map(chr, range(32, 127)) + list("\n\r\t\b"))
+    _null_trans = string.maketrans("", "")
+    if not s:
+        # Empty files are considered text
+        return True
+    if "\0" in s:
+        # Files with null bytes are likely binary
+        return False
+    # Get the non-text characters (maps a character to itself then
+    # use the 'remove' option to get rid of the text characters.)
+    t = s.translate(_null_trans, text_characters)
+    # If more than 30% non-text characters, then
+    # this is considered a binary file
+    if float(len(t))/float(len(s)) > 0.30:
         return False
 
-    def is_text(filename):
-        s=open(filename).read(512)
-        text_characters = "".join(map(chr, range(32, 127)) + list("\n\r\t\b"))
-        _null_trans = string.maketrans("", "")
-        if not s:
-            # Empty files are considered text
-            return True
-        if "\0" in s:
-            # Files with null bytes are likely binary
-            return False
-        # Get the non-text characters (maps a character to itself then
-        # use the 'remove' option to get rid of the text characters.)
-        t = s.translate(_null_trans, text_characters)
-        # If more than 30% non-text characters, then
-        # this is considered a binary file
-        if float(len(t))/float(len(s)) > 0.30:
-            return False
-
-        return True
-    ```
+    return True
+```
 
 ### python 日志模块logging的简单实用
 
