@@ -183,6 +183,88 @@ toIndex: 结束索引, 可以大于数组的长度, 新数组不包括该索引�
 
 ### 字符串
 
+- 创建字符串
+
+```Java
+//方法一
+String s = new String();
+
+//方法二
+car a[] = {'g', 'o', 'o', 'd'}
+String s = new String(a);             //这种方式等价于String s = new String("good")
+
+//方法三
+car a[] = {'s', 't', 'u', 'd', 'e', 'n', 't'}
+String s = new String(a, 2, 4);       //第二个参数为offset, 第三个参数为length; 这种方式等价于String s = new String("uden")
+```
+
+- 字符串连接都是用"+", 包括字符串和字符串连接, 字符串和其他数据类型连接
+
+- 获取字符串的信息
+
+**str.length():** 获取字符串的长度
+
+**str.indexOf(substr):** 获取字符串中指定字符的索引, 没有检索到则返回-1
+
+**str.lastIndexOf(substr):** 获取字符串中指定字符最后出现的索引, 没有检索到则返回-1
+
+**str.charAt(int index):** 获取指定索引的字符
+
+**str.trim():** 去掉字符串前后的空格
+
+**StringTokenizer(String str, String delim):** 分割字符串, 不支持正则表达式
+
+**str.replaceAll(String regex, String replacement):** 字符串替换, 默认为正则表达式匹配, 将regex替换为replacement, 替换所有匹配到的字符串
+
+**str.replace(CharSequence target, CharSequence replacement):** 字符串替换, 全部替换, 不支持正则表达式匹配
+
+**str.replaceFirst(String regex, String replacement):** 只替换第一个匹配的字符串, 默认为正则表达式匹配
+
+```Java
+public class ReplaceString {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		String str1 = "Aoc.Iop.Aoc.Iop.Aoc";
+		String str2 = "Aoc.Iop.Aoc.Iop.Aoc";
+		String str3 = "Aoc.Iop.Aoc.Iop.Aoc";
+		
+		String str11 = str1.replace(".", "#");		// str11 = "Aoc#Iop#Aoc#Iop#Aoc"
+		String str22 = str2.replaceAll(".", "#");	// str22 = "###################"
+		String str33 = str3.replaceFirst(".", "#");	// str33 = "#oc.Iop.Aoc.Iop.Aoc"
+
+		System.out.println(str11);
+		System.out.println(str22);
+		System.out.println(str33);
+	}
+
+}
+```
+
+- 字符串判断
+
+**str.equals(String otherstr):** 比较字符串str和otherstr的是否相等, 长度是否一样; 且严格区分大小写; 返回true或false
+
+**str.equalsIgnoreCase(String otherstr):** 比较字符串str和otherstr的是否相等, 长度是否一样; 不区分大小写; 返回true或false
+
+**str.startsWith(String prefix):** 判断字符串是否以prefix开始
+
+**str.endsWith(String suffix):** 判断字符串是否以suffix开始
+
+**str.toLowerCase():** 将字符串转换成小写
+
+**str.toUpperCase():** 将字符串转换成大写
+
+**str.split(String sign):** 分割字符串, sign可以是正则表达式
+
+**str.split(String sign, int limit):** 分割字符串, sign可以是正则表达式, limit指定拆分的份数
+
+- 格式化字符串
+
+
+
+
 
 ### 编码风格
 
