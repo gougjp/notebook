@@ -80,6 +80,110 @@ public class Val {
 }
 ```
 
+### 数组
+
+- 一维数组
+
+```Java
+//方法一
+int arr[];            //声明整数数组
+arr = new int[3];     //为数组分配内存
+arr[0] = 1;           //给数组赋值
+arr[1] = 2;
+arr[2] = 3;
+
+//方法二
+int arr[] = new int[3];   //声明数组并分配内存
+arr[0] = 1;               //给数组赋值
+arr[1] = 2;
+arr[2] = 3;
+
+//方法三
+int arr[] = new int[]{1, 2, 3};   //定义并初始化
+int arr[] = {1, 2, 3};            //定义并初始化
+```
+
+- 二维数组
+
+```Java
+//方法一
+int arr[][];             //声明整数数组
+arr = new int[2][3];     //为数组分配内存
+arr[0][0] = 1;           //给数组赋值
+
+//方法二
+int arr[][] = new int[2][3];   //声明数组并分配内存
+arr[0][0] = 1;                 //给数组赋值
+
+//方法三
+int arr[][] = new int[]{{1, 2, 3}, {4, 5, 6}};   //定义并初始化
+int arr[][] = {{1, 2, 3}, {4, 5, 6}};            //定义并初始化
+```
+
+- Arrays类中的静态方法fill()可对数组中的元素进行替换
+
+**Arrays.fill(int\[\] a, int value)**
+
+```Java
+import java.util.Arrays;
+
+public class Swap {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		int arr[] = new int[5];
+		Arrays.fill(arr, 8);        //填充过后, 数组的所有元素都为8
+		for (int i = 0; i < arr.length; i++) {
+			System.out.println("arr[" + i + "] = " + arr[i]);
+		}
+	}
+
+}
+```
+
+**Arrays.fill(int\[\] a, int fromIndex, int toIndex, int value)**
+
+填充数组中指定索引范围中的元素, fromIndex表示起始索引(包括), toIndex表示结束索引(不包括), 如果fromIndex == toIndex, 则填充范围为空
+
+```Java
+import java.util.Arrays;
+
+public class Displace {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		int arr[] = new int[] {45, 12, 2, 10, 1};
+		
+		Arrays.fill(arr, 1, 3, 8);
+		
+		for (int i = 0; i < arr.length; i++) {
+			System.out.println("arr[" + i + "] = " + arr[i]);
+		}
+	}
+
+}
+```
+
+- 对数组进行排序
+
+**Arrays.sort(object)**
+
+- 复制数组
+
+**Arrays.copyOff(arr, int newlength)**
+
+如果newlength大于arr的长度, 则新数组的后面用0填充; 如果小于则截断数组后半部分
+
+**Arrays.copyOfRange(arr, int fromIndex, int toIndex)**
+
+fromIndex: 起始索引, 必须为0到数组长度之间, 新数组包括该索引的元素
+toIndex: 结束索引, 可以大于数组的长度, 新数组不包括该索引的元素
+
+### 字符串
+
+
 ### 编码风格
 
 类名大写字母开头, 后面驼峰风格
@@ -124,6 +228,8 @@ i = (int)lng2;           // 必须进行显示转换
 - Java中没有sizeof()操作符
 
 ### 控制执行流程
+
+- 复合语句就是一个语句块, 里面定义的变量只在语句块中可见
 
 - Java不允许将一个非布尔值, 比如数字作为布尔值使用
 
@@ -250,7 +356,34 @@ Integer[] b = new Integer[] {
 
 - package定义包名, 必须放在文件的第一行(除了前面有注释)
 
+### Java交换两个变量的值
 
+```Java
+import java.util.Scanner;
+
+public class VariableExchange {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		
+		System.out.println("Input the value of A");
+		long A = scan.nextLong();
+		
+		System.out.println("Input the value of B");
+		long B = scan.nextLong();
+		
+		System.out.println("A = " + A);
+		System.out.println("B = " + B);
+		
+		A = A ^ B;
+		B = B ^ A;
+		A = A ^ B;
+		
+		System.out.println("A = " + A);
+		System.out.println("B = " + B);
+	}
+}
+```
 
 
 
