@@ -32,6 +32,13 @@ set JAVA_HOME="C:\Program Files (x86)\Java\jre1.8.0_251"
 set CLASSPATH=".;%JAVA_HOME%\\lib:%JAVA_HOME%\\lib\\tools.jar"
 ```
 
+或者在命令执行时指定参数"-cp ."或"-classpath ."
+
+```Shell
+java -cp . HelloDate
+java -classpath . HelloDate
+```
+
 ## 基本语法
 
 ### 注释
@@ -42,6 +49,37 @@ set CLASSPATH=".;%JAVA_HOME%\\lib:%JAVA_HOME%\\lib\\tools.jar"
 
 注释文档: /\*\* ... \*/
 
+### 声明常量
+
+常量在程序运行中只赋值一次, 并且在整个运行过程中都不会改变; 在声明常量时, 通常使用大写字母的格式
+
+**final 数据类型 常量名称\[=值\]**
+
+### 类成员变量和局部变量
+
+```Java
+class var {
+    int x = 45;           //定义实例变量
+    static int y = 90;    //定义静态变量
+}
+```
+
+类成员变量在整个类中都可以使用; 静态变量的有效范围可以跨类, 甚至可以达到整个应用程序内, 在定义的类中可以直接使用, 在其他类中可以通过"类名.静态变量"的方式使用
+
+```Java
+public class Val {
+
+	static int times = 3;                                 //定义类成员变量times
+	
+	public static void main(String[] args) {
+		int times = 4;                                    //定义局部变量times
+		
+		System.out.println("times: " + times);            //打印局部变量的值
+		System.out.println("Val times: " + Val.times);    //打印类成员变量的值
+	}
+}
+```
+
 ### 编码风格
 
 类名大写字母开头, 后面驼峰风格
@@ -50,6 +88,8 @@ set CLASSPATH=".;%JAVA_HOME%\\lib:%JAVA_HOME%\\lib\\tools.jar"
 ### 操作符
 
 - 单个字符用单引号, 字符串用双引号
+
+- 逻辑运算符的操作元必须为布尔类型值, 返回值也为布尔类型值; &&和&都是逻辑与, \|\|和\|都是逻辑或, 只是&&和\|\|是短路运算符, 而&和\|是非短路运算符; 同时, &和\|也是位运算符, 当两边的操作元为布尔类型时则为逻辑运算符, 否则为位运算符
 
 - \>>> 无符号右移操作符, 它使用0扩展, 无论正负, 都在高位插入0; >>>= 为无符号右移和等号的组合, i >>>= 2即i = i >>> 2
 
