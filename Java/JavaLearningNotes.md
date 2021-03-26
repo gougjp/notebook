@@ -262,9 +262,52 @@ public class ReplaceString {
 
 - 格式化字符串
 
+**str.format(String format, Object...args):** 包括日期, 时间, 常规类型格式化
 
+- 正则表达式
 
+**str.matches(String regex):** 判断str是否匹配正则表达式regex, 返回true或false
 
+- 字符串生成器StringBuilder
+
+新创建的StringBuilder对象初始容量是16个字符, 可以自行指定长度, 也可以动态的执行添加, 删除和插入等操作, 大大的提高了频繁增加字符串的效率; 如果附加的字符超过可容纳的长度, 则StringBuilder对象将自动增加长度以容纳被附加的字符
+
+```Java
+public class Jerque {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		String str = "";
+		long startTime = System.currentTimeMillis();
+		for (long i = 0; i < 100000; i++) {
+			str = str + i;
+		}
+		long endTime = System.currentTimeMillis();
+		long time = endTime - startTime;
+		System.out.println("Used time: " + time);         //Used time: 5851
+		StringBuilder builder = new StringBuilder("");
+		startTime = System.currentTimeMillis();
+		for (long j = 0; j < 100000; j++) {
+			builder.append(j);
+		}
+		endTime = System.currentTimeMillis();
+		time = endTime - startTime;
+		System.out.println("StringBuilder used time:" + time);    //StringBuilder used time:2
+	}
+
+}
+```
+
+**StringBuilder append(String str):** 将字符串str追加到字符串生成器中
+
+**StringBuilder append(StringBuffer sb):** 将字符串缓存sb的值追加到字符串生成器中
+
+**StringBuilder insert(int offset, String str):** 将指定的字符串str添加到offset指定的位置
+
+**StringBuilder delete(int start, int end):** 移除字符串生成器中的子字符串, start和end分别为起始位置和结束位置, 返回删除后的字符串; start位置的字符会被删除, end位置的字符不会被删除; 如果start等于end, 则不会删除任何字符
+
+**StringBuilder toString():** 将字符串生成器转换成字符串, 转换后字符串生成器的值不变
 
 ### 编码风格
 
