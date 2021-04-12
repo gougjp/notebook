@@ -1,6 +1,6 @@
 # C Functions
 
-**char \*strrchr(const char \*str, int c)**
+**<font color="red">char \*strrchr(const char \*str, int c)</font>**
 
 在参数str所指向的字符串中搜索最后一次出现字符c(一个无符号字符)的位置; 该函数返回str中最后一次出现字符c的位置指针. 如果未找到该值, 则函数返回一个空指针.
 
@@ -47,12 +47,13 @@ int main(void)
         printf("%s\n",p);
 
     return 0;
+}
 ```
 
 **size\_t getpagesize(void)**
 
 返回一分页的大小, 单位为字节(byte). 此为系统的分页大小, 不一定会和硬件分页大小相同. 在Intel x86上其返回值应为4096 bytes.
 
+**int sscanf(const char \*str, const char \*format, ...)**
 
-
-
+从字符串读取格式化输入, str是C字符串, 是函数检索数据的源; format是C字符串, 包含一个或多个格式说明符号; 其后的多个参数都为指针, 跟格式字符串中的每一个%标签一一对应, 包括类型和数量. 如果成功, 该函数返回成功匹配和赋值的个数. 如果到达文件末尾或发生读错误, 则返回EOF.
