@@ -13,6 +13,13 @@
 .. toctree::
    :glob:
    :maxdepth: 2
+   :caption: CPrograme
+   
+   CPrograme/*
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
    :caption: Python
 
    Python/*
