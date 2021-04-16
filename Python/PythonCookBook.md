@@ -1671,7 +1671,119 @@ c = (a>b and [a] or [b])[0]
 # 也就是False和True在和别人做boolean运算的时候，根据and还是or，F和T在前在后有不一样的数据转换规则。
 ```
 
+### SSH实现交互命令
 
+```Python
+import re
+import time
+import socket
+import paramiko
+
+CREDENTIALS = {
+    'ip'       : <ip>,
+    'user'     : <username>,
+    'password' : <passwd>,
+    'port'     : <port>,
+}
+
+
+class SSHConnect():
+    def __init__(self, credentials):
+        self.ip = credentials['ip']
+        self.username = credentials['user']
+        self.passwd = credentials['password']
+        self.port = credentials['port']
+        self.__ssh = None
+        self.__channel = None
+
+        # 7-bit C1 ANSI sequences
+        self.__ansi_escape = re.compile(r'''
+                \x1B  # ESC
+                (?:   # 7-bit C1 Fe (except CSI)
+                [@-Z\\-_]
+                |     # or [ for CSI, followed by a control sequence
+                \[
+                [0-?]*  # Parameter bytes
+                [ -/]*  # Intermediate bytes
+                [@-~]   # Final byte
+            )
+        ''', re.VERBOSE)
+
+    def __del__(self):
+        self.__close()
+
+    def connect(self):
+        self.__close()
+
+        self.__ssh = paramiko.SSHClient()
+        self.__ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.__ssh.connect(self.ip, username=self.username, password=self.passwd, port=self.port)
+
+    def exec_command(self, cmd, end_str=('# ', '$ ', '? ', '% '), timeout=30):
+        if not self.__channel:
+            self.__channel = self.__ssh.invoke_shell(term='xterm', width=4096, height=48)
+            time.sleep(0.020)
+            self.__channel.recv(4096).decode()
+
+        if cmd.endswith('\n'):
+            self.__channel.send(cmd)
+        else:
+            self.__channel.send(cmd + '\n')
+
+        result = self.__recv(self.__channel, end_str, timeout)
+        print(result)
+        begin_pos = result.find('\r\n')
+        end_pos = result.rfind('\r\n')
+        if begin_pos == end_pos:
+            return ''
+        return result[begin_pos + 2:end_pos]
+
+    def __recv(self, channel, end_str, timeout):
+        result = ''
+        out_str = ''
+        max_wait_time = timeout * 1000
+        channel.settimeout(0.05)
+        while max_wait_time > 0:
+            try:
+                out = channel.recv(1024 * 1024).decode()
+
+                if not out or out == '':
+                    continue
+                out_str = out_str + out
+
+                match, result = self.__match(out_str, end_str)
+                if match is True:
+                    return result.strip()
+                else:
+                    max_wait_time -= 50
+            except socket.timeout:
+                max_wait_time -= 50
+
+        raise Exception('recv data timeout')
+
+    def __match(self, out_str, end_str):
+        result = self.__ansi_escape.sub('', out_str)
+
+        for it in end_str:
+            if result.endswith(it):
+                return True, result
+        return False, result
+
+    def __close(self):
+        if not self.__ssh:
+            return
+        self.__ssh.close()
+        self.__ssh = None
+
+
+
+if __name__ == '__main__':
+    connecter = SSHConnect(CREDENTIALS)
+    connecter.connect()
+    connecter.exec_command('run-system-shell\n')
+    connecter.exec_command('bash\n')
+    connecter.exec_command('ls -al /sbin/phy\n')
+```
 
 
 
