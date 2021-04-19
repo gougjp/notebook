@@ -167,6 +167,7 @@ https://www.jianshu.com/p/f59d7df06432
 
     **SCHED_RR**: 鉴于SCHED_FIFO调度策略的一些缺点, SCHED_RR对SCHED_FIFO做出了一些增强功能. 从实质上看, 它还是SCHED_FIFO调用策略. 它使用最大运行时间来限制当前进程的运行, 当运行时间大于等于最大运行时间的时候, 当前线程将被切换并放置于相同优先级队列的最后. 这样做的好处是其他具有相同级别的线程能在“自私“线程下执行.
 
+
 2. 获取线程可以设置的最高和最低优先级:
 
     **int sched_get_priority_max(int policy)**;
@@ -174,6 +175,7 @@ https://www.jianshu.com/p/f59d7df06432
     **int sched_get_priority_min(int policy)**;
     
     policy可以为SCHED_OTHER, SCHED_FIFO, SCHED_RR; 对于 SCHED_OTHER 策略, sched_priority只能为0; 对于SCHED_FIFO, SCHED_RR策略, sched_priority从1到99.
+
 
 3. 获取和设置线程的优先级:
 
@@ -192,11 +194,13 @@ https://www.jianshu.com/p/f59d7df06432
     
     **int pthread_attr_getschedparam(const pthread_attr_t \*attr, struct sched_param \*param)**;
 
+
 4. 获取和设置线程的调度策略:
 
     **int pthread_attr_setschedpolicy(pthread_attr_t \*attr, int policy)**;
     
     **int pthread_attr_getschedpolicy(pthread_attr_t \*attr, int policy)**;
+
 
 5. 继承调度属性:
 
@@ -207,7 +211,9 @@ https://www.jianshu.com/p/f59d7df06432
     手动设置了调度策略或优先级时, 必须显示的设置线程调度策略的inheritsched属性, 因为pthread没有为inheritsched设置默认值. 所以在改变了调度策略或优先级时必须总是设置该属性.
 
     第一个函数中inheritsched的取值为: PTHREAD_INHERIT_SCHED或者PTHREAD_EXPLICIT_SCHED.
+    
     前者为继承创建线程的调度策略和优先级, 后者指定不继承调度策略和优先级, 而是使用自己设置的调度策略和优先级; 无论何时, 当你需要控制一个线程的调度策略或优先级时, 必须将inheritsched属性设置为PTHREAD_EXPLICIT_SCHED.
+    
     
 6. 总结:
 
@@ -216,6 +222,7 @@ https://www.jianshu.com/p/f59d7df06432
     调度策略和优先级是分开来描述的. 前者使用预定义的SCHED_RR, SCHED_FIFO, SCHED_OTHER, 后者是通过结果体struct sched_param给出的
     
     这些设置调度策略和优先级的函数操作的对象是线程的属性pthread_attr_t, 而不是直接来操作线程的调度策略和优先级的. 函数的第一个参数都是pthread_attr_t
+
 
 7. 直接设置正在运行的线程的调度策略和优先级(动态设置线程的调度策略和优先级):
 
@@ -245,9 +252,6 @@ https://www.jianshu.com/p/f59d7df06432
     
     pthread_setschedparam 函数改变在运行线程的调度策略和优先级肯定就不用调用函数来设置inheritsched属性了
     
-
-
-
 
 参考:
 
