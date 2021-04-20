@@ -146,9 +146,180 @@ int sys_affinity_bind(int coreNum)
 
 1. 命令行
 
+    使用命令**cat /proc/cpuinfo**查看CPU信息:
+
+    - processor: 指明第几个cpu处理器
+    
+    - cpu cores: 指明每个处理器的核心数
+
+    也可以使用系统调用sysconf获取cpu核心数: 
+    
+    ```
+    #include <unistd.h>
+
+    int sysconf(_SC_NPROCESSORS_CONF);/* 返回系统可以使用的核数，但是其值会包括系统中禁用的核的数目，因 此该值并不代表当前系统中可用的核数 */
+    int sysconf(_SC_NPROCESSORS_ONLN);/* 返回值真正的代表了系统当前可用的核数 */
+
+    /* 以下两个函数与上述类似 */
+    #include <sys/sysinfo.h>
+
+    int get_nprocs_conf (void);/* 可用核数 */
+    int get_nprocs (void);/* 真正的反映了当前可用核数 */
+    ```
+
+    使用命令**taskset**命令指令将进程绑定到CPU:
+    
+    - 获取进程pid
+    
+    ```Shell
+    -> % ps
+      PID TTY          TIME CMD
+     2683 pts/1    00:00:00 zsh
+     2726 pts/1    00:00:00 dgram_servr
+     2930 pts/1    00:00:00 ps
+    ```
+    
+    - 查看进程当前运行在哪个cpu上
+    
+    ```Shell
+    -> % taskset -p 2726
+    pid 2726's current affinity mask: 3
+    ```
+    
+    显示的十进制数字3转换为2进制为最低两个是1, 每个1对应一个cpu, 所以进程运行在2个cpu上
+    
+    - 指定进程运行在cpu1上
+    
+    ```Shell
+    -> % taskset -pc 1 2726
+    pid 2726's current affinity list: 0,1
+    pid 2726's new affinity list: 1
+    ```
+    
+    注意, cpu的标号是从0开始的, 所以cpu1表示第二个cpu(第一个cpu的标号是0)
+    
+    至此, 就把应用程序绑定到了cpu1上运行, 查看如下:
+    
+    ```Shell
+    -> % taskset -p 2726
+    pid 2726's current affinity mask: 2
+    ```
+    
+    - 启动程序时绑定cpu
+    
+    ```Shell
+    #启动时绑定到第二个cpu
+    -> % taskset -c 1 ./dgram_servr&
+    [1] 3011
+
+    #查看确认绑定情况
+    -> % taskset -p 3011
+    pid 3011's current affinity mask: 2
+    ```
 
 2. 系统接口
 
+    sched_setaffinity可以将某个进程绑定到一个特定的CPU
+    
+    ```C
+    #define _GNU_SOURCE             /* See feature_test_macros(7) */
+    #include <sched.h>
+
+    /* 设置进程号为pid的进程运行在mask所设定的CPU上
+     * 第二个参数cpusetsize是mask所指定的数的长度
+     * 通常设定为sizeof(cpu_set_t)
+
+     * 如果pid的值为0,则表示指定的是当前进程 
+     */
+    int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask);
+
+    int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask);/* 获得pid所指示的进程的CPU位掩码,并将该掩码返回到mask所指向的结构中 */
+    ```
+
+    实例:
+    
+    ```C
+    #include<stdlib.h>
+    #include<stdio.h>
+    #include<sys/types.h>
+    #include<sys/sysinfo.h>
+    #include<unistd.h>
+
+    #define __USE_GNU
+    #include<sched.h>
+    #include<ctype.h>
+    #include<string.h>
+    #include<pthread.h>
+    #define THREAD_MAX_NUM 200  //1个CPU内的最多进程数
+
+    int num=0;  //cpu中核数
+    void* threadFun(void* arg)  //arg  传递线程标号（自己定义）
+    {
+             cpu_set_t mask;  //CPU核的集合
+             cpu_set_t get;   //获取在集合中的CPU
+             int *a = (int *)arg; 
+             int i;
+
+             printf("the thread is:%d\n",*a);  //显示是第几个线程
+             CPU_ZERO(&mask);    //置空
+             CPU_SET(*a,&mask);   //设置亲和力值
+             if (sched_setaffinity(0, sizeof(mask), &mask) == -1)//设置线程CPU亲和力
+             {
+                       printf("warning: could not set CPU affinity, continuing...\n");
+             }
+
+               CPU_ZERO(&get);
+               if (sched_getaffinity(0, sizeof(get), &get) == -1)//获取线程CPU亲和力
+               {
+                        printf("warning: cound not get thread affinity, continuing...\n");
+               }
+               for (i = 0; i < num; i++)
+               {
+                        if (CPU_ISSET(i, &get))//判断线程与哪个CPU有亲和力
+                        {
+                                 printf("this thread %d is running processor : %d\n", i,i);
+                        }
+               }
+
+             return NULL;
+    }
+
+    int main(int argc, char* argv[])
+    {
+             int tid[THREAD_MAX_NUM];
+             int i;
+             pthread_t thread[THREAD_MAX_NUM];
+
+             num = sysconf(_SC_NPROCESSORS_CONF);  //获取核数
+             if (num > THREAD_MAX_NUM) {
+                printf("num of cores[%d] is bigger than THREAD_MAX_NUM[%d]!\n", num, THREAD_MAX_NUM);
+                return -1;
+             }
+             printf("system has %i processor(s). \n", num);
+
+             for(i=0;i<num;i++)
+             {
+                       tid[i] = i;  //每个线程必须有个tid[i]
+                       pthread_create(&thread[i],NULL,threadFun,(void*)&tid[i]);
+             }
+             for(i=0; i< num; i++)
+             {
+                       pthread_join(thread[i],NULL);//等待所有的线程结束，线程为死循环所以CTRL+C结束
+             }
+             return 0;
+    }
+    ```
+    
+    运行结果:
+    
+    ```Shell
+    -> % ./a.out
+    system has 2 processor(s). 
+    the thread is:0
+    the thread is:1
+    this thread 0 is running processor : 0
+    this thread 1 is running processor : 1
+    ```
 
 参考:
 
