@@ -428,15 +428,144 @@ https://www.jianshu.com/p/f59d7df06432
 
 https://www.cnblogs.com/eleclsc/p/10523608.html
 
+### 信号量
 
+信号量(Semaphore): 有时被称为信号灯, 是在多线程环境下使用的一种设施, 是可以用来保证两个或多个关键代码段不被并发调用. 在进入一个关键代码段之前, 线程必须获取一个信号量: 一旦该关键代码段完成了, 那么该线程必须释放信号量. 其它想进入该关键代码段的线程必须等待直到第一个线程释放信号量.
 
+类似计数器, 常用在多线程同步任务上, 信号量可以在当前线程某个任务完成后, 通知别的线程, 再进行别的任务.
 
+信号量是在多线程环境中共享资源的计数器. 对信号量的基本操作无非有三个: 对信号量的增加, 然后阻塞线程等待, 直到信号量不为空才返回: 然后就是对信号量的减少.
 
+分类:
 
+    二值信号量: 信号量的值只有0和1, 这和互斥量很类似, 若资源被锁住, 信号量的值为0; 若资源可用, 则信号量的值为1.
 
+    计数信号量: 信号量的值在0到一个大于1的限制值之间, 该计数表示可用的资源的个数.
 
+信号量在创建时需要设置一个初始值, 表示同时可以有几个任务可以访问该信号量保护的共享资源, 初始值为1就变成互斥锁Mutex, 即同时只能有一个任务可以访问信号量保护的共享资源.
 
+函数使用:
 
+    首先需要include \<semaphore.h\>这个库
 
+    **int sem_init(sem_t \*sem, int pshared, unsigned int value)**: 创建信号量, sem是要初始化的信号量; pshared表示此信号量是在进程间共享还是线程间共享, 如果其值为0, 就表示信号量是当前进程的局部信号量, 否则信号量就可以在多个进程间共享; value是信号量的初始值; 返回值success为0, failure为-1.
 
+    **int sem_wait(sem_t \*sem)**: 等待信号量, 如果信号量的值大于0, 将信号量的值减1, 立即返回. 如果信号量的值为0, 则线程阻塞; 返回值success为0, failure为-1. 当信号的计数为零的时候, sem_wait将休眠挂起当前调用线程, 直到信号量计数不为零, 在sem_wait返回后信号量计数将自动减1.
 
+    **int sem_post(sem_t \*sem)**: 释放信号量, 让信号量的值加1; 返回值success为0, failure为-1. 解除信号量等待限制, 让信号量计数加1, 该函数会立即返回不等待
+    
+    **int sem_destroy(sem_t \*sem)**: 其中sem是要销毁的信号量, 只有用sem_init初始化的信号量才能用sem_destroy销毁.
+    
+    **int sem_trywait(sem_t \*sem)**: 是一个立即返回函数, 不会因为任何事情阻塞, 根据其返回值得到不同的信息. 如果返回值为0, 说明信号量在该函数调用之前大于0, 但是调用之后会被该函数自动减1. 至于调用之后是否为零则不得而知了. 如果返回值为EAGAIN说明信号量计数为0.
+    
+    **int sem_getvalue(sem_t * sem, int * sval)**: 获得当前信号量计数的值
+
+在编程中, 信号量最常用的方式就是一个线程A使用sem_wait阻塞, 因为此时信号量计数为0, 直到另外一个线程B发出信号post后, 信号量计数加1, 此时, 线程A得到了信号, 信号量的计数为1不为空, 所以就从sem_wait返回了, 然后信号量的计数又减1变为零.
+
+在使用信号量之前, 我们必须初始化信号. 第三个参数通常设置为零, 初始化信号的计数为0, 这样第一次使用sem_wait的时候会因为信号计数为0而等待, 直到在其他地方信号量post了才返回. 除非你明白你在干什么, 否则不要将第三个参数设置为大于0的数
+
+第二个参数是用在进程之间的数据共享标志, 如果仅仅使用在当前进程中, 设置为0. 如果要在多个进程之间使用该信号, 设置为非零. 但是在Linux线程中, 暂时还不支持进程之间的信号共享, 所以第二个参数说了半天等于白说, 必须设置为0, 否则将返回ENOSYS错误.
+
+参考:
+
+https://www.cnblogs.com/hnrainll/archive/2011/04/20/2022487.html
+
+### 互斥锁
+
+posix下抽象了一个锁类型的结构: ptread_mutex_t, 通过对该结构的操作, 来判断资源是否可以访问. 顾名思义, 加锁(lock)后, 别人就无法打开, 只有当锁没有关闭(unlock)的时候才能访问资源.
+
+即对象互斥锁的概念, 来保证共享数据操作的完整性. 每个对象都对应于一个可称为"互斥锁"的标记, 这个标记用来保证在任一时刻, 只能有一个线程访问该对象.
+
+使用互斥锁(互斥)可以使线程按顺序执行. 通常, 互斥锁通过确保一次只有一个线程执行代码的临界段来同步多个线程. 互斥锁还可以保护单线程代码.
+
+要更改缺省的互斥锁属性, 可以对属性对象进行声明和初始化. 通常, 互斥锁属性会设置在应用程序开头的某个位置, 以便可以快速查找和轻松修改.
+
+1. 锁的创建
+
+    **int pthread_mutex_init(pthread_mutex_t \*restrict mutex, const pthread_mutexattr_t \*restrict attr)**
+    
+    以动态方式创建互斥锁, 参数attr指定了新建互斥锁的属性, 如果参数attr为NULL, 则使用默认的互斥锁属性, 默认属性为快速互斥锁. 互斥锁的属性在创建锁的时候指定, 在LinuxThreads实现中仅有一个锁类型属性, 不同的锁类型在试图对一个已经被锁定的互斥锁加锁时表现不同.
+
+    **pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER**
+    
+    用宏PTHREAD_MUTEX_INITIALIZER来静态的初始化锁, 采用这种方式比较容易理解, 互斥锁是pthread_mutex_t的结构体, 而这个宏是一个结构常量.
+    
+2. 锁的属性
+
+    **int pthread_mutexattr_init(pthread_mutexattr_t \*attr)**
+    
+    初始化锁的属性, 然后可以调用其他的属性设置方法来设置其属性.
+    
+    **int pthread_mutexattr_getpshared(const pthread_mutexattr_t \*attr, int \*pshared)**
+    **int pthread_mutexattr_setpshared(pthread_mutexattr_t \*attr, int pshared)**
+
+    获取和设置互斥锁的范围, 可以指定是该进程与其他进程的同步还是同一进程内不同的线程之间的同步. PTHREAD_PROCESS_PRIVATE表示进程内使用锁, PTHREAD_PROCESS_SHARE表示进程间使用锁, 默认是进程内使用锁.
+    
+    **int pthread_mutexattr_gettype(const pthread_mutexattr_t \*attr, int \*type)**
+    **int pthread_mutexattr_settype(pthread_mutexattr_t \*attr, int type)**
+    
+    获取和设置互斥锁的类型:
+    PTHREAD_MUTEX_TIMED_NP, 这个是缺省值, 也就是普通锁. 当一个线程加锁以后, 其余请求锁的线程将形成一个等待队列, 并在解锁后按优先级获得锁. 这种锁策略保证了资源分配的公平性.
+    PTHREAD_MUTEX_RECURSIVE_NP, 嵌套锁, 允许同一个线程对同一个锁成功获得多次, 并通过多次unlock解锁. 如果是不同线程请求, 则在加锁线程解锁时重新竞争.
+    PTHREAD_MUTEX_ERRORCHECK_NP, 检错锁, 如果同一个线程请求同一个锁, 则返回EDEADLK, 否则与PTHREAD_MUTEX_TIMED_NP类型动作相同. 这样就保证当不允许多次加锁时不会出现最简单情况下的死锁.
+    PTHREAD_MUTEX_ADAPTIVE_NP, 适应锁, 动作最简单的锁类型, 仅等待解锁后重新竞争.
+    
+3. 其他锁操作
+
+    **int pthread_mutex_lock(pthread_mutex_t \*mutex)**  加锁, 
+    **int pthread_mutex_trylock(pthread_mutex_t \*mutex)**  测试加锁, 语义与pthread_mutex_lock类似，不同的是在锁已经被占据时返回EBUSY而不是挂起等待
+    **int pthread_mutex_unlock(pthread_mutex_t \*mutex)**  解锁
+
+    不论哪种类型的锁, 都不可能被两个不同的线程同时得到, 而必须等待解锁. 对于普通锁和适应锁类型, 解锁者可以是同进程内任何线程; 而检错锁则必须由加锁者解锁才有效, 否则返回EPERM. 对于嵌套锁, 文档和实现要求必须由加锁者解锁, 但实验结果表明并没有这种限制, 这个不同目前还没有得到解释. 在同一进程中的线程, 如果加锁后没有解锁, 则任何其他线程都无法再获得锁.
+    
+4. 锁的释放
+
+    **int pthread_mutex_destroy(pthread_mutex_t \*mutex)**
+    
+    可以释放锁占用的资源，但这有一个前提上锁当前是没有被锁的状态
+    
+5. 死锁
+
+    死锁主要发生在有多个依赖锁存在时, 会在一个线程试图以与另一个线程相反顺序锁住互斥量时发生. 如何避免死锁是使用互斥量应该格外注意的东西:
+    
+    对共享资源操作前一定要获得锁
+    
+    完成操作以后一定要释放锁
+    
+    尽量短时间地占用锁
+    
+    如果有多锁, 如获得顺序是ABC连环扣, 释放顺序也应该是ABC
+    
+    线程错误返回时应该释放它所获得的锁
+    
+6. 锁使用举例
+
+    ```C
+    #include <pthread.h>
+    #include <stdio.h>
+     
+    pthread_mutex_t mutex ;
+    void *print_msg(void *arg){
+            int i=0;
+            pthread_mutex_lock(&mutex);
+            for(i=0;i<15;i++){
+                    printf("output : %d\n",i);
+                    usleep(100);
+            }
+            pthread_mutex_unlock(&mutex);
+    }
+    int main(int argc,char** argv){
+            pthread_t id1;
+            pthread_t id2;
+            pthread_mutex_init(&mutex,NULL);
+            pthread_create(&id1,NULL,print_msg,NULL);
+            pthread_create(&id2,NULL,print_msg,NULL);
+            pthread_join(id1,NULL);
+            pthread_join(id2,NULL);
+            pthread_mutex_destroy(&mutex);
+            return 1;
+    }
+    ```
+    
+参考
+https://blog.csdn.net/happylzs2008/article/details/89067028
