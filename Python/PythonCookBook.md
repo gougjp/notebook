@@ -1792,8 +1792,10 @@ if __name__ == '__main__':
     **只需要三个文件, 都放在同一目录下: **
 
     \_\_init\_\_\.py: 为空文件, 表示当前目录为一个包
+    
     sshlib.py: 为要打包的库
-    setup.py为打包工具
+    
+    setup.py: 为打包工具
     
     ```Python
     from setuptools import find_packages, setup
