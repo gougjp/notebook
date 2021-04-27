@@ -1785,9 +1785,43 @@ if __name__ == '__main__':
     connecter.exec_command('ls -al /sbin/phy\n')
 ```
 
+### Python 将自己实现的库打包成第三方库
 
+1. 单文件库打包
 
+    **只需要三个文件, 都放在同一目录下: **
 
+    \_\_init\_\_\.py: 为空文件, 表示当前目录为一个包
+    sshlib.py: 为要打包的库
+    setup.py为打包工具
+    
+    ```Python
+    from setuptools import find_packages, setup
 
+    setup(
+        name='sshlib',     # 包的名字
+        version='1.0',     # 版本号
+        description='custom ssh library, you can execute commands and transfer files through this library',   # 说明
+        py_modules = ['sshlib'],   # 要打包的文件, 不需要后缀, 在Python中文件名就是模块名
+        zip_safe=False,
+        install_requires=[
+            'paramiko',    # 依赖的库, 在安装的时候会自动安装
+        ],
+    )
+    ```
 
+    **执行命令python setup.py build**
 
+    ![](images/PythonCookbook/4.jpg)
+    
+    执行完成后多了一个build目录
+    
+    **执行命令python setup.py sdist**
+
+    ![](images/PythonCookbook/5.jpg)
+
+    执行完成后多了dist目录, 里面的.tar.gz就是可以发布的包, 解压后执行python setup.py install就可以成功安装了, 也可以用pip uninstall sshlib来卸载
+    
+2. 如果一个库下有多个模块需要打包:
+
+    首先要把需要打包的模块都放到一个目录下, 然后在目录同一级创建setup.py文件, 不去掉py_modules = \['sshlib'\]参数, 增加packages=find_packages()这个选项即可, 其他操作不变
