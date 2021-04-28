@@ -569,3 +569,10 @@ posix下抽象了一个锁类型的结构: ptread_mutex_t, 通过对该结构的
     
 参考
 https://blog.csdn.net/happylzs2008/article/details/89067028
+
+### typedef用法总结
+
+参考
+http://c.biancheng.net/view/298.html
+
+

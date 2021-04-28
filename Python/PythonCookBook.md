@@ -1826,4 +1826,10 @@ if __name__ == '__main__':
     
 2. 如果一个库下有多个模块需要打包:
 
-    首先要把需要打包的模块都放到一个目录下, 然后在目录同一级创建setup.py文件, 不去掉py_modules = \['sshlib'\]参数, 增加packages=find_packages()这个选项即可, 其他操作不变
+    首先要把需要打包的模块都放到一个目录下, 然后在目录同一级创建setup.py文件, 不去掉py_modules = \['sshlib'\]参数, 增加packages=find_packages()这个选项即可, 其他操作不变 
+
+参考:
+https://www.cnblogs.com/mangM/p/11619247.html
+https://packaging.python.org/tutorials/packaging-projects/
+https://setuptools.readthedocs.io/en/latest/userguide/index.html
+
