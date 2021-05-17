@@ -1,6 +1,6 @@
 # Jenkins Note
 
-## Jenkins打开RF报告出错: Opening Robot Framework log failed
+### Jenkins打开RF报告出错: Opening Robot Framework log failed
 
 **1. 错误信息:**
 
@@ -49,7 +49,79 @@ java -Dhudson.model.DirectoryBrowserSupport.CSP= -jar E:\Jenkins\jenkins.war
 5. Click on Run button.
 ```
 
-## Python调用Jenkins的API
+### 在浏览器中打开Jenkins的userContent下的HTML文件时, 如果HTML中有javascript, 则加载javascript脚本失败
+
+这个是jenkins的安全策略设置，默认的设置为：
+
+```
+不允许JavaScript
+不允许插件(对象/嵌入)
+没有内联CSS或CSS允许从其他网站
+不允许从其他网站图片
+不允许框架
+不允许web字体
+不允许XHR / AJAX等
+```
+
+解决方法一:
+
+在Jenkins的Jenkins Script Console(脚本命令行)里设置如下:
+
+```
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP",  "script-src 'unsafe-inline'")
+```
+
+这种方案在Jenkins服务重启过后就失效了
+
+解决方法二: 
+
+Linux下, 在jenkins的启动文件catalina设置如下
+
+```Shell
+CATALINA_OPTS="-Dhudson.model.DirectoryBrowserSupport.CSP=\"default-src 'self'; style-src 'self' 'unsafe-inline' www.google.com ajax.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' www.google.com; img-src 'self' data:; child-src 'self'\""
+```
+
+Windows下, 修改jenkins.xml中arguments
+
+将
+
+```
+<arguments>-Xrs -Xmx256m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar "E:\Jenkins\jenkins.war" --httpPort=8080 --webroot="%JENKINS_HOME%\war"</arguments>
+```
+
+改为
+
+```
+<arguments>-Xrs -Xmx256m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -Dhudson.model.DirectoryBrowserSupport.CSP="script-src 'unsafe-inline'" -jar "E:\Jenkins\jenkins.war" --httpPort=8080 --webroot="%JENKINS_HOME%\war"</arguments>
+```
+
+附Jenikns其他策略设置:
+
+- 设置自定义:
+
+```
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "sandbox; default-src 'self';")
+```
+
+- 清除自定义:
+
+```
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")
+```
+
+- 恢复默认设置:
+
+```
+System.clearProperty("hudson.model.DirectoryBrowserSupport.CSP")
+```
+
+- 查看当前设置:
+
+```
+System.getProperty("hudson.model.DirectoryBrowserSupport.CSP")
+```
+
+### Python调用Jenkins的API
 
 这里举例获取Jenkins上某个Job的最后一次build状态
 
@@ -87,13 +159,13 @@ base64.b64decode('anVucGluZy5nb3U6QGdqcDEyMzQ==')
 
 也可以在Jenkins的用户设置界面直接查看API Token: 点击右上的用户名, 点击左边的设置, 点击API Token下的Show API Token 
 
-## 获取JOB的控制台输出
+### 获取JOB的控制台输出
 
 ```Shell
 curl -u <username>:<password> ${BUILD_URL}/consoleText --output output.log
 ```
 
-## Jenkins 插件
+### Jenkins 插件
 
 - Job Configuration History #查看Job配置历史
 
