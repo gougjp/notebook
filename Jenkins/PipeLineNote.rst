@@ -845,7 +845,7 @@ SoftwareMiddleware配置实例
 在PipeLine中使用groovy语法，判断文件存在时执行某些操作
 --------------------------------------------------------------
 
-..code::
+.. code::
 
     stage("Reports") {
         steps {
