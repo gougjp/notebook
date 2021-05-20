@@ -734,7 +734,7 @@ conn.commit()
 conn.close()
 ```
 
-### python打印存文本图片
+### python打印纯文本图片
 
 - 安装库pillow
 

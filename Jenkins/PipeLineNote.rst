@@ -901,3 +901,39 @@ SoftwareMiddleware配置实例
         }
     }
 
+在post中也可以先判断报告文件是否存在, 然后再发邮件
+
+.. code::
+
+    post {
+        success {
+            script {
+                if (fileExists("summary.html")) {
+                    emailext subject:"${JOB_NAME}, -Build #${BUILD_NUMBER} : ${currentBuild.result}",
+                             mimeType:'text/html',
+                             body: '${FILE, path="summary.html"}',
+                             to: 'goujunping@ruijie.com.cn'
+                }
+            }
+        }
+        unstable {
+            script {
+                if (fileExists("summary.html")) {
+                    emailext subject:"${JOB_NAME}, -Build #${BUILD_NUMBER} : ${currentBuild.result}",
+                             mimeType:'text/html',
+                             body: '${FILE, path="summary.html"}',
+                             to: 'goujunping@ruijie.com.cn'
+                }
+            }
+        }
+        failure {
+            script {
+                if (fileExists("summary.html")) {
+                    emailext subject:"${JOB_NAME}, -Build #${BUILD_NUMBER} : ${currentBuild.result}",
+                             mimeType:'text/html',
+                             body: '${FILE, path="summary.html"}',
+                             to: 'goujunping@ruijie.com.cn'
+                }
+            }
+        }
+    }
