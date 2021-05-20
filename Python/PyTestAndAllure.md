@@ -260,22 +260,42 @@ logger = logging.getLogger(__name__)
 logger.info("logging information")
 ```
 
+参考:
+
+https://www.cnblogs.com/poloyy/category/1690628.html?page=2
+
 ### allure测试报告框架
 
-1. 安装
+一. 安装
 
-Python库:
+    Python库:
 
-```Shell
-pip install pytest-allure-adaptor
-```
+    ```Shell
+    pip install allure-pytest
+    ```
 
-命令工具:
+    命令工具:
 
-官方地址: https://github.com/allure-framework/allure2/releases
+    官方地址: https://github.com/allure-framework/allure2/releases
 
-这两个工具都需要安装
+    目前最新版本是2.13.10, 但是这个版本可能有问题, 生成报告后, 用任何浏览器打开都是空白页, 在加载javascript的时候都会报错: allure is not defined; 切换到2.13.9则OK
+    
+    Windows需要将allure-2.13.9\bin的绝对路径加入到PATH环境变量中
+
+    这两个工具都需要安装
+
+二. 使用
+
+1. 在测试脚本中 ...
 
 
+2. 在执行pytest的时候指定--alluredir reports参数, 会将allure日志保存到reports目录中
+
+
+3. 执行命令allure generate ./reports -c -o ./allure-reports --clean生成html报告, 这样打开index.html的时候没有数据; 需要通过服务的方式打开(命令:allure serve ./reports), 这样会自动打开默认浏览器并显示结果
+
+
+
+三. 在将allure集成到Jenkins中
 
 

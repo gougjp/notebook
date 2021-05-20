@@ -34,6 +34,42 @@ pipeline的 HTML Publisher Plugin使用
         }
     }
 
+还可以判断当html文件存在的时候才执行
+
+.. code::
+
+    stage("Collection Results") {
+        steps {
+            //publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '', reportFiles: 'detail.html', reportName: 'HTML Report', reportTitles: ''])
+            script {
+                if (fileExists("detail.html")) {
+                    publishHTML (target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: true,
+                    reportDir: '.',
+                    reportFiles: 'detail.html',
+                    reportName: "Html Report"])
+                }
+                bat("python continuous_integration\\collection_build_result.py")
+            }
+        }
+    }
+    
+另外一种语法
+
+.. code::
+
+    stage("Collection Results") {
+        steps {
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '', reportFiles: 'detail.html', reportName: 'HTML Report', reportTitles: ''])
+            script {
+                bat("python continuous_integration\\collection_build_result.py")
+            }
+        }
+    }
+
+
 when检查文件是否存在
 -------------------------------
 
