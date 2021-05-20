@@ -764,6 +764,23 @@ conn.close()
     print(txt)
     ```
 
+### python打印字母的艺术纯文本图片
+
+- 安装库art
+
+    ```Shell
+    pip install art
+    ```
+
+- 执行如下脚本
+
+    ```
+    from art import *
+
+    myart = text2art('Start Test', font='block', chr_ignore=True)
+    print(myart)
+    ```
+
 ### 反射
 
 - **什么是反射**:
