@@ -41,37 +41,27 @@ pytest –h
 
 ### 使用及接口
 
-1. 命令行使用及参数
+1. **<font color='red'>命令行使用及参数</font>**
 
-**pytest** 运行当前目录下的所有用例
-
-**pytest test_mod.py** 运行模块test_mod.py下的所有用例
-
-**pytest somepath** 运行某个路径下的所有用例
-
-**pytest -k stringexpr** 只运行名字匹配stringexpr的类或者方法, 例如"-k 'test_method or test_other'"匹配名字中包含test_method或者test_other的类或方法; "-k 'not test_method'"匹配名字中不包含test_method的类或者方法; 这个匹配是区分大小写的
-
-**pytest test_mod.py::test_func** 只运行test_mod.py模块中的test_func方法
-
-**-v** 用于显示每个测试函数的执行结果
-
-**-q** 只显示整体测试结果
-
-**-s** 用于显示测试函数中print()函数输出
-
-**-x, --exitfirst** 第一个失败或者出错的用例后立即退出
-
-2. 装饰器\@pytest.fixture的作用域有四种
-
-    - **\@pytest.fixture(scope='function')** 每个test都运行, 默认是function的scope
+    **pytest** 运行当前目录下的所有用例
     
-    - **\@pytest.fixture(scope='class')** 每个class的所有test只运行一次
+    **pytest test_mod.py** 运行模块test_mod.py下的所有用例
     
-    - **\@pytest.fixture(scope='module')** 每个module的所有test只运行一次
+    **pytest somepath** 运行某个路径下的所有用例
     
-    - **\@pytest.fixture(scope='session')** 每个session只运行一次
+    **pytest -k stringexpr** 只运行名字匹配stringexpr的类或者方法, 例如"-k 'test_method or test_other'"匹配名字中包含test_method或者test_other的类或方法; "-k 'not test_method'"匹配名字中不包含test_method的类或者方法; 这个匹配是区分大小写的
+    
+    **pytest test_mod.py::test_func** 只运行test_mod.py模块中的test_func方法
+    
+    **-v** 用于显示每个测试函数的执行结果
+    
+    **-q** 只显示整体测试结果
+    
+    **-s** 用于显示测试函数中print()函数输出
+    
+    **-x, --exitfirst** 第一个失败或者出错的用例后立即退出
 
-3. setup和teardown
+2. setup和teardown
 
     - 模块级别的setup和teardown: 只调用一次, 只针对模块中的函数有用, 模块中的类方法没用
     
@@ -128,6 +118,16 @@ pytest –h
         call.
         """
     ```
+
+3. 装饰器\@pytest.fixture的作用域有四种
+
+    - **\@pytest.fixture(scope='function')** 每个test都运行, 默认是function的scope
+    
+    - **\@pytest.fixture(scope='class')** 每个class的所有test只运行一次
+    
+    - **\@pytest.fixture(scope='module')** 每个module的所有test只运行一次
+    
+    - **\@pytest.fixture(scope='session')** 每个session只运行一次
 
 4. 通过pytest.mark对用例打标签
 
@@ -296,6 +296,6 @@ https://www.cnblogs.com/poloyy/category/1690628.html?page=2
 
 
 
-三. 在将allure集成到Jenkins中
+三. 将allure集成到Jenkins中
 
 
