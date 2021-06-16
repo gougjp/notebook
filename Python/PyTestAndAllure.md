@@ -377,7 +377,7 @@ pytest –h
         - **\@pytest.fixture(scope='module')** 每个module的所有test只运行一次
         - **\@pytest.fixture(scope='session')** 每个session只运行一次
         
-    - fixture函数参数化
+    - **fixture函数参数化**
     
         在@pytest.fixture装饰器中指定一个参数列表, 则会对列表中的每一个参数调用一次对应的测试用例
         ```Python
@@ -402,7 +402,7 @@ pytest –h
         执行该测试文件得到如下输入:
         ![](images/Pytest/9.jpg)
       
-    - fixture本身还可以使用其他的fixture
+    - **fixture本身还可以使用其他的fixture**
         ```Python
         import pytest
         import logging
@@ -491,7 +491,7 @@ pytest –h
         执行该测试文件得到如下输入:
         ![](images/Pytest/11.jpg)
         
-    - Fixture errors, 当fixtures抛错后
+    - **Fixture errors, 当fixtures抛错后**
     
         在pytest中, 如果一个测试函数中传入了多个fixture函数, 那么pytest会尽可能的按线性顺序先后执行. 如果, 先执行的fixture函数有问题引发了异常, 那么pytest将会停止执行这个测试函数的fixture, 并且标记此测试函数有错误.
         但是, 当测试被标记为有错误时, 并不是说这个测试函数的结果失败了, 这仅仅意味着测试函数所依赖的fixture有问题, 导致测试函数不能正常进行.
@@ -534,140 +534,351 @@ pytest –h
         
         这里测试用例test_fixture_a先执行fixture_function_b正常, 然后执行fixture_function_a时异常, 后面就不会继续执行fixture_function_c了; 测试用例test_fixture_b先执行fixture_function_b正常, 然后执行fixture_function_c正常, 最后执行fixture_function_a是异常
 
+    - **Teardown处理, yield和addfinalizer**
+    
+        当我们运行测试函数时, 我们希望确保测试函数在运行结束后, 可以自己清理掉对环境的影响. 这样的话, 它们就不会干扰任何其他的测试函数, 更不会日积月累的留下越来越多的测试数据. 在pytest中的fixture, 可以使用yield和addfinalizer两种方式来实现Teardown的功能
+        
+        在有yield的fixtures函数中, 关键字yield可以代替return, 可以把fixture里的一些对象传递给调用它们的fixture函数或者测试函数. 就像其他普通的fixture函数一样. 区别仅仅是：
+        
+        - yield替换掉了return
+        - teardown代码放置在yield之后
+        
+        yield的执行顺序: pytest在执行fixture函数时, 会根据fixture函数之间的线性关系顺序调用的. 但是, 当测试函数运行结束的时候, pytest又会按照之前的顺序反方向来执行fixture中yield之后的代码.
+        
+        ```Python
+        import pytest
+        import logging
+        
+        @pytest.fixture
+        def fixture_one():
+            logging.info("执行fixture_one")
+            return 1
+        
+        
+        @pytest.fixture
+        def fixture_two(fixture_one):
+            logging.info("执行fixture_two")
+            yield 2
+            logging.info("执行fixture_two的teardown代码")
+        
+        
+        @pytest.fixture
+        def fixture_adding(fixture_one, fixture_two):
+            logging.info("执行fixture_adding")
+            result = fixture_one + fixture_two
+            yield result
+            logging.info("执行fixture_adding的teardown代码")
+        
+        
+        def test_demo(fixture_two, fixture_adding):
+            logging.info("执行测试函数test_demo")
+            assert fixture_adding == 3
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/14.jpg)
+        
+        request.addfinalizer把函数变成终结器:
+        ```Python
+        import pytest
+        import logging
+        
+        @pytest.fixture()
+        def demo_fixture(request):
+            logging.info("这个fixture在每个case前执行一次")
+            def demo_finalizer():
+                logging.info("在每个case完成后执行的teardown")
+        
+            #注册demo_finalizer为终结函数    
+            request.addfinalizer(demo_finalizer)
+        
+        def test_01(demo_fixture):
+            logging.info("===执行了case: test_01===")
+        
+        def test_02(demo_fixture):
+            logging.info("===执行了case: test_02===")
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/15.jpg)
+        
+        可以看出demo_finalizer函数会在每个用例结束后执行
+        
+        request.addfinalizer注册多个终结器函数:
+        
+        ```Python
+        import pytest
+        import logging
+        
+        @pytest.fixture()
+        def demo_fixture(request):
+            logging.info("这个fixture在每个case前执行一次")
+            def demo_finalizer():
+                logging.info("在每个case完成后执行的teardown")
+            def demo_finalizer2():
+                logging.info("在每个case完成后执行的teardown2")
+        
+            #注册demo_finalizer为终结函数
+            request.addfinalizer(demo_finalizer)
+            request.addfinalizer(demo_finalizer2)
+        
+        def test_01(demo_fixture):
+            logging.info("===执行了case: test_01===")
+        
+        def test_02(demo_fixture):
+            logging.info("===执行了case: test_02===")
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/16.jpg)
+        
+        从上例可以看出: 多个终结器的情况下, 执行的顺序是与注册时候相反的
+        
+        **<font color=red>注意: 只要终结函数注册成功, 终结函数总是会执行到; 在setup的时候, 如果在注册终结函数之前失败了, 则不会执行终结函数, 因为还没有执行注册的步骤; 所以终结函数最好放在setup的前面</font>**
+      
+    - **如何让fixture函数更可靠**
+    
+        fixture功能强大, 用来处理setup, teardown非常的灵活, 好用. 但是, 毕竟它也只是一段程序代码, 虽然可以帮我们做setup, teardown的处理, 但是并不代表任何情况下都可以完美处理掉. 拿teardown来说, 假如我们写的代码不小心报错了, 导致该删掉的没删掉, 那么就可能会导致后续一些奇怪的问题发生.
+        其实很多事情要想可靠, 首先必须要简单. 让每个fixture函数里只做一种状态的操作. 
+        
+        - <font color=red>不可靠fixture函数举例:</font>
+        ```Python
+        import pytest
+        
+        from emaillib import Email, MailAdminClient
+        
+        @pytest.fixture
+        def setup():
+            mail_admin = MailAdminClient()
+            sending_user = mail_admin.create_user()
+            receiving_user = mail_admin.create_user()
+            email = Email(subject="Hey!", body="How's it going?")
+            sending_user.send_emai(email, receiving_user)
+            yield receiving_user, email
+            receiving_user.delete_email(email)
+            admin_client.delete_user(sending_user)
+            admin_client.delete_user(receiving_user)
+        
+        def test_email_received(setup):
+            receiving_user, email = setup
+            assert email in receiving_user.inbox
+        ```
+
+        - <font color=red>可靠fixture函数举例1:</font>
+        ```Python
+        import pytest
+        
+        from emaillib import Email, MailAdminClient
+        
+        @pytest.fixture
+        def mail_admin():
+            return MailAdminClient()
+        
+        @pytest.fixture
+        def sending_user(mail_admin):
+            user = mail_admin.create_user()
+            yield user
+            admin_client.delete_user(user)
+        
+        @pytest.fixture
+        def receiving_user(mail_admin):
+            user = mail_admin.create_user()
+            yield user
+            admin_client.delete_user(user)
+        
+        def test_email_received(receiving_user, email):
+            email = Email(subject="Hey!", body="How's it going?")
+            sending_user.send_email(_email, receiving_user)
+            assert email in receiving_user.inbox
+        ```
+
+        - <font color=red>可靠fixture函数举例2:</font>
+        ```Python
+        from uuid import uuid4
+        from urllib.parse import urljoin
+        
+        from selenium.webdriver import Chrome
+        import pytest
+        
+        from src.utils.pages import LoginPage, LandingPage
+        from src.utils import AdminApiClient
+        from src.utils.data_types import User
+        
+        @pytest.fixture
+        def admin_client(base_url, admin_credentials):
+            return AdminApiClient(base_url, **admin_credentials)
+        
+        @pytest.fixture
+        def user(admin_client):
+            _user = User(name="Susan", username=f"testuser-{uuid4()}", password="P4$$word")
+            admin_client.create_user(_user)
+            yield _user
+            admin_client.delete_user(_user)
+        
+        @pytest.fixture
+        def driver():
+            _driver = Chrome()
+            yield _driver
+            _driver.quit()
+        
+        @pytest.fixture
+        def login(driver, base_url, user):
+            driver.get(urljoin(base_url, "/login"))
+            page = LoginPage(driver)
+            page.login(user)
+        
+        @pytest.fixture
+        def landing_page(driver, login):
+            return LandingPage(driver)
+        
+        def test_name_on_landing_page_after_login(landing_page, user):
+            assert landing_page.header == f"Welcome, {user.name}!"
+        ```
+     
+    参考:
+    https://zhuanlan.zhihu.com/p/87775743
+    https://docs.pytest.org/en/latest/how-to/fixtures.html
+
 4. 通过pytest.mark对用例打标签
 
-标签需要先在pytest.ini文件中注册, 比如这里注册了两个标签smoke和demo
-
-```ini
-[pytest]
-markers =
-    smoke: marks tests as smoke (deselect with '-m "not smoke"')
-    serial
+    标签需要先在pytest.ini文件中注册, 比如这里注册了两个标签smoke和demo
     
-    demo: marks tests as demo (deselect with '-m "not demo"')
-    serial
-```
-
-然后就可以在用例中使用该标签了
-
-```Python
-# file_name: test_pytest.py
-import pytest
-
-class TestMyClass():
-    @pytest.mark.smoke
-    @pytest.mark.demo
-    def test_a(self):
-        print("------->test_a start<-------")
-        print("-------->test_a end<--------")
-        assert 1
-
-    @pytest.mark.smoke
-    def test_b(self):
-        print("------->test_b start<-------")
-        print("-------->test_b end<--------")
-        assert 1
-
-    @pytest.mark.demo
-    def test_c(self):
-        print("------->test_c start<-------")
-        print("-------->test_c end<--------")
-        assert 1
-
-
-if __name__ == '__main__':
-    pytest.main(["-s","test_pytest.py"])
-```
-
-在命令行增加参数'-m "smoke"'只跑test_a和test_b, '-m "demo"'只跑test_a和test_c, '-m "smoke and demo"'只跑test_a, '-m "smoke or demo"'跑所有用例
-
-具体命令:
-
-```Shell
-pytest -v -m "demo or smoke" test_pytest.py --html=./report.html
-```
+    ```ini
+    [pytest]
+    markers =
+        smoke: marks tests as smoke (deselect with '-m "not smoke"')
+        serial
+        
+        demo: marks tests as demo (deselect with '-m "not demo"')
+        serial
+    ```
+    
+    然后就可以在用例中使用该标签了
+    
+    ```Python
+    # file_name: test_pytest.py
+    import pytest
+    
+    class TestMyClass():
+        @pytest.mark.smoke
+        @pytest.mark.demo
+        def test_a(self):
+            print("------->test_a start<-------")
+            print("-------->test_a end<--------")
+            assert 1
+    
+        @pytest.mark.smoke
+        def test_b(self):
+            print("------->test_b start<-------")
+            print("-------->test_b end<--------")
+            assert 1
+    
+        @pytest.mark.demo
+        def test_c(self):
+            print("------->test_c start<-------")
+            print("-------->test_c end<--------")
+            assert 1
+    
+    
+    if __name__ == '__main__':
+        pytest.main(["-s","test_pytest.py"])
+    ```
+    
+    在命令行增加参数'-m "smoke"'只跑test_a和test_b, '-m "demo"'只跑test_a和test_c, '-m "smoke and demo"'只跑test_a, '-m "smoke or demo"'跑所有用例
+    
+    具体命令:
+    
+    ```Shell
+    pytest -v -m "demo or smoke" test_pytest.py --html=./report.html
+    ```
 
 5. 装饰器**\@pytest.mark.parametrize**用来实现测试用例参数化
 
-该装饰器有两个参数, 第一个参数为字符串, 对应与函数的参数名, 多个参数名用逗号分开; 第二个参数为list, list的每个元素都是一个元组, 元组里的每个元素顺序跟参数名的顺序一一对应; 如果参数名只有一个, 则list中也只有一个元组, 此时可以省略元组, 直接用将所有元素写入list中.
-
-传一个参数\@pytest.mark.parametrize('参数名', \[参数_data\[0\], 参数_data\[1\]\])进行参数化
-
-传两个参数\@pytest.mark.parametrize('参数名1, 参数名2', \[(参数1_data\[0\], 参数2_data\[0\]), (参数1_data\[1\], 参数2_data\[1\])])进行参数化
-
-也可以传入json格式
-
-```Python
-# file_name: test_pytest.py
-import pytest
-
-json=({"username":"alex","password":"111111"},{"username":"rongrong","password":"222222"})
-
-class TestMyClass():
-    @pytest.mark.parametrize("user,pwd",[("18200000001",111111),("18200000002",222222),("18200000003",333333)])
-    def test_a(self, user, pwd):
-        print("------->test_a start<-------")
-        print('User: {}, Password: {}'.format(user, pwd))
-        print("-------->test_a end<--------")
-        assert 1
-
-    @pytest.mark.parametrize("user", ["18200000001", "18200000002", "18200000003"])
-    @pytest.mark.parametrize("pwd", [111111, 222222, 333333])
-    def test_b(self, user, pwd):
-        print("------->test_b start<-------")
-        print('User: {}, Password: {}'.format(user, pwd))
-        print("-------->test_b end<--------")
-        assert 1
-
-    @pytest.mark.parametrize("json", json)
-    def test_c(self, json):
-        print("------->test_c start<-------")
-        print(json)
-        print('username : {}, password : {}'.format(json["username"], json["password"]))
-        print("-------->test_c end<--------")
-        assert 1
-
-
-if __name__ == '__main__':
-    pytest.main(["-s","test_pytest.py"])
-```
-
-该例中test_a会有3个用例, test_b会有9个用例, test_c会有2个用例
-
-![](images/Pytest/1.jpg)
-
-参考:
-
-https://blog.51cto.com/u_15009374/2555751
+    该装饰器有两个参数, 第一个参数为字符串, 对应与函数的参数名, 多个参数名用逗号分开; 第二个参数为list, list的每个元素都是一个元组, 元组里的每个元素顺序跟参数名的顺序一一对应; 如果参数名只有一个, 则list中也只有一个元组, 此时可以省略元组, 直接用将所有元素写入list中.
+    
+    传一个参数\@pytest.mark.parametrize('参数名', \[参数_data\[0\], 参数_data\[1\]\])进行参数化
+    
+    传两个参数\@pytest.mark.parametrize('参数名1, 参数名2', \[(参数1_data\[0\], 参数2_data\[0\]), (参数1_data\[1\], 参数2_data\[1\])])进行参数化
+    
+    也可以传入json格式
+    
+    ```Python
+    # file_name: test_pytest.py
+    import pytest
+    
+    json=({"username":"alex","password":"111111"},{"username":"rongrong","password":"222222"})
+    
+    class TestMyClass():
+        @pytest.mark.parametrize("user,pwd",[("18200000001",111111),("18200000002",222222),("18200000003",333333)])
+        def test_a(self, user, pwd):
+            print("------->test_a start<-------")
+            print('User: {}, Password: {}'.format(user, pwd))
+            print("-------->test_a end<--------")
+            assert 1
+    
+        @pytest.mark.parametrize("user", ["18200000001", "18200000002", "18200000003"])
+        @pytest.mark.parametrize("pwd", [111111, 222222, 333333])
+        def test_b(self, user, pwd):
+            print("------->test_b start<-------")
+            print('User: {}, Password: {}'.format(user, pwd))
+            print("-------->test_b end<--------")
+            assert 1
+    
+        @pytest.mark.parametrize("json", json)
+        def test_c(self, json):
+            print("------->test_c start<-------")
+            print(json)
+            print('username : {}, password : {}'.format(json["username"], json["password"]))
+            print("-------->test_c end<--------")
+            assert 1
+    
+    
+    if __name__ == '__main__':
+        pytest.main(["-s","test_pytest.py"])
+    ```
+    
+    该例中test_a会有3个用例, test_b会有9个用例, test_c会有2个用例
+    
+    ![](images/Pytest/1.jpg)
+    
+    参考:
+    
+    https://blog.51cto.com/u_15009374/2555751
 
 6. 日志
 
-首先在pytest.ini中配置日志格式
-
-```ini
-log_cli = true
-log_cli_level = DEBUG
-log_cli_date_format = %Y-%m-%d-%H-%M-%S
-log_cli_format = %(asctime)s - %(filename)s - %(module)s - %(funcName)s - %(lineno)d - %(levelname)s - %(message)s
-log_file = test.log
-log_file_level = DEBUG
-log_file_date_format = %Y-%m-%d-%H-%M-%S
-log_file_format = %(asctime)s - %(filename)s - %(module)s - %(funcName)s - %(lineno)d - %(levelname)s - %(message)s
-```
-
-然后在需要打印日志的文件中调用
-
-```Python
-import logging
-
-logger = logging.getLogger(__name__)
-
-logger.info("logging information")
-```
-
-参考:
-
-https://www.cnblogs.com/poloyy/category/1690628.html?page=2
+    首先在pytest.ini中配置日志格式
+    
+    ```ini
+    log_cli = true
+    log_cli_level = DEBUG
+    log_cli_date_format = %Y-%m-%d-%H-%M-%S
+    log_cli_format = %(asctime)s - %(filename)s - %(module)s - %(funcName)s - %(lineno)d - %(levelname)s - %(message)s
+    log_file = test.log
+    log_file_level = DEBUG
+    log_file_date_format = %Y-%m-%d-%H-%M-%S
+    log_file_format = %(asctime)s - %(filename)s - %(module)s - %(funcName)s - %(lineno)d - %(levelname)s - %(message)s
+    ```
+    
+    然后在需要打印日志的文件中调用
+    
+    ```Python
+    import logging
+    
+    logger = logging.getLogger(__name__)
+    
+    logger.info("logging information")
+    ```
+    
+    参考:
+    
+    https://www.cnblogs.com/poloyy/category/1690628.html?page=2
 
 ### allure测试报告框架
 
