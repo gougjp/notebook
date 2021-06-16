@@ -490,7 +490,49 @@ pytest –h
         ```
         执行该测试文件得到如下输入:
         ![](images/Pytest/11.jpg)
+        
+    - Fixture errors, 当fixtures抛错后
     
+        在pytest中, 如果一个测试函数中传入了多个fixture函数, 那么pytest会尽可能的按线性顺序先后执行. 如果, 先执行的fixture函数有问题引发了异常, 那么pytest将会停止执行这个测试函数的fixture, 并且标记此测试函数有错误.
+        但是, 当测试被标记为有错误时, 并不是说这个测试函数的结果失败了, 这仅仅意味着测试函数所依赖的fixture有问题, 导致测试函数不能正常进行.
+        
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture()
+            def fixture_function_a(self):
+                logging.info('------->start fixture_function_a<-------')
+                1/0
+                logging.info('------->end fixture_function_a<-------')
+        
+            @pytest.fixture(autouse=True)
+            def fixture_function_b(self):
+                logging.info('------->start fixture_function_b<-------')
+                logging.info('------->end fixture_function_b<-------')
+        
+            @pytest.fixture()
+            def fixture_function_c(self):
+                logging.info('------->start fixture_function_c<-------')
+                logging.info('------->end fixture_function_c<-------')
+        
+            def test_fixture_a(self, fixture_function_a, fixture_function_c):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info('------->end test_fixture_a<-------')
+        
+            @pytest.mark.usefixtures('fixture_function_c')
+            def test_fixture_b(self, fixture_function_a):
+                logging.info('------->start test_fixture_b<-------')
+                logging.info('------->end test_fixture_b<-------')
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/13.jpg)
+        
+        这里测试用例test_fixture_a先执行fixture_function_b正常, 然后执行fixture_function_a时异常, 后面就不会继续执行fixture_function_c了; 测试用例test_fixture_b先执行fixture_function_b正常, 然后执行fixture_function_c正常, 最后执行fixture_function_a是异常
 
 4. 通过pytest.mark对用例打标签
 
