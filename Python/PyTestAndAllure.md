@@ -41,7 +41,7 @@ pytest –h
 
 ### 使用及接口
 
-1. **<font color='red'>命令行使用及参数</font>**
+1. **命令行使用及参数**
 
     **pytest** 运行当前目录下的所有用例
     
@@ -119,15 +119,378 @@ pytest –h
         """
     ```
 
-3. 装饰器\@pytest.fixture的作用域有四种
+3. **pytest之fixture**
 
-    - **\@pytest.fixture(scope='function')** 每个test都运行, 默认是function的scope
+    - **fixture用途**
     
-    - **\@pytest.fixture(scope='class')** 每个class的所有test只运行一次
+        - 做测试前后的初始化设置, 如测试数据准备, 链接数据库, 打开浏览器等这些操作都可以使用fixture来实现
+        - 测试用例的前置条件可以使用fixture实现
+        - 支持经典的xunit fixture, 像unittest使用的setup和teardown
+        - fixture可以实现unittest不能实现的功能, 比如unittest中的测试用例和测试用例之间是无法传递参数和数据的, 但是fixture却可以解决这个问题
+
+    - **firture相对于setup和teardown的优势**
     
-    - **\@pytest.fixture(scope='module')** 每个module的所有test只运行一次
+        - 命名方式灵活，不局限于setup和teardown这几个命名
+        - conftest.py 配置里可以实现数据共享, 不需要import就能自动找到一些配置
+        - scope="module" 可以实现多个.py跨文件共享前置, 每一个.py文件调用一次    
+        - scope="session" 以实现多个.py跨文件使用一个session来完成多个用例
+ 
+    - **fixture定义**
     
-    - **\@pytest.fixture(scope='session')** 每个session只运行一次
+        fixture通过@pytest.fixture()装饰器装饰一个函数，那么这个函数就是一个fixture
+        
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture()
+            def fixture_function_a(self):
+                logging.info('------->start fixture_function_a<-------')
+                logging.info('------->end fixture_function_a<-------')
+        
+            def test_fixture_a(self, fixture_function_a):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info('------->end test_fixture_a<-------')
+
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/2.jpg)
+        
+    - 调用fixture的三种方式
+        
+        - 将fixture的名字直接作为测试用例的参数, 见test_fixture_a; 该方法的好处是可以将fixture函数的返回值传递给测试函数; 当pytest运行测试函数时, 它会查看该测试函数中的参数, 然后搜索与这些参数具有相同名称的fixture. 一旦pytest找到这些对象, 它就会运行这些fixture.
+        - 每个函数或者类前使用@pytest.mark.usefixtures('fixture_function_a')装饰器装饰, 见test_fixture_b
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture()
+            def fixture_function_a(self):
+                logging.info('------->start fixture_function_a<-------')
+                logging.info('------->end fixture_function_a<-------')
+        
+            def test_fixture_a(self, fixture_function_a):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info('------->end test_fixture_a<-------')
+        
+            @pytest.mark.usefixtures('fixture_function_a')
+            def test_fixture_b(self):
+                logging.info('------->start test_fixture_b<-------')
+                logging.info('------->end test_fixture_b<-------')
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/3.jpg)
+ 
+        - 在定义fixture的时候指定参数autouse=True, 则会根据作用域自动调用, 默认作用于为function
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture(autouse=True)
+            def fixture_function_a(self):
+                logging.info('------->start fixture_function_a<-------')
+                logging.info('------->end fixture_function_a<-------')
+        
+            def test_fixture_a(self):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info('------->end test_fixture_a<-------')
+        
+            def test_fixture_b(self):
+                logging.info('------->start test_fixture_b<-------')
+                logging.info('------->end test_fixture_b<-------')
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/4.jpg)
+        
+    - **同时使用多个fixture函数**
+    
+        - 通过参数方式调用多个fixture函数, fixture函数调用顺序跟传入参数的顺序相同
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture()
+            def fixture_function_a(self):
+                logging.info('------->start fixture_function_a<-------')
+                logging.info('------->end fixture_function_a<-------')
+        
+            @pytest.fixture()
+            def fixture_function_b(self):
+                logging.info('------->start fixture_function_b<-------')
+                logging.info('------->end fixture_function_b<-------')
+        
+            def test_fixture_a(self, fixture_function_a, fixture_function_b):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info('------->end test_fixture_a<-------')
+        
+            def test_fixture_b(self, fixture_function_b, fixture_function_a):
+                logging.info('------->start test_fixture_b<-------')
+                logging.info('------->end test_fixture_b<-------')
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/5.jpg)
+        
+        - 使用装饰器的方式调用多个fixture函数, fixture函数调用顺序跟装饰器的顺序相反
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture()
+            def fixture_function_a(self):
+                logging.info('------->start fixture_function_a<-------')
+                logging.info('------->end fixture_function_a<-------')
+        
+            @pytest.fixture()
+            def fixture_function_b(self):
+                logging.info('------->start fixture_function_b<-------')
+                logging.info('------->end fixture_function_b<-------')
+        
+            @pytest.mark.usefixtures('fixture_function_a')  # 后执行
+            @pytest.mark.usefixtures('fixture_function_b')  # 先执行
+            def test_fixture_a(self):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info('------->end test_fixture_a<-------')
+        
+            @pytest.mark.usefixtures('fixture_function_b')  # 后执行
+            @pytest.mark.usefixtures('fixture_function_a')  # 先执行
+            def test_fixture_b(self):
+                logging.info('------->start test_fixture_b<-------')
+                logging.info('------->end test_fixture_b<-------')
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/6.jpg)
+ 
+        - 使用autouse=True的方式调用多个fixture函数, fixture函数调用顺序是根据fixture函数名的顺序调用的
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture(autouse=True)
+            def fixture_function_b(self):
+                logging.info('------->start fixture_function_b<-------')
+                logging.info('------->end fixture_function_b<-------')
+        
+            @pytest.fixture(autouse=True)
+            def fixture_function_a(self):
+                logging.info('------->start fixture_function_a<-------')
+                logging.info('------->end fixture_function_a<-------')
+        
+            def test_fixture_a(self):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info('------->end test_fixture_a<-------')
+        
+            def test_fixture_b(self):
+                logging.info('------->start test_fixture_b<-------')
+                logging.info('------->end test_fixture_b<-------')
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/7.jpg)
+        
+        - 同一个用例使用三种方式调用多个fixture函数时, autouse=True方式定义的fixture函数最先调用, 然后调用装饰器调用的, 最后再调用参数传入的
+        如下例, 测试用例test_fixture_a调用fixture函数的顺序为fixture_function_b, fixture_function_a, fixture_function_c; 测试用例test_fixture_b调用fixture函数的顺序为测试用例test_fixture_a调用fixture函数的顺序为fixture_function_b, fixture_function_c, fixture_function_a
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture()
+            def fixture_function_a(self):
+                logging.info('------->start fixture_function_a<-------')
+                logging.info('------->end fixture_function_a<-------')
+        
+            @pytest.fixture(autouse=True)
+            def fixture_function_b(self):
+                logging.info('------->start fixture_function_b<-------')
+                logging.info('------->end fixture_function_b<-------')
+        
+            @pytest.fixture()
+            def fixture_function_c(self):
+                logging.info('------->start fixture_function_c<-------')
+                logging.info('------->end fixture_function_c<-------')
+        
+            def test_fixture_a(self, fixture_function_a, fixture_function_c):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info('------->end test_fixture_a<-------')
+        
+            @pytest.mark.usefixtures('fixture_function_c')
+            def test_fixture_b(self, fixture_function_a):
+                logging.info('------->start test_fixture_b<-------')
+                logging.info('------->end test_fixture_b<-------')
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/12.jpg)
+
+    - 使用fixture函数的返回值
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture()
+            def fixture_function_b(self):
+                logging.info('------->start fixture_function_b<-------')
+                logging.info('------->end fixture_function_b<-------')
+                return 'fixture_function_b result'
+        
+            def test_fixture_a(self, fixture_function_b):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info(fixture_function_b)
+                logging.info('------->end test_fixture_a<-------')
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/8.jpg)
+      
+    - **装饰器\@pytest.fixture的作用域有四种**
+
+        - **\@pytest.fixture(scope='function')** 每个test都运行, 默认是function的scope        
+        - **\@pytest.fixture(scope='class')** 每个class的所有test只运行一次
+        - **\@pytest.fixture(scope='module')** 每个module的所有test只运行一次
+        - **\@pytest.fixture(scope='session')** 每个session只运行一次
+        
+    - fixture函数参数化
+    
+        在@pytest.fixture装饰器中指定一个参数列表, 则会对列表中的每一个参数调用一次对应的测试用例
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture(scope="module", params=[[1, 1, 2], [2, 8, 10], [99, 1, 100]])
+            def fixture_function_a(self, request):
+                logging.info('------->start fixture_function_a<-------')
+                logging.info('------->end fixture_function_a<-------')
+                return request.param
+        
+            def test_fixture_a(self, fixture_function_a):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info(fixture_function_a)
+                logging.info('------->end test_fixture_a<-------')
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/9.jpg)
+      
+    - fixture本身还可以使用其他的fixture
+        ```Python
+        import pytest
+        import logging
+        
+        class Fruit:
+            def __init__(self, name):
+                self.name = name
+        
+            def __eq__(self, other):
+                return self.name == other.name
+        
+        @pytest.fixture
+        def my_fruit():
+            # 这里是一个fixture, 返回了一个Fruit对象, name为apple
+            logging.info('------->start my_fruit<-------')
+            logging.info('------->end my_fruit<-------')
+            return Fruit('apple')
+
+        @pytest.fixture
+        def fruit_basket(my_fruit):
+            # 这里是另一个fixture, 同样声明一个Fruit对象, name为banana
+            # 然后在这个fixture中又传入了上一个fixture：my_fruit
+            # 最后把最终的返回装到一个列表[]里，返回
+            logging.info('------->start fruit_basket<-------')
+            logging.info('------->end fruit_basket<-------')
+            return [Fruit('banana'), my_fruit]
+
+        def test_my_fruit_in_basket(my_fruit, fruit_basket):
+            # 这是一个测试函数，可以使用多个fixture
+            logging.info('------->start test_my_fruit_in_basket<-------')
+            logging.info(my_fruit)
+            logging.info(fruit_basket)
+            logging.info('------->end test_my_fruit_in_basket<-------')
+            assert my_fruit in fruit_basket
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/10.jpg)
+        
+        在同一个测试函数中, fixture也可以被请求多次. 但是在这个测试函数中, pytest在第一次执行fixture函数之后, 不会再次执行它们.
+        如果第一次执行fixture函数有返回值, 那么返回值会被缓存起来.
+        ```Python
+        import pytest
+        import logging
+        
+        # Arrange
+        @pytest.fixture
+        def first_entry():
+            logging.info('------->start first_entry<-------')
+            logging.info('------->end first_entry<-------')
+            return "a"
+        
+        # Arrange
+        @pytest.fixture
+        def order():
+            logging.info('------->start order<-------')
+            logging.info('------->end order<-------')
+            return []
+        
+        # Act
+        @pytest.fixture
+        def append_first(order, first_entry):
+            # 在这里order第一次被请求, 返回一个列表[]
+            # 接着, order空列表增加了first_entry的返回值, 此时的order变成了["a"], 被缓存起来
+            logging.info('------->start append_first<-------')
+            logging.info(order)
+            logging.info(first_entry)
+            logging.info('------->end append_first<-------')
+            return order.append(first_entry)
+        
+        def test_string_only(append_first, order, first_entry):
+            # 在测试函数里, order第二次被请求, 但是并不会拿到空列表[], 而且拿到了被缓存起来的["a"]
+            # 所以断言order == [first_entry], 其实就是 ["a"] == ["a"], 测试通过
+            # Assert
+            logging.info('------->start test_string_only<-------')
+            logging.info(order)
+            logging.info(first_entry)
+            logging.info('------->end test_string_only<-------')
+            assert order == [first_entry]
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/11.jpg)
+    
 
 4. 通过pytest.mark对用例打标签
 
