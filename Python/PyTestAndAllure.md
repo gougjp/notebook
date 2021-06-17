@@ -369,27 +369,27 @@ pytest –h
     <br/>
     
     - 使用fixture函数的返回值
-            ```Python
-            import pytest
-            import logging
-            
-            class TestFixture():
-                @pytest.fixture()
-                def fixture_function_b(self):
-                    logging.info('------->start fixture_function_b<-------')
-                    logging.info('------->end fixture_function_b<-------')
-                    return 'fixture_function_b result'
-            
-                def test_fixture_a(self, fixture_function_b):
-                    logging.info('------->start test_fixture_a<-------')
-                    logging.info(fixture_function_b)
-                    logging.info('------->end test_fixture_a<-------')
-            
-            if __name__=='__main__':
-                pytest.main(['-v', 'test_fixture.py'])
-            ```
-            执行该测试文件得到如下输入:
-            ![](images/Pytest/8.jpg)
+        ```Python
+        import pytest
+        import logging
+        
+        class TestFixture():
+            @pytest.fixture()
+            def fixture_function_b(self):
+                logging.info('------->start fixture_function_b<-------')
+                logging.info('------->end fixture_function_b<-------')
+                return 'fixture_function_b result'
+        
+            def test_fixture_a(self, fixture_function_b):
+                logging.info('------->start test_fixture_a<-------')
+                logging.info(fixture_function_b)
+                logging.info('------->end test_fixture_a<-------')
+        
+        if __name__=='__main__':
+            pytest.main(['-v', 'test_fixture.py'])
+        ```
+        执行该测试文件得到如下输入:
+        ![](images/Pytest/8.jpg)
       
     <br/>
     
