@@ -103,7 +103,7 @@ pytest –h
             """teardown any state that was previously setup with a setup_method
             call.
             """
-    ```
+        ```
 
     - 函数级别的setup和teardown: 不在类中的每个函数都会调用一次
     
@@ -117,7 +117,7 @@ pytest –h
             """teardown any state that was previously setup with a setup_function
             call.
             """
-    ```
+        ```
 
 3. **pytest之fixture**
 
@@ -127,7 +127,9 @@ pytest –h
         - 测试用例的前置条件可以使用fixture实现
         - 支持经典的xunit fixture, 像unittest使用的setup和teardown
         - fixture可以实现unittest不能实现的功能, 比如unittest中的测试用例和测试用例之间是无法传递参数和数据的, 但是fixture却可以解决这个问题
+    
     <br/>
+    
     - **firture相对于setup和teardown的优势**
     
         - 命名方式灵活，不局限于setup和teardown这几个命名
@@ -136,6 +138,7 @@ pytest –h
         - scope="session" 以实现多个.py跨文件使用一个session来完成多个用例
 
     <br/>
+    
     - **fixture定义**
     
         fixture通过@pytest.fixture()装饰器装饰一个函数，那么这个函数就是一个fixture
@@ -160,10 +163,14 @@ pytest –h
         执行该测试文件得到如下输入:
         ![](images/Pytest/2.jpg)
     
-    <br/>    
+    <br/>  
+    
     - 调用fixture的三种方式
         
         - 将fixture的名字直接作为测试用例的参数, 见test_fixture_a; 该方法的好处是可以将fixture函数的返回值传递给测试函数; 当pytest运行测试函数时, 它会查看该测试函数中的参数, 然后搜索与这些参数具有相同名称的fixture. 一旦pytest找到这些对象, 它就会运行这些fixture.
+        
+        <br/>
+        
         - 每个函数或者类前使用@pytest.mark.usefixtures('fixture_function_a')装饰器装饰, 见test_fixture_b
             ```Python
             import pytest
@@ -189,7 +196,9 @@ pytest –h
             ```
             执行该测试文件得到如下输入:
             ![](images/Pytest/3.jpg)
- 
+        
+        <br/>
+        
         - 在定义fixture的时候指定参数autouse=True, 则会根据作用域自动调用, 默认作用于为function
             ```Python
             import pytest
@@ -216,6 +225,7 @@ pytest –h
             ![](images/Pytest/4.jpg)
         
     <br/>
+    
     - **同时使用多个fixture函数**
     
         - 通过参数方式调用多个fixture函数, fixture函数调用顺序跟传入参数的顺序相同
@@ -249,6 +259,7 @@ pytest –h
             ![](images/Pytest/5.jpg)
         
         <br/>
+        
         - 使用装饰器的方式调用多个fixture函数, fixture函数调用顺序跟装饰器的顺序相反
             ```Python
             import pytest
@@ -284,6 +295,7 @@ pytest –h
             ![](images/Pytest/6.jpg)
  
         <br/>
+        
         - 使用autouse=True的方式调用多个fixture函数, fixture函数调用顺序是根据fixture函数名的顺序调用的
             ```Python
             import pytest
@@ -315,6 +327,7 @@ pytest –h
             ![](images/Pytest/7.jpg)
         
         <br/>
+        
         - 同一个用例使用三种方式调用多个fixture函数时, autouse=True方式定义的fixture函数最先调用, 然后调用装饰器调用的, 最后再调用参数传入的
         如下例, 测试用例test_fixture_a调用fixture函数的顺序为fixture_function_b, fixture_function_a, fixture_function_c; 测试用例test_fixture_b调用fixture函数的顺序为测试用例test_fixture_a调用fixture函数的顺序为fixture_function_b, fixture_function_c, fixture_function_a
             ```Python
@@ -354,6 +367,7 @@ pytest –h
             ![](images/Pytest/12.jpg)
 
     <br/>
+    
     - 使用fixture函数的返回值
             ```Python
             import pytest
@@ -378,6 +392,7 @@ pytest –h
             ![](images/Pytest/8.jpg)
       
     <br/>
+    
     - **装饰器\@pytest.fixture的作用域有四种**
 
         - **\@pytest.fixture(scope='function')** 每个test都运行, 默认是function的scope        
@@ -385,7 +400,8 @@ pytest –h
         - **\@pytest.fixture(scope='module')** 每个module的所有test只运行一次
         - **\@pytest.fixture(scope='session')** 每个session只运行一次
     
-    <br/>    
+    <br/> 
+    
     - **fixture函数参数化**
     
         在@pytest.fixture装饰器中指定一个参数列表, 则会对列表中的每一个参数调用一次对应的测试用例
@@ -412,6 +428,7 @@ pytest –h
         ![](images/Pytest/9.jpg)
     
     <br/>
+    
     - **fixture本身还可以使用其他的fixture**
         ```Python
         import pytest
@@ -502,6 +519,7 @@ pytest –h
         ![](images/Pytest/11.jpg)
         
     <br/>
+    
     - **Fixture errors, 当fixtures抛错后**
     
         在pytest中, 如果一个测试函数中传入了多个fixture函数, 那么pytest会尽可能的按线性顺序先后执行. 如果, 先执行的fixture函数有问题引发了异常, 那么pytest将会停止执行这个测试函数的fixture, 并且标记此测试函数有错误.
@@ -546,6 +564,7 @@ pytest –h
         这里测试用例test_fixture_a先执行fixture_function_b正常, 然后执行fixture_function_a时异常, 后面就不会继续执行fixture_function_c了; 测试用例test_fixture_b先执行fixture_function_b正常, 然后执行fixture_function_c正常, 最后执行fixture_function_a是异常
 
     <br/>
+    
     - **Teardown处理, yield和addfinalizer**
     
         当我们运行测试函数时, 我们希望确保测试函数在运行结束后, 可以自己清理掉对环境的影响. 这样的话, 它们就不会干扰任何其他的测试函数, 更不会日积月累的留下越来越多的测试数据. 在pytest中的fixture, 可以使用yield和addfinalizer两种方式来实现Teardown的功能
@@ -655,12 +674,14 @@ pytest –h
         **<font color=red>注意: 只要终结函数注册成功, 终结函数总是会执行到; 在setup的时候, 如果在注册终结函数之前失败了, 则不会执行终结函数, 因为还没有执行注册的步骤; 所以终结函数最好放在setup的前面</font>**
       
     <br/>
+    
     - **如何让fixture函数更可靠**
     
         fixture功能强大, 用来处理setup, teardown非常的灵活, 好用. 但是, 毕竟它也只是一段程序代码, 虽然可以帮我们做setup, teardown的处理, 但是并不代表任何情况下都可以完美处理掉. 拿teardown来说, 假如我们写的代码不小心报错了, 导致该删掉的没删掉, 那么就可能会导致后续一些奇怪的问题发生.
         其实很多事情要想可靠, 首先必须要简单. 让每个fixture函数里只做一种状态的操作. 
         
         <br/>
+        
         - <font color=red>不可靠fixture函数举例:</font>
             ```Python
             import pytest
@@ -685,6 +706,7 @@ pytest –h
             ```
         
         <br/>
+        
         - <font color=red>可靠fixture函数举例1:</font>
             ```Python
             import pytest
@@ -714,6 +736,7 @@ pytest –h
             ```
         
         <br/>
+        
         - <font color=red>可靠fixture函数举例2:</font>
             ```Python
             from uuid import uuid4
