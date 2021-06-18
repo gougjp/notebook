@@ -1,6 +1,8 @@
 # Jenkins 插件开发
 
-## 环境
+## Linux环境
+
+### 环境安装
 
 - 系统: 这里使用Centos7, Jenkins版本2.235.1
 
@@ -22,7 +24,7 @@ OS name: "linux", version: "3.10.0-957.el7.x86_64", arch: "amd64", family: "unix
 [ate@localhost ~]$
 ```
 
-## 配置环境
+### 配置环境
 
 在用户目录下创建.m2文件夹, 然后再在.m2目录下创建settings.xml文件, 全路径为(~/.m2/settings.xml)
 
@@ -59,7 +61,7 @@ OS name: "linux", version: "3.10.0-957.el7.x86_64", arch: "amd64", family: "unix
 </settings>
 ```
 
-## 创建插件项目
+### 创建插件项目
 
 执行以下命令**mvn -U archetype:generate -Dfilter=io.jenkins.archetypes:**, 中间需要选择版本, groupId等属性
 
@@ -210,8 +212,104 @@ demo/
 ```
 
 
-
-
 参考文档:
 https://www.baeldung.com/jenkins-custom-plugin
 https://www.jenkins.io/zh/doc/developer/tutorial/create/
+
+## Windows环境
+
+### 环境安装
+
+1. 安装JDK
+
+    - 在Oracle官网下载jdk然后安装
+    - 新建环境变量JAVA_HOME, 值为jdk跟目录, 比如: C:\Program Files\Java\jdk1.8.0_291
+    - 新建环境变量CLASSPATH, 值为".;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\tools.jar;", 第一个点号为当前目录
+    - 在PATH环境变量中增加"%JAVA_HOME%\bin;%JAVA_HOME%\jre\bin;"两个路径
+    
+2. 安装Maven
+
+    - 将安装包解压到任意地址, 比如"D:\Program Files\apache-maven-3.8.1"
+    - 新建环境变量MAVEN_HOME, 值为上一步的路径"D:\Program Files\apache-maven-3.8.1"
+    - 在PATH环境变量中增加";%MAVEN_HOME%\bin"路径
+    
+3. eclipse安装m2eclipse插件(我安装好eclipse后, 该插件已有, 所以执行以下步骤时会安装失败)
+
+    - Help -> Install New Software...
+    - 在弹出的界面中点击Add
+    - 在弹出的界面中, Name输入m2e, Location为https://download.eclipse.org/technology/m2e/releases/1.9/1.9.1.20180912-1601, 可以https://download.eclipse.org/technology/m2e/releases网址找对应的版本
+    - 勾选Maven Integration for Eclipse, 并点击下一步直到安装完毕
+    - Help -> About Eclipse IDE -> Installation Details, 查看是否有m2e
+
+4. 搭建Jenkins, 配置JENKINS_HOME环境变量, 并启动Jenkins
+
+5. 设置maven开发环境
+
+    - 在%USERPROFILE%目录(即用户目录, 我这里是C:\Users\Administrator)中, 创建一个.m2的目录, 并在目录中新建文件settings.xml, settings.xml文件内容如下; 其中本地仓库地址localRepository需要修改为实际地址
+        ```Xml
+        <?xml version="1.0" encoding="UTF-8"?>
+         
+        <settings>
+            <!-- 指定本地仓库的存放地址，可选 -->
+            <localRepository>F:\jenkins-plugins\repository</localRepository>
+            
+            <pluginGroups>
+                <pluginGroup>org.jenkins-ci.tools</pluginGroup>
+            </pluginGroups>
+            
+            <profiles>
+                <!-- Give access to Jenkins plugins -->
+                <profile>
+                    <id>jenkins</id>
+                    <activation>
+                        <activeByDefault>true</activeByDefault> <!-- change this to false, if you don't like to have it on per default -->
+                    </activation>
+                    
+                    <repositories>
+                        <repository>
+                            <id>repo.jenkins-ci.org</id>
+                            <url>http://repo.jenkins-ci.org/public/</url>
+                        </repository>
+                    </repositories>
+              
+                    <pluginRepositories>
+                        <pluginRepository>
+                            <id>repo.jenkins-ci.org</id>
+                            <url>http://repo.jenkins-ci.org/public/</url>
+                        </pluginRepository>
+                    </pluginRepositories>
+                </profile>
+            </profiles>
+            
+            <mirrors>
+                <mirror>
+                    <id>repo.jenkins-ci.org</id>
+                    <url>http://repo.jenkins-ci.org/public/</url>
+                    <mirrorOf>m.g.o-public</mirrorOf>
+                </mirror>
+            </mirrors>
+        
+        </settings>
+        ```
+
+    - 然后在上面配置的路径F:\jenkins-plugins下打开cmd, 在cmd中执行"mvn -U archetype:generate -Dfilter=io.jenkins.archetypes:"命令等待下载, 中间需要版本, 设置属性等, 可以参考Linux下的步骤
+    
+        ![](images/plugin-1.jpg)
+        
+    - 打开eclipse -> File -> Import -> Maven -> Existing Maven Projects, 点击下一步, 在Root Directory选择F:\jenkins-plugins目录, 点击Finished即可
+    
+6. Jenkins插件项目结构
+
+    - src/main/java 存放Java源文件
+    - src/main/resources jelly/groovy视图文件
+    - src/main/webapp 静态资源文件, 例如图片, HTML文件(默认情况不存在, 需要手动创建)
+    - pom.xml 配置文件, Maven使用此文件编译插件
+    
+7. Jenkins插件编写规则
+
+    src/main/java/io/jenkins/plugins/sample下的HelloWorldBuilder.java文件和src/main/resources/io/jenkins/plugins/sample下的HelloWorldBuilder目录必须相对应, 必须名称一致
+
+
+
+参考: https://blog.csdn.net/q13554515812/article/details/86761757
+
