@@ -15,6 +15,7 @@ pytest是一个非常成熟的全功能的python测试框架, 主要有以下几
 pytest官方文档:
 
 https://docs.pytest.org/en/latest/contents.html
+https://www.osgeo.cn/pytest/contents.html
 
 
 ### pytest及其他第三方库的安装
@@ -923,21 +924,21 @@ pytest –h
 
 一. 安装
 
-    Python库:
+Python库:
 
-    ```Shell
-    pip install allure-pytest
-    ```
+```Shell
+pip install allure-pytest
+```
 
-    命令工具:
+命令工具:
 
-    官方地址: https://github.com/allure-framework/allure2/releases
+官方地址: https://github.com/allure-framework/allure2/releases
 
-    目前最新版本是2.13.10, 但是这个版本可能有问题, 生成报告后, 用任何浏览器打开都是空白页, 在加载javascript的时候都会报错: allure is not defined; 切换到2.13.9则OK
-    
-    Windows需要将allure-2.13.9\bin的绝对路径加入到PATH环境变量中
+目前最新版本是2.13.10, 但是这个版本可能有问题, 生成报告后, 用任何浏览器打开都是空白页, 在加载javascript的时候都会报错: allure is not defined; 切换到2.13.9则OK
 
-    这两个工具都需要安装
+Windows需要将allure-2.13.9\bin的绝对路径加入到PATH环境变量中
+
+这两个工具都需要安装
 
 二. 使用
 
