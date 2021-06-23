@@ -412,3 +412,11 @@ echo "/usr/local/lib" > /etc/ld.so.conf.d/sqlite3.conf
 ldconfig
 sqlite3 -version
 ```
+
+## 终端混乱解决
+
+有时候会出现在终端输入命令时, 命令不会显示出来, 但是敲完回车后命令仍然能够执行成功; 如果没有命令一直敲回车, 则一直显示命令提示符, 且不能回车, 只有输入Ctrl+C过后才能回车; 
+此时在终端输入**stty sane**命令则可恢复终端.
+
+
+
