@@ -211,6 +211,45 @@ https://blog.csdn.net/GW569453350game/article/details/51882246
 https://wiki.jenkins.io/display/JENKINS/EnvInject+Plugin
 ```
 
+- AnsiColor   # 使Jenkins控制台输出显示颜色
+
+```
+https://plugins.jenkins.io/ansicolor/
+```
+
+在pipeline中可以按一下方式使用:
+
+```Groovy
+pipeline {
+    agent any
+    options {
+        ansiColor('xterm')
+    }
+    stages {
+        stage('Build') {
+            steps {
+                echo '\033[34mHello\033[0m \033[33mcolorful\033[0m \033[35mworld!\033[0m'
+            }
+        }
+    }
+}
+```
+
+或者
+
+```Groovy
+ansiColor('css') {
+  sh "ls -al"
+}
+
+echo 'this will be rendered as-is'
+// multiple ansiColor steps within one pipeline are also supported
+
+ansiColor('vga') {
+  echo '\033[42m\033[97mWhite letters, green background\033[0m'
+}
+```
+
 ### 在Centos7系统上, 通过tomcat部署Jenkins
 
 首先要安装jdk, 这里省略
