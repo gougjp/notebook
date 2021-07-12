@@ -1546,6 +1546,12 @@ etree.parse(cloc_file, parser=etree.XMLParser(encoding="gb2312"))
     清华大学 https://pypi.tuna.tsinghua.edu.cn/simple/ 
     中国科学技术大学 http://pypi.mirrors.ustc.edu.cn/simple/
     ```
+    
+- 也可以使用绝对路径执行pip命令安装第三方库
+
+    ```Shell
+    /root/.pyenv/versions/3.8.9/bin/python3.8 -m pip install paramiko
+    ```
 
 ### 判断一个文件是二进制文件还是文本文件
 
