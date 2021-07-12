@@ -211,3 +211,55 @@ https://blog.csdn.net/GW569453350game/article/details/51882246
 https://wiki.jenkins.io/display/JENKINS/EnvInject+Plugin
 ```
 
+### 在Centos7系统上, 通过tomcat部署Jenkins
+
+首先要安装jdk, 这里省略
+
+1. 下载tomcat
+
+可以在 https://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/ 路径下找合适的版本
+
+```Shell
+wget https://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-9/v9.0.50/bin/apache-tomcat-9.0.50.tar.gz
+```
+
+2. 下载Jenkins
+
+```Shell
+wget http://mirrors.jenkins-ci.org/war/latest/jenkins.war
+```
+
+3. 部署Jenkins
+
+解压apache-tomcat-9.0.50.tar.gz, 并拷贝到/usr/local/目录下, 重名名为tomcat
+
+```shell
+tar -zxvf apache-tomcat-9.0.50.tar.gz
+mv apache-tomcat-9.0.50 /usr/local/tomcat
+```
+
+将jenkins.war拷贝到/usr/local/tomcat/webapps/目录下, 设置JENKINS_HOME环境变量, 然后启动tomcat
+
+```Shell
+cp -f jenkins.war /usr/local/tomcat/webapps/
+export JENKINS_HOME=/home/jenkins
+cd /usr/local/tomcat/bin
+./catalina.sh start
+```
+
+关闭防火墙
+
+```Shell
+查看状态
+firewall-cmd --state
+停止firewall
+systemctl stop firewalld.service
+禁止firewall开机启动
+systemctl disable firewalld.service 
+```
+
+在浏览器中访问Jenkins
+
+http://<Jenkins_server_ip>:8080/jenkins/
+
+另外, 如果想直接通过http://<Jenkins_server_ip>:8080访问Jenkins, 则需要将/usr/local/tomcat/webapps/目录下的ROOT文件夹重命名, 比如为ROOT_BAK, 然后将jenkins.war重命名为ROOT.war, 然后再启动服务
