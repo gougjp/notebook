@@ -22,7 +22,7 @@ https://www.osgeo.cn/pytest/contents.html
 
 ```Shell
 pip install –U pytest
-pip install sugar
+pip install pytest-sugar
 pip install pytest-rerunfailures
 pip install pytest-xdist
 pip install pytest-assume
