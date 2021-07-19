@@ -1914,7 +1914,7 @@ https://setuptools.readthedocs.io/en/latest/userguide/index.html
 https://blog.csdn.net/wangan_wangan/article/details/104215735
 https://www.jianshu.com/p/e5ed2ddb3f27
 
-### 使用paramiko库通过ssh发送ctrol +c
+### 使用paramiko库通过ssh发送Ctrl +C
 
 1. 发送chr(3)
 
@@ -1926,6 +1926,12 @@ SSH.send(chr(3))
 
 说明:
 一般按Ctrl+字母组合键时可以产生ASCII码为1-26的控制字符, 字母序号是几, ASCII码就是几, 这样Ctrl+C的ASCII码应为3
+
+因此如果要发送Ctrl +E, 则发送char(5)
+
+```Python
+SSH.send(chr(5))
+```
 
 实例代码:
 
@@ -2029,3 +2035,12 @@ class sshlib():
 conn.exec_command(chr(3), timeout=20)
 ```
 
+3. 在robotframework中发送Ctrl +C
+
+```
+${crtl_c}   Evaluate    chr(int(3))  
+SSHLibrary.Write Bare   ${crtl_c}
+```
+
+参考:
+https://my.oschina.net/activehealth/blog/730146
