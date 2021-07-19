@@ -1914,3 +1914,118 @@ https://setuptools.readthedocs.io/en/latest/userguide/index.html
 https://blog.csdn.net/wangan_wangan/article/details/104215735
 https://www.jianshu.com/p/e5ed2ddb3f27
 
+### 使用paramiko库通过ssh发送ctrol +c
+
+1. 发送chr(3)
+
+```Python
+SSH.send(chr(3))
+```
+
+2. 直接关闭链接, 进程自然中断, 跟ctrol +c效果相同
+
+说明:
+一般按Ctrl+字母组合键时可以产生ASCII码为1-26的控制字符, 字母序号是几, ASCII码就是几, 这样Ctrl+C的ASCII码应为3
+
+实例代码:
+
+sshlib.py
+```Python
+import os
+import re
+import sys
+import time
+import socket
+import paramiko
+
+
+class sshlib():
+    #初始化
+    def __init__(self, host, user, password, sshport=22, debug=False, debugf=None):
+        self.ssh = self.__connect(host, user, password, sshport)
+        self.ssh_transport = self.ssh.get_transport()
+        self.channel = None
+        self.debug = debug
+        self.debugf = debugf
+        if self.debugf and os.path.exists(self.debugf):
+            os.remove(self.debugf)
+
+    def __connect(self, host, user, password, sshport):
+        for try_times in range(30):
+            try:
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(host, username=user, password=password, port=sshport)
+                return ssh
+            except Exception as ex:
+                if try_times == 59:
+                    raise
+                time.sleep(2)
+                print(str(ex))
+                continue
+
+    #执行命令和接收输出
+    def exec_command(self, cmd, end_str=('# ', '$ ', '? ', '% ', ': ', ']'), match_str=None, timeout=20):
+        # print(cmd)
+        if not self.channel:
+            self.channel = self.ssh.invoke_shell(term='xterm', width=4096, height=48)
+            time.sleep(0.020)
+            self.__recv(self.channel, end_str, match_str, timeout)
+
+        if cmd == chr(int(3)):
+            self.channel.send(cmd)   # 这里如果加了'\n'则执行失败
+        elif cmd.endswith('\n'):
+            self.channel.send(cmd)
+        else:
+            self.channel.send(cmd + '\n')
+
+        try:
+            output = self.__recv(self.channel, end_str, match_str, timeout)
+            # if self.debugf:
+                # with open(self.debugf, 'a', encoding='utf-8') as f:
+                    # f.write(output)
+        except Exception as ex:
+            print('Execute command: {} failed'.format(cmd))
+            raise
+
+        return output
+
+    def __recv(self, channel, end_str, match_str, timeout):
+        max_wait_time = timeout * 1000
+        channel.settimeout(0.05)
+
+        out_str = []
+        while max_wait_time > 0:
+            try:
+                out = channel.recv(1024 * 1024).decode('utf-8', 'ignore')
+                if not out or out.strip() == '':
+                    continue
+                out = out.replace('\r', '')
+                out_str.append(out)
+                if self.debug:
+                    print(out, end='')
+                    sys.stdout.flush()
+                if self.debugf:
+                    with open(self.debugf, 'a', encoding='utf-8') as f:
+                        f.write(out)
+
+                if match_str:
+                    if match_str in out:
+                        return ''.join(out_str)
+                else:
+                    for it in end_str:
+                        if out.endswith(it):
+                            return ''.join(out_str)
+
+                max_wait_time -= 50
+            except socket.timeout:
+                max_wait_time -= 50
+
+        raise Exception('recv data timeout')
+```
+
+调用:
+```Python
+conn.exec_command(chr(3), timeout=20)
+```
+
