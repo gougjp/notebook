@@ -418,5 +418,31 @@ sqlite3 -version
 有时候会出现在终端输入命令时, 命令不会显示出来, 但是敲完回车后命令仍然能够执行成功; 如果没有命令一直敲回车, 则一直显示命令提示符, 且不能回车, 只有输入Ctrl+C过后才能回车; 
 此时在终端输入**stty sane**命令则可恢复终端.
 
+## centos7使用系统自带Java配置JAVA环境变量
 
+如果执行echo $JAVA_HOME发现返回为空, 则说明该环境变量没有配置
+
+1. 执行以下命令查询openjdk安装位置:
+
+```Shell
+[root@bogon ~]# which java
+/usr/bin/java
+[root@bogon ~]# ls -lrt /usr/bin/java
+lrwxrwxrwx. 1 root root 22 Jul  9 16:01 /usr/bin/java -> /etc/alternatives/java
+[root@bogon ~]# ls -lrt /etc/alternatives/java
+lrwxrwxrwx. 1 root root 71 Jul  9 16:01 /etc/alternatives/java -> /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.262.b10-1.el7.x86_64/jre/bin/java
+```
+
+这里找到的Java安装路径为: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.262.b10-1.el7.x86_64
+
+2. 将环境变量配置到 /etc/profile 文件中
+
+```Shell
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.262.b10-1.el7.x86_64
+export JRE_HOME=$JAVA_HOME/jre
+export CLASSPATH=$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+```
+
+3. 执行source /etc/profile 命令后环境变量生效, 此时再执行echo $JAVA_HOME则能看到该环境变量的值
 
