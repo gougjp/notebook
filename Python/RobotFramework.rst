@@ -12,6 +12,9 @@ RIDE环境搭建
 
 
 
+中文文档:
+https://robotframework-userguide-cn.readthedocs.io/zh_CN/latest/index.html
+
 
 
 
