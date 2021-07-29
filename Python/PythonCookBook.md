@@ -1472,6 +1472,14 @@ etree.parse(cloc_file, parser=etree.XMLParser(encoding="gb2312"))
     yum -y install gcc gcc-c++ make git patch openssl-devel zlib-devel readline-devel sqlite-devel bzip2-devel bzip2-libs ncurses-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
     ```
 
+    ubuntu
+    
+    ```Shell
+    sudo apt-get install make build-essential libssl-dev zlib1g-dev
+    sudo apt-get install libbz2-dev libreadline-dev libsqlite3-dev wget curl
+    sudo apt-get install llvm libncurses5-dev libncursesw5-dev
+    ```
+
 - 下载pyenv
 
     ```Shell
