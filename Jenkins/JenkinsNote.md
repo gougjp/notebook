@@ -302,3 +302,27 @@ systemctl disable firewalld.service
 http://<Jenkins_server_ip>:8080/jenkins/
 
 另外, 如果想直接通过http://<Jenkins_server_ip>:8080访问Jenkins, 则需要将/usr/local/tomcat/webapps/目录下的ROOT文件夹重命名, 比如为ROOT_BAK, 然后将jenkins.war重命名为ROOT.war, 然后再启动服务
+
+4. Jenkins中打开一些网页JS格式无法正常显示, 可以在catalina.sh文件中加入以下配置
+CATALINA_OPTS="-Dhudson.model.DirectoryBrowserSupport.CSP=\"default-src 'self'; style-src 'self' 'unsafe-inline' www.google.com ajax.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' www.google.com; img-src 'self' data:; child-src 'self'\""
+
+### tomcat访问本地服务器文件夹中的文件
+
+1. 向/usr/local/tomcat/conf/server.xml文件最后的<Host><\/Host>内部添加虚拟路径
+
+```Xml
+<Context path="/binaries" docBase="/home/sdr/binaries" debug="0" reloadable="true"/>
+```
+
+![](images/context_path.jpg)
+
+path: 匹配url路径开头
+docBase: 要访问的本地资源路径信息，不包含文件
+
+可以同时添加多个路径
+
+2. 改web.xml文件中的<servlet>配置, 搜索listings
+
+将<param-value>false<\/param-value> 改为 <param-value>true<\/param-value>
+
+![](images/servlet_param_value.jpg)
