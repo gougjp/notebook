@@ -326,3 +326,8 @@ docBase: 要访问的本地资源路径信息，不包含文件
 将<param-value>false<\/param-value> 改为 <param-value>true<\/param-value>
 
 ![](images/servlet_param_value.jpg)
+
+3. 如果路径中包含中文路径则需要在server.xml中配置URIEncoding="utf-8"
+
+![](images/server_path_encoding.jpg)
+
