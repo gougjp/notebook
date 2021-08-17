@@ -308,7 +308,7 @@ CATALINA_OPTS="-Dhudson.model.DirectoryBrowserSupport.CSP=\"default-src 'self'; 
 
 ### tomcat访问本地服务器文件夹中的文件
 
-1. 向/usr/local/tomcat/conf/server.xml文件最后的<Host><\/Host>内部添加虚拟路径
+1. 向/usr/local/tomcat/conf/server.xml文件最后的\<Host\>\<\/Host\>内部添加虚拟路径
 
 ```Xml
 <Context path="/binaries" docBase="/home/sdr/binaries" debug="0" reloadable="true"/>
@@ -317,13 +317,14 @@ CATALINA_OPTS="-Dhudson.model.DirectoryBrowserSupport.CSP=\"default-src 'self'; 
 ![](images/context_path.jpg)
 
 path: 匹配url路径开头
+
 docBase: 要访问的本地资源路径信息，不包含文件
 
 可以同时添加多个路径
 
-2. 改web.xml文件中的<servlet>配置, 搜索listings
+2. 改web.xml文件中的\<servlet\>配置, 搜索listings
 
-将<param-value>false<\/param-value> 改为 <param-value>true<\/param-value>
+将\<param-value\>false\<\/param-value\> 改为\<param-value\>true\<\/param-value\>
 
 ![](images/servlet_param_value.jpg)
 
