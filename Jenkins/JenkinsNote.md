@@ -332,3 +332,19 @@ docBase: 要访问的本地资源路径信息，不包含文件
 
 ![](images/server_path_encoding.jpg)
 
+### jenkins中shell脚本编写的两个注意点
+
+在jenkins的build中, 如果用shell脚本的话, 要记住有两个地方要注意
+
+1. 由于默认jenkins是使用/bin/bash -xe xxx.sh来调用脚本的, 所以不同于日常写的脚本, 任何一行返回值不为0都会使得脚本中途退出, 从而build失败.
+
+    解决方法1: 在开头加#!/bin/bash(试过可以)
+
+    解决方法2: 在开头加set +e(没试过, 应该是可以的)
+
+2. 由于jenkins默认在build结束后杀死所有build相关进程, 所以nohup的进程也会被杀死, 如果想正常使用nohup, 要加一句BUILD_ID=DONTKILLME
+
+
+
+
+
