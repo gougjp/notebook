@@ -1561,6 +1561,36 @@ etree.parse(cloc_file, parser=etree.XMLParser(encoding="gb2312"))
     /root/.pyenv/versions/3.8.9/bin/python3.8 -m pip install paramiko
     ```
 
+- 使用国内源安装Python版本
+
+    pyenv下载Python包的时候, 由于服务器在国外, 下载速度很慢, 可以使用国内源, 将Python包下载到\~/.pyenv/cache/目录下, 然后再执行pyenv install命令安装
+    
+    ```Shell
+    $ v=3.8.5; curl -L https://npm.taobao.org/mirrors/python/$v/Python-$v.tar.xz -o ~/.pyenv/cache/Python-$v.tar.xz; pyenv install $v
+    ```
+    
+    我们也可以创建一个方法, 放到\~/.bashrc 文件中, 以后方便直接使用
+
+    ```Shell
+    function pyinstall() {
+        v=$1
+        echo '准备安装 Python' $v
+        curl -L https://npm.taobao.org/mirrors/python/$v/Python-$v.tar.xz -o ~/.pyenv/cache/Python-$v.tar.xz
+        pyenv install $v
+    }
+    ```
+    
+    ```Shell
+    $ pyinstall 3.8.0
+    ```
+
+    对于不能访问外网的服务器, 也可以在办公电脑上到https://npm.taobao.org/mirrors/python里找到对应的版本, 下载**\.tar.xz**后缀的文件, 
+    
+    比如https://npm.taobao.org/mirrors/python/3.8.9/Python-3.8.9.tar.xz, 然后将Python-3.8.9.tar.xz拷贝到服务器的\~/.pyenv/cache/路径下, 如果\.pyenv没有cache目录, 则先创建
+    
+    然后执行命令pyenv install 3.8.9即可安装成功
+
+
 ### 判断一个文件是二进制文件还是文本文件
 
 ```Python
