@@ -338,6 +338,19 @@ docBase: 要访问的本地资源路径信息，不包含文件
 
 ![](images/context_allowlink.jpg)
 
+5. 如果向在网页显示中对路径中的文件进行排序, 可增加以下配置
+
+在conf/web.xml中增加
+
+```Xml
+<init-param>
+    <param-name>sortListings</param-name>
+    <param-value>true</param-value>
+</init-param>
+```
+
+![](images/sortlisting.jpg)
+
 ### jenkins中shell脚本编写的两个注意点
 
 在jenkins的build中, 如果用shell脚本的话, 要记住有两个地方要注意
