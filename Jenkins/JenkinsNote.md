@@ -332,6 +332,12 @@ docBase: 要访问的本地资源路径信息，不包含文件
 
 ![](images/server_path_encoding.jpg)
 
+4. 如果路径中包含符号链接, 默认网页中不会显示符号链接的, 需要做以下配置
+
+在conf/context.xml文件中增加**\<Resources allowLinking="true" cachingAllowed="true" cacheMaxSize="100000"/\>**
+
+![](images/context_allowlink.jpg)
+
 ### jenkins中shell脚本编写的两个注意点
 
 在jenkins的build中, 如果用shell脚本的话, 要记住有两个地方要注意
