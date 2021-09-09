@@ -20,18 +20,21 @@ https://robotframework-userguide-cn.readthedocs.io/zh_CN/latest/index.html
 
 
 
+### 通过RF API执行用例
 
+```Python
+from robot.api import TestSuiteBuilder
+from robot.api import ResultWriter
 
-
-
-
-
-
-
-
-
-
-
+# testcases为测试用例目录, 跟当前文件在同一级目录下
+suite = TestSuiteBuilder().build('testcases')
+# 设置要测试的tests, suite, tag等, 默认为None, 测试所有的用例; 函数原型为filter(included_suites=None, included_tests=None, included_tags=None, excluded_tags=None)
+suite.filter(included_tests=args['--test'], included_tags=args['--include'])
+# 开始执行测试用例, 里面的参数跟命令行参数基本相同, 其中listener参数指定的文件好像需要用绝对路径; variable参数如果有多个的话, 需要用列表形式variable=[’VAR1:value1’, ’VAR2:value2’], 单个的话可以用字符串形式variable=’VAR:value’
+result = suite.run(loglevel='DEBUG', outputdir=report_path, listener=args['--listener'], pythonpath=args['--pythonpath'], variable=args['--variable'])
+# 写HTML报告
+ResultWriter(result).write_results(report=os.path.join(report_path, 'report.html'), log=os.path.join(report_path, 'log.html'))
+```
 
 ### output.xml中重复出现**\<?xml version="1.0" encoding="UTF-8"?\>**内容
 
@@ -72,3 +75,5 @@ https://robotframework-userguide-cn.readthedocs.io/zh_CN/latest/index.html
 修改后是在__init__.robot中将Python函数分别封装成robotframework的keyword, 然后再调用封装后的keyword, 则问题解决
 
 具体原因不知道
+
+后来发现这样修改后, 问题仍然存在, 先记录
