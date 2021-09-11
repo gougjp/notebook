@@ -363,6 +363,26 @@ docBase: 要访问的本地资源路径信息，不包含文件
 
 2. 由于jenkins默认在build结束后杀死所有build相关进程, 所以nohup的进程也会被杀死, 如果想正常使用nohup, 要加一句BUILD_ID=DONTKILLME
 
+### jenkins job执行时间很长过后卡在**Pausing (Preparing for shutdown)**, 并且页面中出现Jenkins将要shutdown的信息
+
+![](images/job_prepare_shutdown.jpg)
+
+Jenkins服务器为Ubuntu, 登陆到服务器查看到以下进程
+
+![](images/unattended_upgrade.jpg)
+
+不确定是否跟该进程有关系
+
+执行以下命令后进程消失, job能正常执行
+
+```Shell
+systemctl mask unattended-upgrades.service
+systemctl stop unattended-upgrades.service
+```
+
+参考文档:
+
+https://askubuntu.com/questions/1098757/ubuntu-18-10-unattended-upgrades-shutdown-wait-for-signal
 
 
 
