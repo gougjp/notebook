@@ -2082,3 +2082,61 @@ SSHLibrary.Write Bare   ${crtl_c}
 
 参考:
 https://my.oschina.net/activehealth/blog/730146
+
+
+### multiprocessing.Process启动的进程, 在Linux下terminate失败
+
+最近在做一个robotframework框架的时候, 用例已经执行完成了, 输出以下日志后一直卡主
+
+```Shell
+17:05:03  Testcases                                                             | PASS |
+17:05:03  18 tests, 18 passed, 0 failed
+17:05:03  ==============================================================================
+17:05:03  Output:  /home/jenkins/workspace/testradio_auto/reports/output.xml
+17:05:03  Log:     /home/jenkins/workspace/testradio_auto/reports/log.html
+17:05:03  Report:  /home/jenkins/workspace/testradio_auto/reports/report.html
+```
+
+反复确认后是robot命令还没有退出, 即卡在以下步骤
+
+```Python
+result = subprocess.call(robot_cmd, shell=True)
+```
+
+然后登陆到执行robotframework的环境上后发现, 还有Python进程, kill掉Python进程后, Job执行完成
+
+并且该现象在Windows电脑上不存在, 在Linux电脑上必现
+
+后来通过打印进程ID发现是一个multiprocessing.Process启动的进程没有终止, 导致主进程一直等待这个子进程; 但是我在主进程中调用了proc.terminate()方法
+
+进一步查找, 发现terminate方法在Windows和Linux下的处理方式不同, 具体可以见terminate函数的Python官方文档
+
+于是包装了一下terminate方法:
+
+```Python
+import os
+import sys
+import signal
+
+def terminate_process(proc):
+    if 'linux' in sys.platform:
+        os.kill(proc.pid, signal.SIGKILL)
+    else:
+        proc.terminate()
+```
+
+然后通过terminate_process方法终止进程, 最终解决了上述问题
+
+注意:
+
+1. 启动的子进程最好能保证正常退出, 避免调用terminate_process函数来强制终止
+
+2. 完善terminate_process函数, 以保证子进程正常退出失效后也能终止子进程
+
+
+
+
+
+
+
+
