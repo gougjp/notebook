@@ -73,7 +73,7 @@ cpu_set_t结构体是一个掩码数组，一共有1024位，每一位都可以�
 
 运行结果:
 
-.. code-block:: sh
+::
 
     -> % ./a.out 
     Set returned by pthread_getaffinity_np() contained:
@@ -172,7 +172,7 @@ Linux下将不同进程绑定到不同的CPU上运行
 
 - 获取进程pid
 
-.. code-block:: sh
+::
 
     -> % ps
       PID TTY          TIME CMD
@@ -182,7 +182,7 @@ Linux下将不同进程绑定到不同的CPU上运行
 
 - 查看进程当前运行在哪个cpu上
 
-.. code-block:: sh
+::
 
     -> % taskset -p 2726
     pid 2726's current affinity mask: 3
@@ -191,7 +191,7 @@ Linux下将不同进程绑定到不同的CPU上运行
 
 - 指定进程运行在cpu1上
 
-.. code-block:: sh
+::
 
     -> % taskset -pc 1 2726
     pid 2726's current affinity list: 0,1
@@ -201,14 +201,14 @@ Linux下将不同进程绑定到不同的CPU上运行
 
 至此, 就把应用程序绑定到了cpu1上运行, 查看如下:
 
-.. code-block:: sh
+::
 
     -> % taskset -p 2726
     pid 2726's current affinity mask: 2
 
 - 启动程序时绑定cpu
 
-.. code-block:: sh
+::
 
     #启动时绑定到第二个cpu
     -> % taskset -c 1 ./dgram_servr&
@@ -313,7 +313,7 @@ sched_setaffinity可以将某个进程绑定到一个特定的CPU
 
 运行结果:
 
-.. code-block:: sh
+::
 
     -> % ./a.out
     system has 2 processor(s). 
