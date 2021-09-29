@@ -26,6 +26,7 @@ C语言
 .. toctree::
    :maxdepth: 2
    :caption: CPrograme
+   :hidden:
    
    CPrograme/CCookBook
    CPrograme/CFuncionts
@@ -39,8 +40,33 @@ Python语言
 .. toctree::
    :maxdepth: 2
    :caption: Python
+   :hidden:
 
-   Python/*
+   Python/DataTable
+   Python/DjangoNote
+   Python/PyQt5Note
+   Python/PyTestAndAllure
+   Python/PythonCookBook
+   Python/PythonCrawlers
+   Python/PythonResources
+   Python/PythonSourceCode
+   Python/PythonStaticAnalysis
+   Python/PythonWin32Excel
+   Python/RobotFramework
+   Python/SublimeTextRFPlugin
+
+:doc:`Python/DataTable`
+:doc:`Python/DjangoNote`
+:doc:`Python/PyQt5Note`
+:doc:`Python/PyTestAndAllure`
+:doc:`Python/PythonCookBook`
+:doc:`Python/PythonCrawlers`
+:doc:`Python/PythonResources`
+:doc:`Python/PythonSourceCode`
+:doc:`Python/PythonStaticAnalysis`
+:doc:`Python/PythonWin32Excel`
+:doc:`Python/RobotFramework`
+:doc:`Python/SublimeTextRFPlugin`
 
 Java语言
 ======================
@@ -48,6 +74,7 @@ Java语言
 .. toctree::
    :maxdepth: 2
    :caption: Java
+   :hidden:
 
    Java/*
 
@@ -57,6 +84,7 @@ Superxon
 .. toctree::
    :maxdepth: 2
    :caption: Superxon
+   :hidden:
    
    Superxon/*
 
@@ -66,6 +94,7 @@ Jenkins
 .. toctree::
    :maxdepth: 2
    :caption: Jenkins
+   :hidden:
 
    Jenkins/*
 
@@ -75,6 +104,7 @@ Git
 .. toctree::
    :maxdepth: 2
    :caption: Git
+   :hidden:
     
    Git/*
 
@@ -84,6 +114,7 @@ EFK
 .. toctree::
    :maxdepth: 2
    :caption: EFK
+   :hidden:
     
    Efk/*
 
@@ -93,6 +124,7 @@ MySql
 .. toctree::
    :maxdepth: 2
    :caption: MySql
+   :hidden:
     
    MySql/*
 
@@ -102,6 +134,7 @@ CppCheck
 .. toctree::
    :maxdepth: 2
    :caption: CppCheck
+   :hidden:
     
    CppCheck/*
 
@@ -111,6 +144,7 @@ Exsi
 .. toctree::
    :maxdepth: 2
    :caption: Exsi
+   :hidden:
     
    Esxi/*
 
@@ -120,6 +154,7 @@ Ant
 .. toctree::
    :maxdepth: 2
    :caption: Ant
+   :hidden:
     
    Ant/*
 
@@ -129,6 +164,7 @@ Xslt
 .. toctree::
    :maxdepth: 2
    :caption: Xslt
+   :hidden:
     
    Xslt/*
 
@@ -138,6 +174,7 @@ Linux
 .. toctree::
    :maxdepth: 2
    :caption: Linux
+   :hidden:
     
    Linux/*
 
@@ -147,6 +184,7 @@ SourceMonitor
 .. toctree::
    :maxdepth: 2
    :caption: SourceMonitor
+   :hidden:
     
    SourceMonitor/*
 
@@ -156,6 +194,7 @@ PMD
 .. toctree::
    :maxdepth: 2
    :caption: PMD
+   :hidden:
     
    PMD/*
 
@@ -165,6 +204,7 @@ DataBase
 .. toctree::
    :maxdepth: 2
    :caption: DataBase
+   :hidden:
     
    DataBase/*
 
@@ -174,6 +214,7 @@ DockerAndKubernetes
 .. toctree::
    :maxdepth: 2
    :caption: DockerAndKubernetes
+   :hidden:
     
    DockerAndKubernetes/*
 
@@ -183,6 +224,7 @@ DockerAndKubernetes
 .. toctree::
    :maxdepth: 2
    :caption: Help
+   :hidden:
     
    Help/*
 
