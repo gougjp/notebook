@@ -154,7 +154,9 @@ EFK
    :caption: EFK
    :hidden:
     
-   Efk/*
+   Efk/EfkNotes
+
+:doc:`Efk/EfkNotes`
 
 MySql
 ======================
@@ -164,7 +166,9 @@ MySql
    :caption: MySql
    :hidden:
     
-   MySql/*
+   MySql/MySqlNote
+
+:doc:`MySql/MySqlNote`
 
 CppCheck
 ======================
@@ -174,7 +178,9 @@ CppCheck
    :caption: CppCheck
    :hidden:
     
-   CppCheck/*
+   CppCheck/Cppcheck
+
+:doc:`CppCheck/Cppcheck`
 
 Exsi
 ======================
@@ -184,7 +190,15 @@ Exsi
    :caption: Exsi
    :hidden:
     
-   Esxi/*
+   Esxi/EsxiNote
+   Esxi/VMWarevSphere
+   Esxi/vSphereCommandLineInterface
+
+:doc:`Esxi/EsxiNote`
+
+:doc:`Esxi/VMWarevSphere`
+
+:doc:`Esxi/vSphereCommandLineInterface`
 
 Ant
 ======================
@@ -194,7 +208,9 @@ Ant
    :caption: Ant
    :hidden:
     
-   Ant/*
+   Ant/Build
+
+:doc:`Ant/Build`
 
 Xslt
 ======================
@@ -204,7 +220,9 @@ Xslt
    :caption: Xslt
    :hidden:
     
-   Xslt/*
+   Xslt/Xslt
+
+:doc:`Xslt/Xslt`
 
 Linux
 ======================
@@ -214,7 +232,15 @@ Linux
    :caption: Linux
    :hidden:
     
-   Linux/*
+   Linux/ShellArray
+   Linux/ShellNote
+   Linux/ShellParameterExpansion
+
+:doc:`Linux/ShellArray`
+
+:doc:`Linux/ShellNote`
+
+:doc:`Linux/ShellParameterExpansion`
 
 SourceMonitor
 ======================
