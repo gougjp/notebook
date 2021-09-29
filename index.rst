@@ -103,7 +103,9 @@ Superxon
    :caption: Superxon
    :hidden:
    
-   Superxon/*
+   Superxon/SuperxonNote
+
+:doc:`Superxon/SuperxonNote`
 
 Jenkins
 ======================
@@ -113,7 +115,21 @@ Jenkins
    :caption: Jenkins
    :hidden:
 
-   Jenkins/*
+   Jenkins/Ansible
+   Jenkins/DevelopmentOfPlugIn
+   Jenkins/JenkinsNote
+   Jenkins/PipeLineNote
+   Jenkins/Puppet
+
+:doc:`Jenkins/Ansible`
+
+:doc:`Jenkins/DevelopmentOfPlugIn`
+
+:doc:`Jenkins/JenkinsNote`
+
+:doc:`Jenkins/PipeLineNote`
+
+:doc:`Jenkins/Puppet`
 
 Git
 ======================
@@ -123,7 +139,12 @@ Git
    :caption: Git
    :hidden:
     
-   Git/*
+   Git/GitLab
+   Git/GitNote
+
+:doc:`Git/GitLab`
+
+:doc:`Git/GitNote`
 
 EFK
 ======================
