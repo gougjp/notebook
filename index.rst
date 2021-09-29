@@ -3,137 +3,180 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. toctree::
-   :glob:
-   :maxdepth: 2
-   :caption: Basic
-    
-   Basic/*
+个人工作学习笔记
+===========================================
+
+.. image:: images/notebook.jpg
+
+基础知识
+======================
 
 .. toctree::
-   :glob:
+    :maxdepth: 2
+    :caption: Basic
+    :hidden:
+    
+    Basic/Basic
+
+:doc:`Basic/Basic`
+
+C语言
+======================
+
+.. toctree::
    :maxdepth: 2
    :caption: CPrograme
    
    CPrograme/*
 
+Python语言
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: Python
 
    Python/*
-   
+
+Java语言
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: Java
 
    Java/*
 
+Superxon
+======================
 
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: Superxon
    
    Superxon/*
 
+Jenkins
+======================
 
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: Jenkins
 
    Jenkins/*
 
+Git
+======================
 
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: Git
     
    Git/*
-   
+
+EFK
+======================
+ 
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: EFK
     
    Efk/*
 
+MySql
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: MySql
     
    MySql/*
 
+CppCheck
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: CppCheck
     
    CppCheck/*
-   
+
+Exsi
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: Exsi
     
    Esxi/*
-   
+
+Ant
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: Ant
     
    Ant/*
-   
+
+Xslt
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: Xslt
     
    Xslt/*
 
+Linux
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: Linux
     
    Linux/*
 
+SourceMonitor
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: SourceMonitor
     
    SourceMonitor/*
 
+PMD
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: PMD
     
    PMD/*
 
+DataBase
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: DataBase
     
    DataBase/*
 
+DockerAndKubernetes
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: DockerAndKubernetes
     
    DockerAndKubernetes/*
 
+帮助
+======================
+
 .. toctree::
-   :glob:
    :maxdepth: 2
    :caption: Help
     
