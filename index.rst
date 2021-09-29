@@ -27,7 +27,11 @@ C语言
    :maxdepth: 2
    :caption: CPrograme
    
-   CPrograme/*
+   CPrograme/CCookBook
+   CPrograme/CFuncionts
+   
+:doc:`CPrograme/CCookBook`
+:doc:`CPrograme/CFuncionts`
 
 Python语言
 ======================
