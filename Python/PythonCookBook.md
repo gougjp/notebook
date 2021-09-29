@@ -2127,7 +2127,7 @@ def terminate_process(proc):
 
 然后通过terminate_process方法终止进程, 最终解决了上述问题
 
-注意:
+总结:
 
 1. 启动的子进程最好能保证正常退出, 避免调用terminate_process函数来强制终止
 
