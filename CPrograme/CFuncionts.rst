@@ -1,4 +1,5 @@
-# C Functions
+C Functions
+====================
 
 **<font color="red">char \*strrchr(const char \*str, int c)</font>**
 
@@ -24,31 +25,31 @@ https://refspecs.linuxfoundation.org/LSB_5.0.0/LSB-Core-generic/LSB-Core-generic
 
 strtok函数会破坏被分解字符串的完整, 调用前和调用后的s已经不一样了. 如果要保持原字符串的完整, 可以使用strchr和sscanf的组合等.
 
-```C
-#include<string.h>
-#include<stdio.h>
+.. code-block:: c
 
-int main(void)
-{
-    char input[16]="abc,d";
-    char*p;
+    #include<string.h>
+    #include<stdio.h>
 
-    /*strtok places a NULL terminator
-    infront of the token,if found*/
-    p=strtok(input,",");
-    if(p)
-        printf("%s\n",p);
-        /*Asecond call to strtok using a NULL
-        as the first parameter returns a pointer
-        to the character following the token*/
+    int main(void)
+    {
+        char input[16]="abc,d";
+        char*p;
 
-    p=strtok(NULL,",");
-    if(p)
-        printf("%s\n",p);
+        /*strtok places a NULL terminator
+        infront of the token,if found*/
+        p=strtok(input,",");
+        if(p)
+            printf("%s\n",p);
+            /*Asecond call to strtok using a NULL
+            as the first parameter returns a pointer
+            to the character following the token*/
 
-    return 0;
-}
-```
+        p=strtok(NULL,",");
+        if(p)
+            printf("%s\n",p);
+
+        return 0;
+    }
 
 **<font color="red">size\_t getpagesize(void)</font>**
 
