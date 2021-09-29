@@ -32,6 +32,7 @@ C语言
    CPrograme/CFuncionts
    
 :doc:`CPrograme/CCookBook`
+
 :doc:`CPrograme/CFuncionts`
 
 Python语言
@@ -56,16 +57,27 @@ Python语言
    Python/SublimeTextRFPlugin
 
 :doc:`Python/DataTable`
+
 :doc:`Python/DjangoNote`
+
 :doc:`Python/PyQt5Note`
+
 :doc:`Python/PyTestAndAllure`
+
 :doc:`Python/PythonCookBook`
+
 :doc:`Python/PythonCrawlers`
+
 :doc:`Python/PythonResources`
+
 :doc:`Python/PythonSourceCode`
+
 :doc:`Python/PythonStaticAnalysis`
+
 :doc:`Python/PythonWin32Excel`
+
 :doc:`Python/RobotFramework`
+
 :doc:`Python/SublimeTextRFPlugin`
 
 Java语言
@@ -76,7 +88,12 @@ Java语言
    :caption: Java
    :hidden:
 
-   Java/*
+   Java/JavaLearningNotes
+   Java/TestNG
+
+:doc:`Java/JavaLearningNotes`
+
+:doc:`Java/TestNG`
 
 Superxon
 ======================
