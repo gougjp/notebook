@@ -250,7 +250,9 @@ SourceMonitor
    :caption: SourceMonitor
    :hidden:
     
-   SourceMonitor/*
+   SourceMonitor/SourceMonitor
+
+:doc:`SourceMonitor/SourceMonitor`
 
 PMD
 ======================
@@ -260,7 +262,9 @@ PMD
    :caption: PMD
    :hidden:
     
-   PMD/*
+   PMD/Duplicity
+
+:doc:`PMD/Duplicity`
 
 DataBase
 ======================
@@ -269,8 +273,10 @@ DataBase
    :maxdepth: 2
    :caption: DataBase
    :hidden:
-    
-   DataBase/*
+
+   DataBase/Oracle
+
+:doc:`DataBase/Oracle`
 
 DockerAndKubernetes
 ======================
@@ -280,7 +286,12 @@ DockerAndKubernetes
    :caption: DockerAndKubernetes
    :hidden:
     
-   DockerAndKubernetes/*
+   DockerAndKubernetes/Docker
+   DockerAndKubernetes/Kubernetes
+
+:doc:`DockerAndKubernetes/Docker`
+
+:doc:`DockerAndKubernetes/Kubernetes`
 
 帮助
 ======================
@@ -289,8 +300,10 @@ DockerAndKubernetes
    :maxdepth: 2
    :caption: Help
    :hidden:
-    
-   Help/*
+
+   Help/UseReadtheDocs
+
+:doc:`Help/UseReadtheDocs`
 
 Indices and tables
 ==================
