@@ -1,7 +1,8 @@
 C Functions
 ====================
+.. raw:: html
 
-``char *strrchr(const char *str, int c)``
+    <font color="red">char \*strrchr(const char \*str, int c)</font>
 
 在参数str所指向的字符串中搜索最后一次出现字符c(一个无符号字符)的位置; 该函数返回str中最后一次出现字符c的位置指针. 如果未找到该值, 则函数返回一个空指针.
 
