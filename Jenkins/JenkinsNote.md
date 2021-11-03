@@ -250,6 +250,18 @@ ansiColor('vga') {
 }
 ```
 
+### Jenkins 插件离线安装
+
+1. 下载hpi:
+
+- 可以在https://updates.jenkins-ci.org/download/plugins/里面找到对应的插件, 点击左边的版本号即可下载hpi
+
+- 也可以在https://plugins.jenkins.io/里面根据插件名字搜索对应的插件, 搜索到过后, 点击进插件页面, 点击上面的release, 然后点击版本号下载
+
+2. 安装hpi:
+
+点击Jenkins系统管理 \-\> 插件管理 \-\> 高级 \-\> 上传插件里面点击选择文件来 \-\> 选择刚下载的hpi文件 \-\> 点击上传开始安装, 如果没有报错则安装成功, 否则查看错误信息, 如果错误信息是其他依赖插件没有, 则再安装依赖插件 
+
 ### 在Centos7系统上, 通过tomcat部署Jenkins
 
 首先要安装jdk, 这里省略
