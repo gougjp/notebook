@@ -2133,6 +2133,27 @@ def terminate_process(proc):
 
 2. 完善terminate_process函数, 以保证子进程正常退出失效后也能终止子进程
 
+### Python离线安装第三方库
+
+公司内网某电脑不能上网, 需要安装Python环境, 这里我们将办公电脑上的所有第三方库移植到这个电脑上去
+
+1. 现在对应的Python版本, 拷贝到该电脑并安装完成
+
+2. 在能上外网的办公电脑上下载包:
+
+    - 制作requirements.txt: **pip freeze > requirements.txt**
+
+    - 下载单个离线包: **pip download -d your_offline_packages <package_name>**, your_offline_packages为当前目录下的一个文件夹名, 下载好的包会放到这个文件夹里, \<package_name\>为包名, 比如lxml, paramiko等
+    
+    - 根据requirements.txt批量下载离线包: **pip download -d your_offline_packages -r requirements.txt**
+    
+    - 然后将your_offline_packages文件夹和requirements.txt文件拷贝到目标电脑上
+    
+    - 执行命令安装单个包: **pip install --no-index --find-links=your_offline_packages package_name**, your_offline_packages就是刚拷贝的目录, 也可以用绝对路径
+    
+    - 执行命令根据requirements.txt安装所有包: **pip install --no-index --find-links=your_offline_packages -r requirements.txt**
+
+
 
 
 
