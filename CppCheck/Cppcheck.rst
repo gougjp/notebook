@@ -1,5 +1,8 @@
+CppCheck部署
+===================
+
 cppcheck 下载安装
-------------
+----------------------
 
 官网地址：http://cppcheck.net/
 
@@ -23,7 +26,7 @@ cppcheck 下载安装
     python "C:\Program Files\Cppcheck\htmlreport\cppcheck-htmlreport" --file cppcheck.xml --source-encoding="iso8859-1" --report-dir=test --source-dir=%src_path%
 
 排除误报项
-------------
+--------------
 
 .. image:: images/cppcheckhtmlreport.jpeg
 

@@ -72,7 +72,7 @@ MySql新建用户
     .. code::
 
         /*授予用户通过外网IP对于该数据库的全部权限*/
-    　　grant all privileges on `test`.* to 'test'@'%' ;
+    　　grant all privileges on `test`.* to 'test'@'%';
 
         /*授予用户在本地服务器对该数据库的全部权限*/
         grant all privileges on `test`.* to 'test'@'localhost';

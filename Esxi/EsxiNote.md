@@ -143,7 +143,7 @@
 
 - 在直通配置的时候, 如果选中了Intel Corporation HD Graphics 630这个显卡设备, 则在重启服务器的时候, 就卡在了vmkapi-v2_2_0_0_vmkernel_shim loaded successfully步骤
 
-![](images/0-22.jpeg)
+![](images/0-22.jpg)
 ![](images/0-23.jpeg)
 
 - 在直通配置的时候, 如果选中了网卡, 则启动后出现以下错误: No compatible network adapter found. Please consult the product's Hardware Compatibility Guide(HCG) for a list of supported adapters.
