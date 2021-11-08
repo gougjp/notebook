@@ -70,14 +70,12 @@ MySql新建用户
 其他示例:
 
     .. code::
+        
+    　　grant all privileges on `test`.* to 'test'@'%'; /*授予用户通过外网IP对于该数据库的全部权限*/
 
-        /*授予用户通过外网IP对于该数据库的全部权限*/
-    　　grant all privileges on `test`.* to 'test'@'%';
+        grant all privileges on `test`.* to 'test'@'localhost'; /*授予用户在本地服务器对该数据库的全部权限*/
 
-        /*授予用户在本地服务器对该数据库的全部权限*/
-        grant all privileges on `test`.* to 'test'@'localhost';
-
-        grant select on test.* to 'user1'@'localhost';  /*给予查询权限*/
+        grant select on test.* to 'user1'@'localhost'; /*给予查询权限*/
 
         grant insert on test.* to 'user1'@'localhost'; /*添加插入权限*/
 
