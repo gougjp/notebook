@@ -20,7 +20,7 @@ Django Note
 然后在项目中执行命令 **python manage.py inspectdb**
 
 错误**ORA-00904: "IDENTITY_COLUMN": invalid identifier**
-----------------------
+--------------------------------------------------------------
 
 在执行python manage.py inspectdb命令从已有数据库表格生成models.py的时候会出现如下错误:
 
@@ -53,7 +53,7 @@ Django Note
     pip install django==2.2
 
 POST请求提交表单时出现以下错误: "**Forbidden (CSRF token missing or incorrect.): /fqc/inserttco**"
-----------------------
+----------------------------------------------------------------------------------------------------------
 
 ::
 
