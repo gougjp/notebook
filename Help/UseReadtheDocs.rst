@@ -146,6 +146,16 @@ Sphinx是一个基于Python的文档生成项目, 最早只是用来生成 Pytho
 
     The HTML pages are in build\html.
 
+需要安装Python库
+
+.. code::
+
+    pip3 install -U Sphinx
+    pip3 install sphinx-autobuild
+    pip3 install sphinx_rtd_theme
+    pip3 install recommonmark
+    pip3 install sphinx_markdown_tables
+
 * 进入build/html目录后用浏览器打开index.html
 
 .. image:: images/HelloWorld.jpg
