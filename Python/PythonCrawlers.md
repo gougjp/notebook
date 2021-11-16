@@ -2,6 +2,24 @@
 
 ### Python实现单点登录(SSO)
 
+CAS协议流程:
+
+第1步: 浏览器正常发起Web服务请求(带过期cookie或者无cookie)
+
+第2步: web服务发现cookie无效, 重定向请求到CAS登录界面进行认证
+
+第3步: 用户填写认证信息后, 将认证信息POST给CAS服务器
+
+第4步: CAS服务器判定认证信息有效, 生成一个Cas-cookie, 并返回一个一次性有效ticket
+
+第5步: 浏览器存储cas-cookie, 并带上ticket再次访问web服务
+
+第6步: web服务会请求CAS服务器以验证ticket有效
+
+第7步: CAS验证ticket有效后CAS即删除ticket, 返回结果给web服务
+
+第8步: web服务生成一个service-cookie, 并返回web资源给浏览器
+
 1. 分析网页
 
 使用Chrome浏览器打开登录页面, 右键-\>检查, 打开分析工具, 在Network选卡上可以看到当前浏览器显示页面和提交登录信息的详情
@@ -116,6 +134,69 @@ def get_image_link():
 这里要特别注意一点, 因为http是无状态的, web页面要保存登录状态需要用到cookie, 等成成功以后页面的response里面会包含一个带有有效标记的cookie, 登录最终的目标就是获取并保存这个有效的cookie, 这样后续的访问就不会被重定向到登录页.
 
 在requests的方法里面只要向这样吧cookie带到请求里即可
+
+### 对于Python2.7接口稍微有点变化
+
+```Python
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import time
+import json
+import traceback
+import requests
+import urllib3
+from sshlib import sshlib
+from lxml import etree
+
+sess = requests.session()
+sess.trust_env = False     # faster
+cookie = None
+
+header = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Origin': 'https://yfsso.ruijie.com.cn:8443',
+          'Connection': 'keep-alive',
+          'Content-Type': 'application/x-www-form-urlencoded'
+}
+
+def login_build():
+    global cookie
+
+    url = 'http://build.ruijie.net:8080/ngcf_build/servlet/5gnrindex'
+    form_data = {
+        "username": "goujunping",
+        "password": "gjp71016",
+        "submit": "",
+        "_eventId": "submit"
+    }
+    
+    res = sess.get(url, headers=header, verify=False)
+    cookie = res.cookies
+    login_url = res.url
+
+    header['Referer'] = login_url
+    header['Cookie'] = 'JSESSIONID=' + cookie['JSESSIONID']
+    form_data['lt'] = str(etree.HTML(res.content).xpath('//input[@name="lt"]/@value')[0])
+
+    res = sess.post(login_url, headers=header, params=form_data, cookies=cookie, allow_redirects=False, verify=False)
+    cookie = res.cookies
+
+    url_with_ticket = res.headers['location']
+    res = sess.get(url=url_with_ticket, allow_redirects=False, verify=False)
+    cookie = res.cookies
+
+    if res.status_code == 200 or res.status_code == 302:
+        if cookie is not None and cookie.get(name='JSESSIONID') is not None:
+            print('Login succeeded')
+            return 0
+
+    print('Login failed')
+    return 1
+```
+
+参考: https://blog.csdn.net/zhutou_xu/article/details/114212377
 
 ### 分析动态内容页面
 

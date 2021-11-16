@@ -446,3 +446,163 @@ export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
 
 3. 执行source /etc/profile 命令后环境变量生效, 此时再执行echo $JAVA_HOME则能看到该环境变量的值
 
+
+## Centos 7 使用本地ISO作为源安装软件
+
+有些服务器不能连外网, 需要安装软件时可以将官网的ISO下载下来, 拷贝到服务器上作为源来进行软件安装
+
+1. 在可以连接外网的办公电脑上去官网下载Everything版本的ISO, 比如这里的CentOS-7-x86_64-Everything-2009.iso, 大小有将近10G
+
+2. 下载完成后将下载好的ISO拷贝到服务器上去, 比如放到/opt下面
+
+3. 创建镜像挂载目录: 
+
+```Shell
+mkdir /mnt/CentosISO
+```
+
+4. 挂载镜像文件
+
+```Shell
+mount -t iso9660 -o loop /opt/CentOS-7-x86_64-Everything-2009.iso /mnt/CentosISO
+```
+
+5. 配置开机自动挂载:
+
+在/etc/fstab中增加以下内容:
+
+```Shell
+[root@centod-7 opt]# cat /etc/fstab 
+
+#
+# /etc/fstab
+# Created by anaconda on Mon Nov  8 11:26:33 2021
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+UUID=07bd3685-8f80-4ee8-bf09-b477256f99ba /                       xfs     defaults        0 0
+UUID=2fc60640-c62b-4174-ac9c-e60028e1cd1c /boot                   xfs     defaults        0 0
+UUID=238ca9b4-2a1f-4930-84fb-a58349224be1 swap                    swap    defaults        0 0
+
+/dev/sdb     /home/jenkins/userContent/testmac_auto    ext4     defaults       0 0
+
+/opt/CentOS-7-x86_64-Everything-2009.iso /mnt/CentosIS iso9660 defaults,ro,loop 0 0
+```
+
+6. 备份/etc/yum.repos.d/CentOS-Base.repo文件
+
+```Shell
+cd /etc/yum.repos.d/
+cp -f CentOS-Base.repo CentOS-Base.repo.bak
+```
+
+7. 修改/etc/yum.repos.d/CentOS-Base.repo文件中的所有baseurl内容, 原始文件中baseurl都是注释掉的, 新增一行, 值都为本地路径
+
+```Shell
+baseurl=file:///mnt/CentosISO
+```
+
+以下是修改之前的内容:
+
+```Shell
+# CentOS-Base.repo
+#
+# The mirror system uses the connecting IP address of the client and the
+# update status of each mirror to pick mirrors that are updated to and
+# geographically close to the client.  You should use this for CentOS updates
+# unless you are manually picking other mirrors.
+#
+# If the mirrorlist= does not work for you, as a fall back you can try the 
+# remarked out baseurl= line instead.
+#
+#
+
+[base]
+name=CentOS-$releasever - Base
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#released updates 
+[updates]
+name=CentOS-$releasever - Updates
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that may be useful
+[extras]
+name=CentOS-$releasever - Extras
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-$releasever - Plus
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=centosplus&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/centosplus/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+```
+
+以下是修改过后的内容
+
+```Shell
+# CentOS-Base.repo
+#
+# The mirror system uses the connecting IP address of the client and the
+# update status of each mirror to pick mirrors that are updated to and
+# geographically close to the client.  You should use this for CentOS updates
+# unless you are manually picking other mirrors.
+#
+# If the mirrorlist= does not work for you, as a fall back you can try the 
+# remarked out baseurl= line instead.
+#
+#
+
+[base]
+name=CentOS-$releasever - Base
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+baseurl=file:///mnt/CentosISO
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#released updates 
+[updates]
+name=CentOS-$releasever - Updates
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+baseurl=file:///mnt/CentosISO
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that may be useful
+[extras]
+name=CentOS-$releasever - Extras
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/extras/$basearch/
+baseurl=file:///mnt/CentosISO
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-$releasever - Plus
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=centosplus&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/centosplus/$basearch/
+baseurl=file:///mnt/CentosISO
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+```
+
+8. 执行**yum clean all**清空yum已存在的所有源信息, 然后即可安装软件
+
+
