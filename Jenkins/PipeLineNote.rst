@@ -937,3 +937,112 @@ SoftwareMiddleware配置实例
             }
         }
     }
+
+在PipeLine中定义函数并调用
+-----------------------------
+
+在最外层定义函数download_scripts, 实现为代码下载功能, 然后在pipeline中可以直接调用
+
+.. code::
+
+    def download_scripts()
+    {
+        println "********* download_scripts ************"
+        checkout changelog: false, poll: false, 
+                 scm: [$class: 'SubversionSCM', 
+                       additionalCredentials: [], 
+                       excludedCommitMessages: '', 
+                       excludedRegions: '', 
+                       excludedRevprop: '', 
+                       excludedUsers: '', 
+                       filterChangelog: false, 
+                       ignoreDirPropChanges: false, 
+                       includedRegions: '', 
+                       locations: [[cancelProcessOnExternalsFail: true, 
+                                    credentialsId: 'goujunping-svn-secret', 
+                                    depthOption: 'infinity', 
+                                    ignoreExternalsOption: true, 
+                                    local: '.', 
+                                    remote: 'http://<svnserver>/svn/5G_phy_autotest_x86/rgclienv/testbandwidth_auto']], 
+                                    quietOperation: false, 
+                                    workspaceUpdater: [$class: 'UpdateUpdater']]
+    }
+
+    pipeline {
+        agent { label "master" }
+
+        options {
+            timestamps()
+        }
+
+        stages {
+            stage("Deployment") {
+                steps {
+                    script {
+                        println "BBU_IP: ${BBU_IP}"
+                        println "CPE_SERVER: ${CPE_SERVER}"
+                        println "CPE_NUM: ${CPE_NUM}"
+                        println "TIMEOUT: ${TIMEOUT}"
+                        println "UPLOAD_BIN: ${UPLOAD_BIN}"
+                        download_scripts()
+                        if (UPLOAD_BIN == "True")
+                        {
+                            println "********* Deployment ************"
+                            sh("python testbandwidth_auto.py deployment")
+                        }
+                    }
+                }
+            }
+
+            stage("Start Stack") {
+                steps {
+                    script {
+                        println "********* Start Stack ************"
+                        sh("python testbandwidth_auto.py startstack")
+                    }
+                }
+            }
+
+            stage("CPE Connect") {
+                agent { label CPE_SERVER }
+                steps {
+                    script {
+                        println "********* CPE Connect ************"
+                        download_scripts()
+                        bat("python testbandwidth_auto.py cpeconnect")
+                        WAN_IPS = readFile("wan_ips.txt")
+                        println "WAN IP: ${WAN_IPS}"
+                    }
+                }
+            }
+
+            stage("Iperf") {
+                parallel {
+                    stage("DL Iperf") {
+                        steps {
+                            script {
+                                println "********* DL Iperf ************"
+                                println "WAN IP: ${WAN_IPS}"
+                                writeFile(file: "wan_ips.txt", text: WAN_IPS)
+                                sh('python testbandwidth_auto.py dliperf')
+                            }
+                        }
+                    }
+                    
+                    stage("UL Iperf") {
+                        agent { label CPE_SERVER }
+                        steps {
+                            script {
+                                println "********* UL Iperf ************"
+                                sh('python testbandwidth_auto.py uliperf')
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
