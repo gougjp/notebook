@@ -2154,10 +2154,3 @@ def terminate_process(proc):
     - 执行命令根据requirements.txt安装所有包: **pip install --no-index --find-links=your_offline_packages -r requirements.txt**
 
 
-
-
-
-
-
-
-
