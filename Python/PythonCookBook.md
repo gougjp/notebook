@@ -2153,4 +2153,56 @@ def terminate_process(proc):
     
     - 执行命令根据requirements.txt安装所有包: **pip install --no-index --find-links=your_offline_packages -r requirements.txt**
 
+### Jupyter Notebook
+
+1. Jupyter Notebook简介:
+
+    一个基于网页的用于交互计算的应用程序, 可被应用于全过程计算：开发、文档编写、运行代码和展示结果.
+
+    Jupyter Notebook是以网页的形式打开, 可以在网页页面中直接编写代码和运行代码, 代码的运行结果也会直接在代码块下显示. 如在编程过程中需要编写说明文档, 可在同一个页面中直接编写, 便于作及时的说明和解释
+
+2. Jupyter Notebook的主要特点:
+
+    - 编程时具有语法高亮、缩进、tab补全的功能
+
+    - 可直接通过浏览器运行代码, 同时在代码块下方展示运行结果
+
+    - 对代码编写说明文档或语句时, 支持Markdown语法
+
+3. 安装:
+
+```Shell
+
+    pip install jupyter
+
+```
+
+4. 运行Jupyter Notebook
+
+查看帮助信息:
+
+```Shell
+jupyter notebook --help
+# 或
+jupyter notebook -h
+```
+
+启动Jupyter Notebook:
+
+在cmd进入到指定目录下运行以下命令, 执行命令后会启动一个web服务器, 用浏览器打开http://localhost:8888/网址即可
+
+```Shell
+jupyter notebook
+```
+
+也可以用\-\-port指定端口号, 然后在浏览器中用指定的端口http://localhost:9999/打开
+
+```Shell
+jupyter notebook --port 9999
+```
+
+然后在浏览器中单击右侧的New -> Python即可
+
+
+
 
