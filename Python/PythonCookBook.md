@@ -1591,6 +1591,12 @@ etree.parse(cloc_file, parser=etree.XMLParser(encoding="gb2312"))
     然后执行命令pyenv install 3.8.9即可安装成功
 
 
+### pip安装第三方软件, 命令行中指定源
+
+```Shell
+
+```
+
 ### 判断一个文件是二进制文件还是文本文件
 
 ```Python

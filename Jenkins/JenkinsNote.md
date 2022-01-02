@@ -392,6 +392,30 @@ systemctl mask unattended-upgrades.service
 systemctl stop unattended-upgrades.service
 ```
 
+### JENKINS-48300错误i解决
+
+错误信息：
+
+![](images/error48300.jpg)
+
+网上搜索后都说是内存不够, 但是Jenkins服务器的内存很大, 使用率很低, 并且在JOB运行的过程中查看内存使用率, 也没有明显的升高
+
+网上的解决办法是在Jenkins的系统管理->脚本命令行执行一下命令：
+
+```Shell
+System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "86400");
+```
+
+但是执行多次后均无效, 下载最新版jenkins并重新部署, 问题仍然存在. 后在tomcat的catalina.sh文件中增加如下参数， 则问题解决
+
+```
+CATALINA_OPTS="$CATALINA_OPTS -Dorg.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL=86400"
+```
+
+![](images/error48300_1.jpg)
+
+
+
 参考文档:
 
 https://askubuntu.com/questions/1098757/ubuntu-18-10-unattended-upgrades-shutdown-wait-for-signal
